@@ -110,10 +110,10 @@ async function loadMarkdownFile(filepath) {
         contentDiv.innerHTML = `
             <div style="text-align: center; padding: 4rem; color: var(--danger-color);">
                 <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                <h2>Błąd ładowania pliku</h2>
-                <p>Nie można załadować pliku: ${filepath}</p>
+                <h2>${t('errorLoadingFile')}</h2>
+                <p>${t('errorCannotLoad')} ${filepath}</p>
                 <p style="color: var(--text-secondary); margin-top: 1rem;">
-                    Upewnij się, że aplikacja jest hostowana na serwerze (nie działa z file://)
+                    ${t('errorServerRequired')}
                 </p>
             </div>
         `;

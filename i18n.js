@@ -15,6 +15,7 @@ const translations = {
         statCategories: "Technical Categories",
 
         // Categories
+        catCategories: "Categories",
         catAlgorithms: "Data Structures & Algorithms",
         catSystemDesign: "System Design",
         catProgramming: "Programming Languages",
@@ -85,7 +86,13 @@ const translations = {
         btnCancel: "Cancel",
 
         // Misc
-        explanation: "Explanation:"
+        loading: "Loading...",
+        explanation: "Explanation:",
+
+        // Error messages
+        errorLoadingFile: "Error Loading File",
+        errorCannotLoad: "Cannot load file:",
+        errorServerRequired: "Make sure the application is hosted on a server (doesn't work with file://)"
     },
     pl: {
         // Header & Navigation
@@ -102,6 +109,7 @@ const translations = {
         statCategories: "Kategorii technicznych",
 
         // Categories
+        catCategories: "Kategorie",
         catAlgorithms: "Struktury Danych i Algorytmy",
         catSystemDesign: "Projektowanie Systemów",
         catProgramming: "Języki Programowania",
@@ -172,7 +180,13 @@ const translations = {
         btnCancel: "Anuluj",
 
         // Misc
-        explanation: "Wyjaśnienie:"
+        loading: "Ładowanie...",
+        explanation: "Wyjaśnienie:",
+
+        // Error messages
+        errorLoadingFile: "Błąd ładowania pliku",
+        errorCannotLoad: "Nie można załadować pliku:",
+        errorServerRequired: "Upewnij się, że aplikacja jest hostowana na serwerze (nie działa z file://)"
     }
 };
 

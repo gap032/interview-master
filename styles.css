@@ -749,6 +749,19 @@ body {
         justify-content: center;
     }
 
+    .language-switcher {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .language-dropdown {
+        width: 100%;
+        max-width: 200px;
+    }
+
     .quiz-container {
         padding: 1.5rem;
     }
