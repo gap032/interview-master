@@ -48,6 +48,12 @@ const translations = {
         quizSeniorLevel: "Senior-Level",
         quizPrincipalLevel: "Principal-Level",
 
+        // Quiz Question Count
+        quiz5Questions: "5 questions",
+        quiz10Questions: "10 questions",
+        quiz20Questions: "20 questions",
+        quiz50Questions: "50 questions",
+
         // Quiz Results
         resultsExcellent: "Excellent! 🎉",
         resultsGood: "Very Good! ⭐",
@@ -141,6 +147,12 @@ const translations = {
         quizMidLevel: "Mid-Level",
         quizSeniorLevel: "Senior-Level",
         quizPrincipalLevel: "Principal-Level",
+
+        // Quiz Question Count
+        quiz5Questions: "5 pytań",
+        quiz10Questions: "10 pytań",
+        quiz20Questions: "20 pytań",
+        quiz50Questions: "50 pytań",
 
         // Quiz Results
         resultsExcellent: "Doskonale! 🎉",
