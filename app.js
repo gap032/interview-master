@@ -151,10 +151,11 @@ function startQuiz() {
 }
 
 function startQuizWithParams(category, level, count) {
-    const questions = getFilteredQuestions(category, level, count);
+    // Pass current language to get questions in the right language
+    const questions = getFilteredQuestions(category, level, count, currentLanguage);
 
     if (questions.length === 0) {
-        alert('Brak pytań dla wybranych kryteriów!');
+        alert(t('quizNoQuestions') || 'No questions available for selected criteria!');
         return;
     }
 
@@ -179,19 +180,20 @@ function displayQuestion() {
     const progress = ((currentQuiz.currentQuestion) / currentQuiz.questions.length) * 100;
     document.getElementById('progress-fill').style.width = `${progress}%`;
     document.getElementById('progress-text').textContent =
-        `Pytanie ${currentQuiz.currentQuestion + 1} z ${currentQuiz.questions.length}`;
+        `${t('quizQuestion')} ${currentQuiz.currentQuestion + 1} ${t('quizOf')} ${currentQuiz.questions.length}`;
 
-    // Display category
-    const categoryNames = {
-        'algorithms': 'Algorithms',
-        'system-design': 'System Design',
-        'programming': 'Programming',
-        'architecture': 'Architecture',
-        'databases': 'Databases',
-        'devops': 'DevOps',
-        'behavioral': 'Behavioral'
+    // Display category (use translations)
+    const categoryKey = 'cat' + question.category.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+    const categoryMap = {
+        'algorithms': 'catAlgorithms',
+        'system-design': 'catSystemDesign',
+        'programming': 'catProgramming',
+        'architecture': 'catArchitecture',
+        'databases': 'catDatabases',
+        'devops': 'catDevOps',
+        'behavioral': 'catBehavioral'
     };
-    document.getElementById('question-category').textContent = categoryNames[question.category] || question.category;
+    document.getElementById('question-category').textContent = t(categoryMap[question.category]) || question.category;
 
     // Display question
     document.getElementById('question-text').textContent = question.question;
