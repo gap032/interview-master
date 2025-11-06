@@ -57,6 +57,67 @@ class LinkedList:
         self.head = new_node  # O(1) insertion
 ```
 
+**Example in C#:**
+```csharp
+using System;
+using System.Collections.Generic;
+
+// Array
+int[] arr = { 1, 2, 3, 4, 5 };
+Console.WriteLine(arr[2]);  // O(1) access
+
+// List<T> - dynamic array
+List<int> list = new List<int> { 1, 2, 3, 4, 5 };
+Console.WriteLine(list[2]);  // O(1) access
+
+// Linked List (simple implementation)
+public class Node<T>
+{
+    public T Data { get; set; }
+    public Node<T> Next { get; set; }
+
+    public Node(T data)
+    {
+        Data = data;
+        Next = null;
+    }
+}
+
+public class LinkedList<T>
+{
+    private Node<T> head;
+
+    public LinkedList()
+    {
+        head = null;
+    }
+
+    public void InsertAtBeginning(T data)
+    {
+        Node<T> newNode = new Node<T>(data);
+        newNode.Next = head;
+        head = newNode;  // O(1) insertion
+    }
+
+    public void Display()
+    {
+        Node<T> current = head;
+        while (current != null)
+        {
+            Console.Write(current.Data + " -> ");
+            current = current.Next;
+        }
+        Console.WriteLine("null");
+    }
+}
+
+// Built-in LinkedList<T>
+LinkedList<int> linkedList = new LinkedList<int>();
+linkedList.AddFirst(5);  // O(1)
+linkedList.AddFirst(4);  // O(1)
+linkedList.AddLast(6);   // O(1)
+```
+
 **Key Points:**
 - Arrays provide O(1) access but O(n) insertion/deletion
 - Linked lists provide O(1) insertion/deletion but O(n) access
@@ -155,6 +216,132 @@ print(ht)
 - Average case: O(1) for insert, get, remove
 - Worst case: O(n) when all keys hash to same index
 - Load factor (n/m) should be kept below 0.7 for good performance
+
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class HashTable<TKey, TValue>
+{
+    private class Entry
+    {
+        public TKey Key { get; set; }
+        public TValue Value { get; set; }
+
+        public Entry(TKey key, TValue value)
+        {
+            Key = key;
+            Value = value;
+        }
+    }
+
+    private int size;
+    private List<Entry>[] table;
+
+    public HashTable(int size = 10)
+    {
+        this.size = size;
+        table = new List<Entry>[size];
+        for (int i = 0; i < size; i++)
+        {
+            table[i] = new List<Entry>();
+        }
+    }
+
+    private int Hash(TKey key)
+    {
+        // Hash function using modulo
+        return Math.Abs(key.GetHashCode() % size);
+    }
+
+    public void Insert(TKey key, TValue value)
+    {
+        int hashIndex = Hash(key);
+
+        // Check if key already exists and update
+        for (int i = 0; i < table[hashIndex].Count; i++)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(table[hashIndex][i].Key, key))
+            {
+                table[hashIndex][i] = new Entry(key, value);
+                return;
+            }
+        }
+
+        // Key doesn't exist, add new entry
+        table[hashIndex].Add(new Entry(key, value));
+    }
+
+    public TValue Get(TKey key)
+    {
+        int hashIndex = Hash(key);
+
+        foreach (var entry in table[hashIndex])
+        {
+            if (EqualityComparer<TKey>.Default.Equals(entry.Key, key))
+            {
+                return entry.Value;
+            }
+        }
+
+        throw new KeyNotFoundException($"Key '{key}' not found");
+    }
+
+    public bool Remove(TKey key)
+    {
+        int hashIndex = Hash(key);
+
+        for (int i = 0; i < table[hashIndex].Count; i++)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(table[hashIndex][i].Key, key))
+            {
+                table[hashIndex].RemoveAt(i);
+                return true;
+            }
+        }
+
+        throw new KeyNotFoundException($"Key '{key}' not found");
+    }
+
+    public override string ToString()
+    {
+        var items = new List<string>();
+        for (int i = 0; i < size; i++)
+        {
+            if (table[i].Count > 0)
+            {
+                var bucketItems = string.Join(", ",
+                    table[i].Select(e => $"({e.Key}, {e.Value})"));
+                items.Add($"Bucket {i}: [{bucketItems}]");
+            }
+        }
+        return items.Count > 0 ? string.Join("\n", items) : "Empty hash table";
+    }
+}
+
+// Usage example
+var ht = new HashTable<string, object>(5);
+ht.Insert("name", "Alice");
+ht.Insert("age", 30);
+ht.Insert("city", "New York");
+ht.Insert("email", "alice@example.com");
+
+Console.WriteLine(ht.Get("name"));  // Output: Alice
+Console.WriteLine(ht);
+
+// Using built-in Dictionary<TKey, TValue> (hash table)
+Dictionary<string, object> dict = new Dictionary<string, object>
+{
+    { "name", "Alice" },
+    { "age", 30 },
+    { "city", "New York" }
+};
+
+Console.WriteLine(dict["name"]);  // O(1) average
+```
 
 **Key Points:**
 - Hash functions should distribute keys uniformly
@@ -297,6 +484,151 @@ print(bst.inorder_traversal())  # [20, 40, 50, 60, 70, 80]
 
 **Space Complexity:** O(n) for storing n nodes, O(h) for recursive call stack where h is height.
 
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class TreeNode<T> where T : IComparable<T>
+{
+    public T Value { get; set; }
+    public TreeNode<T> Left { get; set; }
+    public TreeNode<T> Right { get; set; }
+
+    public TreeNode(T value)
+    {
+        Value = value;
+        Left = null;
+        Right = null;
+    }
+}
+
+public class BinarySearchTree<T> where T : IComparable<T>
+{
+    private TreeNode<T> root;
+
+    public BinarySearchTree()
+    {
+        root = null;
+    }
+
+    public void Insert(T value)
+    {
+        root = InsertRecursive(root, value);
+    }
+
+    private TreeNode<T> InsertRecursive(TreeNode<T> node, T value)
+    {
+        if (node == null)
+            return new TreeNode<T>(value);
+
+        if (value.CompareTo(node.Value) < 0)
+            node.Left = InsertRecursive(node.Left, value);
+        else
+            node.Right = InsertRecursive(node.Right, value);
+
+        return node;
+    }
+
+    public bool Search(T value)
+    {
+        return SearchRecursive(root, value);
+    }
+
+    private bool SearchRecursive(TreeNode<T> node, T value)
+    {
+        if (node == null)
+            return false;
+
+        if (value.CompareTo(node.Value) == 0)
+            return true;
+        else if (value.CompareTo(node.Value) < 0)
+            return SearchRecursive(node.Left, value);
+        else
+            return SearchRecursive(node.Right, value);
+    }
+
+    public void Delete(T value)
+    {
+        root = DeleteRecursive(root, value);
+    }
+
+    private TreeNode<T> DeleteRecursive(TreeNode<T> node, T value)
+    {
+        if (node == null)
+            return null;
+
+        if (value.CompareTo(node.Value) < 0)
+            node.Left = DeleteRecursive(node.Left, value);
+        else if (value.CompareTo(node.Value) > 0)
+            node.Right = DeleteRecursive(node.Right, value);
+        else
+        {
+            // Node to delete found
+            // Case 1: Leaf node or node with one child
+            if (node.Left == null)
+                return node.Right;
+            else if (node.Right == null)
+                return node.Left;
+
+            // Case 2: Node with two children
+            // Find minimum value in right subtree (inorder successor)
+            TreeNode<T> minNode = FindMin(node.Right);
+            node.Value = minNode.Value;
+            node.Right = DeleteRecursive(node.Right, minNode.Value);
+        }
+
+        return node;
+    }
+
+    private TreeNode<T> FindMin(TreeNode<T> node)
+    {
+        while (node.Left != null)
+            node = node.Left;
+        return node;
+    }
+
+    public List<T> InorderTraversal()
+    {
+        List<T> result = new List<T>();
+        InorderRecursive(root, result);
+        return result;
+    }
+
+    private void InorderRecursive(TreeNode<T> node, List<T> result)
+    {
+        if (node != null)
+        {
+            InorderRecursive(node.Left, result);
+            result.Add(node.Value);
+            InorderRecursive(node.Right, result);
+        }
+    }
+}
+
+// Usage example
+var bst = new BinarySearchTree<int>();
+int[] values = { 50, 30, 70, 20, 40, 60, 80 };
+foreach (var val in values)
+{
+    bst.Insert(val);
+}
+
+Console.WriteLine(bst.Search(40));  // True
+Console.WriteLine(bst.Search(25));  // False
+Console.WriteLine(string.Join(", ", bst.InorderTraversal()));
+// Output: 20, 30, 40, 50, 60, 70, 80
+
+bst.Delete(30);
+Console.WriteLine(string.Join(", ", bst.InorderTraversal()));
+// Output: 20, 40, 50, 60, 70, 80
+
+// Using built-in SortedSet<T> (Red-Black tree)
+SortedSet<int> sortedSet = new SortedSet<int> { 50, 30, 70, 20 };
+Console.WriteLine(sortedSet.Contains(30));  // True, O(log n)
+```
+
 **Key Points:**
 - BST property enables efficient search through binary decisions
 - Worst case O(n) occurs with unbalanced trees
@@ -434,6 +766,168 @@ def has_cycle_hashset(head):
 |----------|------|-------|
 | Floyd's  | O(n) | O(1)  |
 | Hash Set | O(n) | O(n)  |
+
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class ListNode
+{
+    public int Value { get; set; }
+    public ListNode Next { get; set; }
+
+    public ListNode(int value)
+    {
+        Value = value;
+        Next = null;
+    }
+}
+
+public class CycleDetection
+{
+    // Floyd's Cycle Detection Algorithm
+    public static bool HasCycle(ListNode head)
+    {
+        if (head == null || head.Next == null)
+            return false;
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow.Next;           // Move 1 step
+            fast = fast.Next.Next;      // Move 2 steps
+
+            if (slow == fast)           // Cycle detected
+                return true;
+        }
+
+        return false; // fast reached end, no cycle
+    }
+
+    // Find the node where cycle begins
+    public static ListNode FindCycleStart(ListNode head)
+    {
+        if (head == null || head.Next == null)
+            return null;
+
+        // First, detect if cycle exists
+        ListNode slow = head;
+        ListNode fast = head;
+        bool hasCycle = false;
+
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow.Next;
+            fast = fast.Next.Next;
+
+            if (slow == fast)
+            {
+                hasCycle = true;
+                break;
+            }
+        }
+
+        if (!hasCycle)
+            return null;
+
+        // Move slow to head, keep fast at meeting point
+        // Both move at same speed, they'll meet at cycle start
+        slow = head;
+        while (slow != fast)
+        {
+            slow = slow.Next;
+            fast = fast.Next;
+        }
+
+        return slow;
+    }
+
+    // Alternative: Hash Set approach
+    public static bool HasCycleHashSet(ListNode head)
+    {
+        HashSet<ListNode> visited = new HashSet<ListNode>();
+        ListNode current = head;
+
+        while (current != null)
+        {
+            if (visited.Contains(current))
+                return true;
+
+            visited.Add(current);
+            current = current.Next;
+        }
+
+        return false;
+    }
+
+    // Get cycle length
+    public static int GetCycleLength(ListNode head)
+    {
+        if (head == null || head.Next == null)
+            return 0;
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        // Detect cycle
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow.Next;
+            fast = fast.Next.Next;
+
+            if (slow == fast)
+            {
+                // Count nodes in cycle
+                int length = 1;
+                ListNode temp = slow.Next;
+                while (temp != slow)
+                {
+                    length++;
+                    temp = temp.Next;
+                }
+                return length;
+            }
+        }
+
+        return 0; // No cycle
+    }
+}
+
+// Usage example
+class Program
+{
+    static void Main()
+    {
+        // Creating a linked list with cycle: 1 -> 2 -> 3 -> 4 -> 2 (cycle)
+        var node1 = new ListNode(1);
+        var node2 = new ListNode(2);
+        var node3 = new ListNode(3);
+        var node4 = new ListNode(4);
+
+        node1.Next = node2;
+        node2.Next = node3;
+        node3.Next = node4;
+        node4.Next = node2;  // Creates cycle
+
+        Console.WriteLine(CycleDetection.HasCycle(node1));  // True
+
+        var cycleStart = CycleDetection.FindCycleStart(node1);
+        Console.WriteLine($"Cycle starts at node with value: {cycleStart.Value}");  // 2
+
+        Console.WriteLine($"Cycle length: {CycleDetection.GetCycleLength(node1)}");  // 3
+
+        // List without cycle
+        var node5 = new ListNode(1);
+        var node6 = new ListNode(2);
+        node5.Next = node6;
+        Console.WriteLine(CycleDetection.HasCycle(node5));  // False
+    }
+}
+```
 
 **Key Points:**
 - Floyd's algorithm uses O(1) space vs O(n) for hash set
@@ -576,6 +1070,164 @@ print(stack2.get_min())  # 2
 - Solution 1: More space-efficient when few minimums change
 - Solution 2: Simpler logic, predictable space usage
 
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// Solution 1: Two Stacks
+public class MinStack
+{
+    private Stack<int> stack;     // Main stack
+    private Stack<int> minStack;  // Stack to track minimums
+
+    public MinStack()
+    {
+        stack = new Stack<int>();
+        minStack = new Stack<int>();
+    }
+
+    public void Push(int value)
+    {
+        stack.Push(value);
+
+        // Update minStack
+        if (minStack.Count == 0 || value <= minStack.Peek())
+        {
+            minStack.Push(value);
+        }
+    }
+
+    public int Pop()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        int value = stack.Pop();
+
+        // If popped value was minimum, remove from minStack
+        if (value == minStack.Peek())
+        {
+            minStack.Pop();
+        }
+
+        return value;
+    }
+
+    public int Top()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Peek();
+    }
+
+    public int GetMin()
+    {
+        if (minStack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return minStack.Peek();
+    }
+
+    public bool IsEmpty() => stack.Count == 0;
+
+    public int Size() => stack.Count;
+}
+
+// Solution 2: Single Stack with Value Tuples
+public class MinStack2
+{
+    private Stack<(int value, int currentMin)> stack;
+
+    public MinStack2()
+    {
+        stack = new Stack<(int, int)>();
+    }
+
+    public void Push(int value)
+    {
+        int currentMin;
+        if (stack.Count == 0)
+        {
+            currentMin = value;
+        }
+        else
+        {
+            currentMin = Math.Min(value, stack.Peek().currentMin);
+        }
+
+        stack.Push((value, currentMin));
+    }
+
+    public int Pop()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Pop().value;
+    }
+
+    public int Top()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Peek().value;
+    }
+
+    public int GetMin()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Peek().currentMin;
+    }
+}
+
+// Usage example
+class Program
+{
+    static void Main()
+    {
+        // Test Solution 1
+        var stack = new MinStack();
+        stack.Push(5);
+        stack.Push(2);
+        stack.Push(7);
+        stack.Push(1);
+        stack.Push(3);
+
+        Console.WriteLine($"Min: {stack.GetMin()}");  // 1
+        Console.WriteLine($"Top: {stack.Top()}");      // 3
+
+        stack.Pop();
+        stack.Pop();
+        Console.WriteLine($"Min: {stack.GetMin()}");  // 2
+
+        // Test Solution 2
+        var stack2 = new MinStack2();
+        stack2.Push(3);
+        stack2.Push(5);
+        stack2.Push(2);
+        stack2.Push(1);
+
+        Console.WriteLine(stack2.GetMin());  // 1
+        stack2.Pop();
+        Console.WriteLine(stack2.GetMin());  // 2
+
+        // Using built-in Stack<T>
+        Stack<int> builtInStack = new Stack<int>();
+        builtInStack.Push(1);
+        builtInStack.Push(2);
+        builtInStack.Push(3);
+        Console.WriteLine(builtInStack.Peek());  // 3 (top)
+        Console.WriteLine(builtInStack.Pop());   // 3 (remove and return)
+    }
+}
+```
+
 **Key Points:**
 - Key insight: track minimum at each stack state
 - Two-stack approach optimizes space for some cases
@@ -696,9 +1348,143 @@ for test in test_cases:
 
 *Space is O(1) because character set is limited (26 lowercase letters or 128 ASCII)
 
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class FirstUniqueChar
+{
+    // Solution 1: Two-Pass with Dictionary
+    public static int FirstUniqChar(string s)
+    {
+        // Count frequency of each character
+        Dictionary<char, int> charCount = new Dictionary<char, int>();
+
+        foreach (char c in s)
+        {
+            if (charCount.ContainsKey(c))
+                charCount[c]++;
+            else
+                charCount[c] = 1;
+        }
+
+        // Find first character with count 1
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (charCount[s[i]] == 1)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Solution 2: LINQ approach
+    public static int FirstUniqCharLinq(string s)
+    {
+        var charCount = s.GroupBy(c => c)
+                         .ToDictionary(g => g.Key, g => g.Count());
+
+        return s.Select((c, i) => new { Char = c, Index = i })
+                .Where(x => charCount[x.Char] == 1)
+                .Select(x => x.Index)
+                .DefaultIfEmpty(-1)
+                .First();
+    }
+
+    // Solution 3: Using array for ASCII characters (most efficient)
+    public static int FirstUniqCharArray(string s)
+    {
+        // Use array for counting (assuming lowercase letters only)
+        int[] count = new int[26];
+
+        // First pass: count frequencies
+        foreach (char c in s)
+        {
+            count[c - 'a']++;
+        }
+
+        // Second pass: find first unique
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (count[s[i] - 'a'] == 1)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Solution 4: Single pass with LinkedList (maintains order)
+    public static int FirstUniqCharSinglePass(string s)
+    {
+        Dictionary<char, int> charIndex = new Dictionary<char, int>();
+        HashSet<char> repeated = new HashSet<char>();
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            char c = s[i];
+
+            if (repeated.Contains(c))
+            {
+                continue;
+            }
+            else if (charIndex.ContainsKey(c))
+            {
+                // Character repeated, remove from dict and add to set
+                charIndex.Remove(c);
+                repeated.Add(c);
+            }
+            else
+            {
+                charIndex[c] = i;
+            }
+        }
+
+        // Return first remaining character's index
+        return charIndex.Count > 0 ? charIndex.Values.Min() : -1;
+    }
+}
+
+// Usage and test cases
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine(FirstUniqueChar.FirstUniqChar("leetcode"));     // 0 (l)
+        Console.WriteLine(FirstUniqueChar.FirstUniqChar("loveleetcode")); // 2 (v)
+        Console.WriteLine(FirstUniqueChar.FirstUniqChar("aabb"));         // -1
+
+        // Test edge cases
+        string[] testCases = {
+            "",           // Empty string -> -1
+            "a",          // Single character -> 0
+            "aabbcc",     // All repeated -> -1
+            "aabbccd",    // Last char unique -> 6
+            "abcabc"      // All repeated -> -1
+        };
+
+        Console.WriteLine("\nEdge case tests:");
+        foreach (var test in testCases)
+        {
+            Console.WriteLine($"'{test}' -> {FirstUniqueChar.FirstUniqChar(test)}");
+        }
+
+        // Performance comparison
+        Console.WriteLine("\nArray-based (fastest): " +
+            FirstUniqueChar.FirstUniqCharArray("leetcode"));
+
+        Console.WriteLine("LINQ (most concise): " +
+            FirstUniqueChar.FirstUniqCharLinq("leetcode"));
+    }
+}
+```
+
 **Key Points:**
 - Hash map is classic solution for counting problems
 - Two-pass is simpler to understand and implement
 - Space is effectively constant for limited character sets
 - OrderedDict maintains insertion order for optimization
+- C# array-based solution is fastest for known character sets
 
