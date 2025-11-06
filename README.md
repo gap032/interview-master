@@ -2,6 +2,15 @@
 
 A comprehensive collection of interview questions and detailed answers for Software Engineering, Computer Engineering, Programming, and IT Architecture positions. Questions are organized by technical domain and experience level.
 
+## 🎯 Featured: C# / .NET Code Examples
+
+**NEW:** All major topics now include comprehensive **C# implementations** alongside Python, Java, and JavaScript examples:
+- ✅ **Data Structures & Algorithms** - 14 sections with production-ready C# code (3,100+ lines)
+- ✅ **Databases** - Entity Framework Core, Dapper, MongoDB C# Driver examples (1,150+ lines)
+- ✅ **Programming Languages** - C# language features, LINQ, async/await, modern .NET patterns
+
+Perfect for **.NET developers** preparing for technical interviews at Microsoft, Amazon, Google, and other top tech companies.
+
 ## 📚 Repository Structure
 
 This repository is organized by technical domains, with each section containing questions categorized by experience level:
@@ -13,9 +22,10 @@ This repository is organized by technical domains, with each section containing 
 
 ### 1. [Data Structures & Algorithms](./data-structures-algorithms/)
 Core algorithmic thinking, complexity analysis, and problem-solving patterns.
-- [Mid-Level Questions](./data-structures-algorithms/mid-level.md)
-- [Senior-Level Questions](./data-structures-algorithms/senior-level.md)
-- [Principal-Level Questions](./data-structures-algorithms/principal-level.md)
+**Languages:** Python, Java, JavaScript, Go, **C#**
+- [Mid-Level Questions](./data-structures-algorithms/mid-level.md) - Arrays, Hash Tables, BST, Graphs
+- [Senior-Level Questions](./data-structures-algorithms/senior-level.md) - LRU Cache, Trie, Tree Serialization
+- [Principal-Level Questions](./data-structures-algorithms/principal-level.md) - Distributed Rate Limiter, B+ Tree, Optimal BST
 
 ### 2. [System Design](./system-design/)
 Designing scalable, reliable, and maintainable systems.
@@ -25,9 +35,10 @@ Designing scalable, reliable, and maintainable systems.
 
 ### 3. [Programming Languages](./programming-languages/)
 Language-specific concepts, paradigms, and best practices.
-- [Mid-Level Questions](./programming-languages/mid-level.md)
-- [Senior-Level Questions](./programming-languages/senior-level.md)
-- [Principal-Level Questions](./programming-languages/principal-level.md)
+**Languages:** Python, JavaScript, **C#** (LINQ, async/await, generics, reflection)
+- [Mid-Level Questions](./programming-languages/mid-level.md) - Closures, Decorators, Type Systems
+- [Senior-Level Questions](./programming-languages/senior-level.md) - Memory Management, Async Patterns
+- [Principal-Level Questions](./programming-languages/principal-level.md) - Roslyn APIs, Performance Optimization
 
 ### 4. [Software Architecture](./architecture/)
 Architectural patterns, microservices, and enterprise design.
@@ -37,9 +48,10 @@ Architectural patterns, microservices, and enterprise design.
 
 ### 5. [Databases](./databases/)
 SQL, NoSQL, database design, and optimization.
-- [Mid-Level Questions](./databases/mid-level.md)
-- [Senior-Level Questions](./databases/senior-level.md)
-- [Principal-Level Questions](./databases/principal-level.md)
+**Technologies:** SQL, **Entity Framework Core**, **Dapper**, **MongoDB C# Driver**
+- [Mid-Level Questions](./databases/mid-level.md) - Indexing, Transactions, SQL vs NoSQL
+- [Senior-Level Questions](./databases/senior-level.md) - Database Sharding, Cross-Shard Transactions
+- [Principal-Level Questions](./databases/principal-level.md) - Distributed Consensus (Raft), CAP Theorem
 
 ### 6. [DevOps & Cloud](./devops-cloud/)
 CI/CD, containerization, cloud platforms, and infrastructure.
@@ -140,4 +152,15 @@ This repository is provided as-is for educational purposes.
 
 ---
 
-**Last Updated**: 2025-11-04
+**Last Updated**: 2025-11-06
+
+### Recent Updates
+
+**2025-11-06**: Added comprehensive C# / .NET examples:
+- 🎯 **4,500+ lines** of production-quality C# code
+- ✅ Data Structures & Algorithms (14 sections)
+- ✅ Databases (Entity Framework Core, Dapper, MongoDB)
+- ✅ Programming Languages (LINQ, async/await, modern .NET)
+- 🔧 Technologies: .NET 6+, EF Core, StackExchange.Redis, MongoDB Driver
+
+**2025-11-04**: Added bilingual support (English/Polish) to web application
