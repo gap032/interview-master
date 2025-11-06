@@ -55,7 +55,7 @@ Leadership, communication, and soft skills.
 
 ## 🌐 Interactive Web Application
 
-**[Launch Interview Prep App](https://gap032.github.io/interview-master/)** *(Coming soon - enable GitHub Pages)*
+**[🚀 Launch Interview Prep App](https://gap032.github.io/interview-master/)**
 
 This repository includes an interactive web application with:
 
