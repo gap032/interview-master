@@ -26,8 +26,10 @@
                     <i class="fas fa-chart-bar"></i> Statistics
                 </button>
                 <div class="language-switcher">
-                    <button class="lang-btn active" data-lang="en" title="English">🇬🇧 EN</button>
-                    <button class="lang-btn" data-lang="pl" title="Polski">🇵🇱 PL</button>
+                    <select id="language-selector" class="language-dropdown">
+                        <option value="en" selected>🇬🇧 English</option>
+                        <option value="pl">🇵🇱 Polski</option>
+                    </select>
                 </div>
             </nav>
         </div>
@@ -170,36 +172,36 @@
                     <!-- Quiz Start Screen -->
                     <div class="quiz-start" id="quiz-start">
                         <i class="fas fa-brain"></i>
-                        <h2>Sprawdź swoją wiedzę!</h2>
-                        <p>Wybierz kategorię i poziom trudności quizu</p>
+                        <h2 data-i18n="quizTitle">Sprawdź swoją wiedzę!</h2>
+                        <p data-i18n="quizSubtitle">Wybierz kategorię i poziom trudności quizu</p>
 
                         <div class="quiz-selector">
                             <div class="form-group">
-                                <label><i class="fas fa-list"></i> Kategoria:</label>
+                                <label><i class="fas fa-list"></i> <span data-i18n="quizCategory">Kategoria:</span></label>
                                 <select id="quiz-category">
-                                    <option value="all">Wszystkie kategorie</option>
-                                    <option value="algorithms">Data Structures & Algorithms</option>
-                                    <option value="system-design">System Design</option>
-                                    <option value="programming">Programming Languages</option>
-                                    <option value="architecture">Architecture</option>
-                                    <option value="databases">Databases</option>
-                                    <option value="devops">DevOps & Cloud</option>
-                                    <option value="behavioral">Behavioral</option>
+                                    <option value="all" data-i18n="quizAllCategories">Wszystkie kategorie</option>
+                                    <option value="algorithms" data-i18n="catAlgorithms">Data Structures & Algorithms</option>
+                                    <option value="system-design" data-i18n="catSystemDesign">System Design</option>
+                                    <option value="programming" data-i18n="catProgramming">Programming Languages</option>
+                                    <option value="architecture" data-i18n="catArchitecture">Architecture</option>
+                                    <option value="databases" data-i18n="catDatabases">Databases</option>
+                                    <option value="devops" data-i18n="catDevOps">DevOps & Cloud</option>
+                                    <option value="behavioral" data-i18n="catBehavioral">Behavioral</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label><i class="fas fa-signal"></i> Poziom:</label>
+                                <label><i class="fas fa-signal"></i> <span data-i18n="quizLevel">Poziom:</span></label>
                                 <select id="quiz-level">
-                                    <option value="all">Wszystkie poziomy</option>
-                                    <option value="mid">Mid-Level</option>
-                                    <option value="senior">Senior-Level</option>
-                                    <option value="principal">Principal-Level</option>
+                                    <option value="all" data-i18n="quizAllLevels">Wszystkie poziomy</option>
+                                    <option value="mid" data-i18n="quizMidLevel">Mid-Level</option>
+                                    <option value="senior" data-i18n="quizSeniorLevel">Senior-Level</option>
+                                    <option value="principal" data-i18n="quizPrincipalLevel">Principal-Level</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label><i class="fas fa-hashtag"></i> Liczba pytań:</label>
+                                <label><i class="fas fa-hashtag"></i> <span data-i18n="quizCount">Liczba pytań:</span></label>
                                 <select id="quiz-count">
                                     <option value="5">5 pytań</option>
                                     <option value="10" selected>10 pytań</option>
@@ -209,7 +211,7 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-primary btn-large" id="start-quiz">
+                        <button class="btn btn-primary btn-large" id="start-quiz" data-i18n="quizStart">
                             <i class="fas fa-play"></i> Rozpocznij Quiz
                         </button>
                     </div>
@@ -223,7 +225,7 @@
                                 </div>
                                 <span class="progress-text" id="progress-text">Pytanie 1 z 10</span>
                             </div>
-                            <button class="btn btn-secondary" id="quit-quiz">
+                            <button class="btn btn-secondary" id="quit-quiz" data-i18n="quizQuit">
                                 <i class="fas fa-times"></i> Zakończ
                             </button>
                         </div>
@@ -232,7 +234,7 @@
                             <div class="question-category" id="question-category"></div>
                             <h3 class="question-text" id="question-text"></h3>
                             <div class="answers" id="answers"></div>
-                            <button class="btn btn-primary" id="next-question" style="display: none;">
+                            <button class="btn btn-primary" id="next-question" style="display: none;" data-i18n="quizNext">
                                 Następne pytanie <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -251,10 +253,10 @@
                         </div>
                         <div class="results-breakdown" id="results-breakdown"></div>
                         <div class="results-actions">
-                            <button class="btn btn-primary" id="retry-quiz">
+                            <button class="btn btn-primary" id="retry-quiz" data-i18n="resultsRetry">
                                 <i class="fas fa-redo"></i> Spróbuj ponownie
                             </button>
-                            <button class="btn btn-secondary" id="new-quiz">
+                            <button class="btn btn-secondary" id="new-quiz" data-i18n="resultsNewQuiz">
                                 <i class="fas fa-plus"></i> Nowy quiz
                             </button>
                         </div>
@@ -266,36 +268,36 @@
         <!-- Statistics Section -->
         <section id="stats-section" class="content-section">
             <div class="container">
-                <h2><i class="fas fa-chart-line"></i> Twoje Statystyki</h2>
+                <h2 data-i18n="statsTitle"><i class="fas fa-chart-line"></i> Twoje Statystyki</h2>
                 <div class="stats-grid">
                     <div class="stat-box">
                         <i class="fas fa-check-circle"></i>
                         <h3 id="total-quizzes">0</h3>
-                        <p>Ukończonych quizów</p>
+                        <p data-i18n="statsCompleted">Ukończonych quizów</p>
                     </div>
                     <div class="stat-box">
                         <i class="fas fa-percent"></i>
                         <h3 id="avg-score">0%</h3>
-                        <p>Średni wynik</p>
+                        <p data-i18n="statsAverage">Średni wynik</p>
                     </div>
                     <div class="stat-box">
                         <i class="fas fa-trophy"></i>
                         <h3 id="best-score">0%</h3>
-                        <p>Najlepszy wynik</p>
+                        <p data-i18n="statsBest">Najlepszy wynik</p>
                     </div>
                     <div class="stat-box">
                         <i class="fas fa-fire"></i>
                         <h3 id="streak">0</h3>
-                        <p>Dni z rzędu</p>
+                        <p data-i18n="statsStreak">Dni z rzędu</p>
                     </div>
                 </div>
 
                 <div class="category-stats">
-                    <h3><i class="fas fa-list-ul"></i> Wyniki według kategorii</h3>
+                    <h3 data-i18n="statsByCategory"><i class="fas fa-list-ul"></i> Wyniki według kategorii</h3>
                     <div id="category-breakdown"></div>
                 </div>
 
-                <button class="btn btn-danger" id="reset-stats">
+                <button class="btn btn-danger" id="reset-stats" data-i18n="statsReset">
                     <i class="fas fa-trash"></i> Resetuj statystyki
                 </button>
             </div>

@@ -202,14 +202,34 @@ function updateUI() {
 
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             element.placeholder = translation;
+        } else if (element.tagName === 'OPTION') {
+            // For option elements, just set text content
+            element.textContent = translation;
         } else {
             // Preserve HTML structure, only replace text
             const html = element.innerHTML;
             if (html.includes('<i ')) {
-                // Has icon, preserve it
-                const iconMatch = html.match(/(<i[^>]*>.*?<\/i>)/);
-                if (iconMatch) {
-                    element.innerHTML = iconMatch[1] + ' ' + translation;
+                // Has icon(s), preserve them
+                const icons = html.match(/(<i[^>]*>.*?<\/i>)/g) || [];
+
+                // Check if icon is at the start or end
+                const startsWithIcon = html.trim().startsWith('<i ');
+                const endsWithIcon = html.trim().match(/<\/i>\s*$/);
+
+                if (icons.length > 0) {
+                    if (startsWithIcon && endsWithIcon) {
+                        // Icons on both sides
+                        element.innerHTML = icons[0] + ' ' + translation + ' ' + icons[icons.length - 1];
+                    } else if (startsWithIcon) {
+                        // Icon before text
+                        element.innerHTML = icons[0] + ' ' + translation;
+                    } else if (endsWithIcon) {
+                        // Icon after text
+                        element.innerHTML = translation + ' ' + icons[icons.length - 1];
+                    } else {
+                        // Icon somewhere in the middle, just set text
+                        element.textContent = translation;
+                    }
                 } else {
                     element.textContent = translation;
                 }
@@ -236,12 +256,14 @@ function initializeLanguage() {
         currentLanguage = 'en';
     }
 
-    // Setup language switcher
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            changeLanguage(btn.dataset.lang);
+    // Setup language switcher (dropdown)
+    const dropdown = document.getElementById('language-selector');
+    if (dropdown) {
+        dropdown.value = currentLanguage;
+        dropdown.addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
         });
-    });
+    }
 
     updateUI();
 }
