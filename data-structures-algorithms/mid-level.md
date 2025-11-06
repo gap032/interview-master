@@ -767,6 +767,168 @@ def has_cycle_hashset(head):
 | Floyd's  | O(n) | O(1)  |
 | Hash Set | O(n) | O(n)  |
 
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class ListNode
+{
+    public int Value { get; set; }
+    public ListNode Next { get; set; }
+
+    public ListNode(int value)
+    {
+        Value = value;
+        Next = null;
+    }
+}
+
+public class CycleDetection
+{
+    // Floyd's Cycle Detection Algorithm
+    public static bool HasCycle(ListNode head)
+    {
+        if (head == null || head.Next == null)
+            return false;
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow.Next;           // Move 1 step
+            fast = fast.Next.Next;      // Move 2 steps
+
+            if (slow == fast)           // Cycle detected
+                return true;
+        }
+
+        return false; // fast reached end, no cycle
+    }
+
+    // Find the node where cycle begins
+    public static ListNode FindCycleStart(ListNode head)
+    {
+        if (head == null || head.Next == null)
+            return null;
+
+        // First, detect if cycle exists
+        ListNode slow = head;
+        ListNode fast = head;
+        bool hasCycle = false;
+
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow.Next;
+            fast = fast.Next.Next;
+
+            if (slow == fast)
+            {
+                hasCycle = true;
+                break;
+            }
+        }
+
+        if (!hasCycle)
+            return null;
+
+        // Move slow to head, keep fast at meeting point
+        // Both move at same speed, they'll meet at cycle start
+        slow = head;
+        while (slow != fast)
+        {
+            slow = slow.Next;
+            fast = fast.Next;
+        }
+
+        return slow;
+    }
+
+    // Alternative: Hash Set approach
+    public static bool HasCycleHashSet(ListNode head)
+    {
+        HashSet<ListNode> visited = new HashSet<ListNode>();
+        ListNode current = head;
+
+        while (current != null)
+        {
+            if (visited.Contains(current))
+                return true;
+
+            visited.Add(current);
+            current = current.Next;
+        }
+
+        return false;
+    }
+
+    // Get cycle length
+    public static int GetCycleLength(ListNode head)
+    {
+        if (head == null || head.Next == null)
+            return 0;
+
+        ListNode slow = head;
+        ListNode fast = head;
+
+        // Detect cycle
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow.Next;
+            fast = fast.Next.Next;
+
+            if (slow == fast)
+            {
+                // Count nodes in cycle
+                int length = 1;
+                ListNode temp = slow.Next;
+                while (temp != slow)
+                {
+                    length++;
+                    temp = temp.Next;
+                }
+                return length;
+            }
+        }
+
+        return 0; // No cycle
+    }
+}
+
+// Usage example
+class Program
+{
+    static void Main()
+    {
+        // Creating a linked list with cycle: 1 -> 2 -> 3 -> 4 -> 2 (cycle)
+        var node1 = new ListNode(1);
+        var node2 = new ListNode(2);
+        var node3 = new ListNode(3);
+        var node4 = new ListNode(4);
+
+        node1.Next = node2;
+        node2.Next = node3;
+        node3.Next = node4;
+        node4.Next = node2;  // Creates cycle
+
+        Console.WriteLine(CycleDetection.HasCycle(node1));  // True
+
+        var cycleStart = CycleDetection.FindCycleStart(node1);
+        Console.WriteLine($"Cycle starts at node with value: {cycleStart.Value}");  // 2
+
+        Console.WriteLine($"Cycle length: {CycleDetection.GetCycleLength(node1)}");  // 3
+
+        // List without cycle
+        var node5 = new ListNode(1);
+        var node6 = new ListNode(2);
+        node5.Next = node6;
+        Console.WriteLine(CycleDetection.HasCycle(node5));  // False
+    }
+}
+```
+
 **Key Points:**
 - Floyd's algorithm uses O(1) space vs O(n) for hash set
 - Fast pointer moves twice as fast as slow pointer
@@ -908,6 +1070,164 @@ print(stack2.get_min())  # 2
 - Solution 1: More space-efficient when few minimums change
 - Solution 2: Simpler logic, predictable space usage
 
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+// Solution 1: Two Stacks
+public class MinStack
+{
+    private Stack<int> stack;     // Main stack
+    private Stack<int> minStack;  // Stack to track minimums
+
+    public MinStack()
+    {
+        stack = new Stack<int>();
+        minStack = new Stack<int>();
+    }
+
+    public void Push(int value)
+    {
+        stack.Push(value);
+
+        // Update minStack
+        if (minStack.Count == 0 || value <= minStack.Peek())
+        {
+            minStack.Push(value);
+        }
+    }
+
+    public int Pop()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        int value = stack.Pop();
+
+        // If popped value was minimum, remove from minStack
+        if (value == minStack.Peek())
+        {
+            minStack.Pop();
+        }
+
+        return value;
+    }
+
+    public int Top()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Peek();
+    }
+
+    public int GetMin()
+    {
+        if (minStack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return minStack.Peek();
+    }
+
+    public bool IsEmpty() => stack.Count == 0;
+
+    public int Size() => stack.Count;
+}
+
+// Solution 2: Single Stack with Value Tuples
+public class MinStack2
+{
+    private Stack<(int value, int currentMin)> stack;
+
+    public MinStack2()
+    {
+        stack = new Stack<(int, int)>();
+    }
+
+    public void Push(int value)
+    {
+        int currentMin;
+        if (stack.Count == 0)
+        {
+            currentMin = value;
+        }
+        else
+        {
+            currentMin = Math.Min(value, stack.Peek().currentMin);
+        }
+
+        stack.Push((value, currentMin));
+    }
+
+    public int Pop()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Pop().value;
+    }
+
+    public int Top()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Peek().value;
+    }
+
+    public int GetMin()
+    {
+        if (stack.Count == 0)
+            throw new InvalidOperationException("Stack is empty");
+
+        return stack.Peek().currentMin;
+    }
+}
+
+// Usage example
+class Program
+{
+    static void Main()
+    {
+        // Test Solution 1
+        var stack = new MinStack();
+        stack.Push(5);
+        stack.Push(2);
+        stack.Push(7);
+        stack.Push(1);
+        stack.Push(3);
+
+        Console.WriteLine($"Min: {stack.GetMin()}");  // 1
+        Console.WriteLine($"Top: {stack.Top()}");      // 3
+
+        stack.Pop();
+        stack.Pop();
+        Console.WriteLine($"Min: {stack.GetMin()}");  // 2
+
+        // Test Solution 2
+        var stack2 = new MinStack2();
+        stack2.Push(3);
+        stack2.Push(5);
+        stack2.Push(2);
+        stack2.Push(1);
+
+        Console.WriteLine(stack2.GetMin());  // 1
+        stack2.Pop();
+        Console.WriteLine(stack2.GetMin());  // 2
+
+        // Using built-in Stack<T>
+        Stack<int> builtInStack = new Stack<int>();
+        builtInStack.Push(1);
+        builtInStack.Push(2);
+        builtInStack.Push(3);
+        Console.WriteLine(builtInStack.Peek());  // 3 (top)
+        Console.WriteLine(builtInStack.Pop());   // 3 (remove and return)
+    }
+}
+```
+
 **Key Points:**
 - Key insight: track minimum at each stack state
 - Two-stack approach optimizes space for some cases
@@ -1028,9 +1348,143 @@ for test in test_cases:
 
 *Space is O(1) because character set is limited (26 lowercase letters or 128 ASCII)
 
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class FirstUniqueChar
+{
+    // Solution 1: Two-Pass with Dictionary
+    public static int FirstUniqChar(string s)
+    {
+        // Count frequency of each character
+        Dictionary<char, int> charCount = new Dictionary<char, int>();
+
+        foreach (char c in s)
+        {
+            if (charCount.ContainsKey(c))
+                charCount[c]++;
+            else
+                charCount[c] = 1;
+        }
+
+        // Find first character with count 1
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (charCount[s[i]] == 1)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Solution 2: LINQ approach
+    public static int FirstUniqCharLinq(string s)
+    {
+        var charCount = s.GroupBy(c => c)
+                         .ToDictionary(g => g.Key, g => g.Count());
+
+        return s.Select((c, i) => new { Char = c, Index = i })
+                .Where(x => charCount[x.Char] == 1)
+                .Select(x => x.Index)
+                .DefaultIfEmpty(-1)
+                .First();
+    }
+
+    // Solution 3: Using array for ASCII characters (most efficient)
+    public static int FirstUniqCharArray(string s)
+    {
+        // Use array for counting (assuming lowercase letters only)
+        int[] count = new int[26];
+
+        // First pass: count frequencies
+        foreach (char c in s)
+        {
+            count[c - 'a']++;
+        }
+
+        // Second pass: find first unique
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (count[s[i] - 'a'] == 1)
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Solution 4: Single pass with LinkedList (maintains order)
+    public static int FirstUniqCharSinglePass(string s)
+    {
+        Dictionary<char, int> charIndex = new Dictionary<char, int>();
+        HashSet<char> repeated = new HashSet<char>();
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            char c = s[i];
+
+            if (repeated.Contains(c))
+            {
+                continue;
+            }
+            else if (charIndex.ContainsKey(c))
+            {
+                // Character repeated, remove from dict and add to set
+                charIndex.Remove(c);
+                repeated.Add(c);
+            }
+            else
+            {
+                charIndex[c] = i;
+            }
+        }
+
+        // Return first remaining character's index
+        return charIndex.Count > 0 ? charIndex.Values.Min() : -1;
+    }
+}
+
+// Usage and test cases
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine(FirstUniqueChar.FirstUniqChar("leetcode"));     // 0 (l)
+        Console.WriteLine(FirstUniqueChar.FirstUniqChar("loveleetcode")); // 2 (v)
+        Console.WriteLine(FirstUniqueChar.FirstUniqChar("aabb"));         // -1
+
+        // Test edge cases
+        string[] testCases = {
+            "",           // Empty string -> -1
+            "a",          // Single character -> 0
+            "aabbcc",     // All repeated -> -1
+            "aabbccd",    // Last char unique -> 6
+            "abcabc"      // All repeated -> -1
+        };
+
+        Console.WriteLine("\nEdge case tests:");
+        foreach (var test in testCases)
+        {
+            Console.WriteLine($"'{test}' -> {FirstUniqueChar.FirstUniqChar(test)}");
+        }
+
+        // Performance comparison
+        Console.WriteLine("\nArray-based (fastest): " +
+            FirstUniqueChar.FirstUniqCharArray("leetcode"));
+
+        Console.WriteLine("LINQ (most concise): " +
+            FirstUniqueChar.FirstUniqCharLinq("leetcode"));
+    }
+}
+```
+
 **Key Points:**
 - Hash map is classic solution for counting problems
 - Two-pass is simpler to understand and implement
 - Space is effectively constant for limited character sets
 - OrderedDict maintains insertion order for optimization
+- C# array-based solution is fastest for known character sets
 
