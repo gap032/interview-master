@@ -16,6 +16,7 @@ let stats = {
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
+    initializeLanguage();  // Initialize i18n first
     loadStats();
     initializeNavigation();
     initializeMaterialsSection();
