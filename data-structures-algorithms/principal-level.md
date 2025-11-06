@@ -412,6 +412,488 @@ class ProductionRateLimiter:
 - Monitor false positives/negatives
 - Client-side caching reduces load on rate limiter
 
+**C# Implementation - Token Bucket with StackExchange.Redis:**
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using StackExchange.Redis;
+
+public class TokenBucketRateLimiter
+{
+    private readonly IDatabase redis;
+    private readonly double rate;        // Tokens per second
+    private readonly int capacity;        // Max tokens in bucket
+
+    public TokenBucketRateLimiter(IDatabase redisDb, double rate, int capacity)
+    {
+        this.redis = redisDb;
+        this.rate = rate;
+        this.capacity = capacity;
+    }
+
+    private string GetKey(string userId) => $"rate_limit:token_bucket:{userId}";
+
+    public async Task<bool> AllowRequestAsync(string userId, int tokensRequested = 1)
+    {
+        string key = GetKey(userId);
+        double now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        // Lua script for atomic operation
+        string luaScript = @"
+            local key = KEYS[1]
+            local capacity = tonumber(ARGV[1])
+            local rate = tonumber(ARGV[2])
+            local now = tonumber(ARGV[3])
+            local requested = tonumber(ARGV[4])
+
+            local bucket = redis.call('HMGET', key, 'tokens', 'last_update')
+            local tokens = tonumber(bucket[1]) or capacity
+            local last_update = tonumber(bucket[2]) or now
+
+            -- Add tokens based on time elapsed
+            local elapsed = now - last_update
+            tokens = math.min(capacity, tokens + elapsed * rate)
+
+            -- Check if enough tokens
+            if tokens >= requested then
+                tokens = tokens - requested
+                redis.call('HMSET', key, 'tokens', tokens, 'last_update', now)
+                redis.call('EXPIRE', key, 300)  -- 5 min TTL
+                return 1
+            else
+                redis.call('HMSET', key, 'tokens', tokens, 'last_update', now)
+                redis.call('EXPIRE', key, 300)
+                return 0
+            end
+        ";
+
+        var result = await redis.ScriptEvaluateAsync(
+            luaScript,
+            new RedisKey[] { key },
+            new RedisValue[] { capacity, rate, now, tokensRequested }
+        );
+
+        return (int)result == 1;
+    }
+
+    public async Task<double?> GetRetryAfterAsync(string userId)
+    {
+        string key = GetKey(userId);
+        var bucket = await redis.HashGetAsync(key, new RedisValue[] { "tokens", "last_update" });
+
+        if (bucket.Length == 0 || bucket[0].IsNull)
+            return 0;
+
+        double tokens = (double)bucket[0];
+        if (tokens >= 1)
+            return 0;
+
+        // Time needed to accumulate 1 token
+        return (1 - tokens) / rate;
+    }
+}
+
+// Usage example
+class RateLimiterExample
+{
+    static async Task Main()
+    {
+        var redis = ConnectionMultiplexer.Connect("localhost:6379");
+        var db = redis.GetDatabase();
+
+        var rateLimiter = new TokenBucketRateLimiter(db, rate: 10, capacity: 100);
+
+        string userId = "user_123";
+
+        // Simulate burst of requests
+        for (int i = 0; i < 105; i++)
+        {
+            bool allowed = await rateLimiter.AllowRequestAsync(userId);
+            if (!allowed)
+            {
+                double? retryAfter = await rateLimiter.GetRetryAfterAsync(userId);
+                Console.WriteLine($"Request {i}: Rate limited. Retry after {retryAfter:F2}s");
+                break;
+            }
+            Console.WriteLine($"Request {i}: Allowed");
+        }
+    }
+}
+```
+
+**C# Implementation - Sliding Window Log:**
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using StackExchange.Redis;
+
+public class SlidingWindowRateLimiter
+{
+    private readonly IDatabase redis;
+    private readonly int maxRequests;
+    private readonly int windowSeconds;
+
+    public SlidingWindowRateLimiter(IDatabase redisDb, int maxRequests, int windowSeconds)
+    {
+        this.redis = redisDb;
+        this.maxRequests = maxRequests;
+        this.windowSeconds = windowSeconds;
+    }
+
+    public async Task<bool> AllowRequestAsync(string userId)
+    {
+        string key = $"rate_limit:sliding_window:{userId}";
+        double now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        double windowStart = now - windowSeconds;
+
+        string luaScript = @"
+            local key = KEYS[1]
+            local now = tonumber(ARGV[1])
+            local window_start = tonumber(ARGV[2])
+            local max_requests = tonumber(ARGV[3])
+
+            -- Remove old entries
+            redis.call('ZREMRANGEBYSCORE', key, '-inf', window_start)
+
+            -- Count current requests
+            local current_requests = redis.call('ZCARD', key)
+
+            if current_requests < max_requests then
+                redis.call('ZADD', key, now, now)
+                redis.call('EXPIRE', key, 300)
+                return 1
+            else
+                return 0
+            end
+        ";
+
+        var result = await redis.ScriptEvaluateAsync(
+            luaScript,
+            new RedisKey[] { key },
+            new RedisValue[] { now, windowStart, maxRequests }
+        );
+
+        return (int)result == 1;
+    }
+}
+```
+
+**C# Implementation - Sliding Window Counter:**
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using StackExchange.Redis;
+
+public class SlidingWindowCounterRateLimiter
+{
+    private readonly IDatabase redis;
+    private readonly int maxRequests;
+    private readonly int windowSeconds;
+    private readonly int numBuckets;
+    private readonly double bucketSize;
+
+    public SlidingWindowCounterRateLimiter(
+        IDatabase redisDb,
+        int maxRequests,
+        int windowSeconds,
+        int numBuckets = 10)
+    {
+        this.redis = redisDb;
+        this.maxRequests = maxRequests;
+        this.windowSeconds = windowSeconds;
+        this.numBuckets = numBuckets;
+        this.bucketSize = (double)windowSeconds / numBuckets;
+    }
+
+    public async Task<bool> AllowRequestAsync(string userId)
+    {
+        string key = $"rate_limit:sliding_counter:{userId}";
+        double now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        long currentBucket = (long)(now / bucketSize);
+        long windowStartBucket = (long)((now - windowSeconds) / bucketSize);
+
+        string luaScript = @"
+            local key = KEYS[1]
+            local current_bucket = tonumber(ARGV[1])
+            local window_start_bucket = tonumber(ARGV[2])
+            local max_requests = tonumber(ARGV[3])
+
+            -- Count requests in window
+            local total = 0
+            local all_data = redis.call('HGETALL', key)
+            for i = 1, #all_data, 2 do
+                local bucket_id = tonumber(all_data[i])
+                local count = tonumber(all_data[i + 1])
+                if bucket_id >= window_start_bucket then
+                    total = total + count
+                else
+                    -- Remove old bucket
+                    redis.call('HDEL', key, all_data[i])
+                end
+            end
+
+            if total < max_requests then
+                redis.call('HINCRBY', key, current_bucket, 1)
+                redis.call('EXPIRE', key, 300)
+                return 1
+            else
+                return 0
+            end
+        ";
+
+        var result = await redis.ScriptEvaluateAsync(
+            luaScript,
+            new RedisKey[] { key },
+            new RedisValue[] { currentBucket, windowStartBucket, maxRequests }
+        );
+
+        return (int)result == 1;
+    }
+}
+```
+
+**C# Implementation - Distributed Rate Limiter with Consistent Hashing:**
+
+```csharp
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using StackExchange.Redis;
+
+public class DistributedRateLimiter
+{
+    private readonly List<IDatabase> redisNodes;
+    private readonly ConcurrentDictionary<string, (CacheData data, DateTime timestamp)> localCache;
+    private readonly int localCacheTtlSeconds;
+
+    public DistributedRateLimiter(List<IDatabase> redisNodes, int localCacheTtlSeconds = 1)
+    {
+        this.redisNodes = redisNodes;
+        this.localCache = new ConcurrentDictionary<string, (CacheData, DateTime)>();
+        this.localCacheTtlSeconds = localCacheTtlSeconds;
+    }
+
+    private IDatabase GetNode(string userId)
+    {
+        // Consistent hashing to select Redis node
+        using (var md5 = MD5.Create())
+        {
+            byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(userId));
+            int hashValue = BitConverter.ToInt32(hashBytes, 0);
+            return redisNodes[Math.Abs(hashValue) % redisNodes.Count];
+        }
+    }
+
+    public async Task<bool> AllowRequestWithQuotaAsync(
+        string userId,
+        int maxRequests,
+        int windowSeconds)
+    {
+        string cacheKey = $"{userId}:{maxRequests}:{windowSeconds}";
+        DateTime now = DateTime.UtcNow;
+
+        // Check local cache first (reduce Redis load)
+        if (localCache.TryGetValue(cacheKey, out var cached))
+        {
+            if ((now - cached.timestamp).TotalSeconds < localCacheTtlSeconds)
+            {
+                if (cached.data.Count >= maxRequests)
+                    return false;
+            }
+        }
+
+        // Check Redis
+        IDatabase node = GetNode(userId);
+        var limiter = new SlidingWindowCounterRateLimiter(node, maxRequests, windowSeconds);
+        bool allowed = await limiter.AllowRequestAsync(userId);
+
+        // Update local cache
+        if (allowed)
+        {
+            localCache.AddOrUpdate(
+                cacheKey,
+                (new CacheData { Count = 1 }, now),
+                (k, v) => (new CacheData { Count = v.data.Count + 1 }, now)
+            );
+        }
+
+        return allowed;
+    }
+
+    public class CacheData
+    {
+        public int Count { get; set; }
+    }
+}
+```
+
+**C# Implementation - In-Memory Rate Limiter (Fallback):**
+
+```csharp
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+
+public class InMemoryTokenBucketRateLimiter
+{
+    private readonly double rate;
+    private readonly int capacity;
+    private readonly ConcurrentDictionary<string, Bucket> buckets;
+
+    public InMemoryTokenBucketRateLimiter(double rate, int capacity)
+    {
+        this.rate = rate;
+        this.capacity = capacity;
+        this.buckets = new ConcurrentDictionary<string, Bucket>();
+    }
+
+    public bool AllowRequest(string userId, int tokensRequested = 1)
+    {
+        var bucket = buckets.GetOrAdd(userId, _ => new Bucket
+        {
+            Tokens = capacity,
+            LastUpdate = DateTime.UtcNow
+        });
+
+        lock (bucket)
+        {
+            DateTime now = DateTime.UtcNow;
+            double elapsed = (now - bucket.LastUpdate).TotalSeconds;
+
+            // Add tokens based on elapsed time
+            bucket.Tokens = Math.Min(capacity, bucket.Tokens + elapsed * rate);
+            bucket.LastUpdate = now;
+
+            // Check if enough tokens
+            if (bucket.Tokens >= tokensRequested)
+            {
+                bucket.Tokens -= tokensRequested;
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public double? GetRetryAfter(string userId)
+    {
+        if (!buckets.TryGetValue(userId, out var bucket))
+            return 0;
+
+        lock (bucket)
+        {
+            if (bucket.Tokens >= 1)
+                return 0;
+
+            return (1 - bucket.Tokens) / rate;
+        }
+    }
+
+    private class Bucket
+    {
+        public double Tokens { get; set; }
+        public DateTime LastUpdate { get; set; }
+    }
+}
+```
+
+**C# Implementation - Complete Rate Limiter with Resilience:**
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using StackExchange.Redis;
+
+public class ResilientRateLimiter
+{
+    private readonly IDatabase redis;
+    private readonly InMemoryTokenBucketRateLimiter fallback;
+    private readonly double rate;
+    private readonly int capacity;
+    private int failureCount = 0;
+    private const int MaxFailures = 3;
+
+    public ResilientRateLimiter(IDatabase redis, double rate, int capacity)
+    {
+        this.redis = redis;
+        this.rate = rate;
+        this.capacity = capacity;
+        this.fallback = new InMemoryTokenBucketRateLimiter(rate, capacity);
+    }
+
+    public async Task<bool> AllowRequestAsync(string userId)
+    {
+        // Circuit breaker pattern
+        if (failureCount >= MaxFailures)
+        {
+            // Use fallback for a while
+            return fallback.AllowRequest(userId);
+        }
+
+        try
+        {
+            var limiter = new TokenBucketRateLimiter(redis, rate, capacity);
+            bool result = await limiter.AllowRequestAsync(userId);
+
+            // Reset failure count on success
+            failureCount = 0;
+            return result;
+        }
+        catch (RedisException ex)
+        {
+            Console.WriteLine($"Redis error: {ex.Message}");
+            failureCount++;
+
+            // Fallback to local rate limiter
+            return fallback.AllowRequest(userId);
+        }
+    }
+}
+
+// Complete usage example
+class CompleteExample
+{
+    static async Task Main()
+    {
+        // Setup Redis connection
+        var redis = ConnectionMultiplexer.Connect("localhost:6379");
+        var db = redis.GetDatabase();
+
+        // Create rate limiter: 100 requests per second, burst up to 1000
+        var rateLimiter = new ResilientRateLimiter(db, rate: 100, capacity: 1000);
+
+        // Test with multiple users
+        var users = new[] { "user_1", "user_2", "user_3" };
+
+        foreach (var user in users)
+        {
+            // Simulate requests
+            int allowedCount = 0;
+            int deniedCount = 0;
+
+            for (int i = 0; i < 1100; i++)
+            {
+                bool allowed = await rateLimiter.AllowRequestAsync(user);
+                if (allowed)
+                    allowedCount++;
+                else
+                    deniedCount++;
+            }
+
+            Console.WriteLine($"{user}: {allowedCount} allowed, {deniedCount} denied");
+        }
+    }
+}
+```
+
 ---
 
 ## 2. B+ Tree Implementation and Analysis
@@ -758,6 +1240,481 @@ def range_query_bplus(tree, start, end):
 - Bulk loading is O(n) vs O(n log n) for sequential inserts
 - Order of 100-200 typical for databases (matches disk page size)
 
+**C# Implementation - B+ Tree:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class BPlusTreeNode<TKey, TValue> where TKey : IComparable<TKey>
+{
+    public int Order { get; set; }
+    public bool IsLeaf { get; set; }
+    public List<TKey> Keys { get; set; }
+    public List<BPlusTreeNode<TKey, TValue>> Children { get; set; }  // For internal nodes
+    public List<TValue> Values { get; set; }  // For leaf nodes
+    public BPlusTreeNode<TKey, TValue> Next { get; set; }  // Leaf node link
+    public BPlusTreeNode<TKey, TValue> Parent { get; set; }
+
+    public BPlusTreeNode(int order, bool isLeaf = false)
+    {
+        Order = order;
+        IsLeaf = isLeaf;
+        Keys = new List<TKey>();
+        Children = new List<BPlusTreeNode<TKey, TValue>>();
+        Values = new List<TValue>();
+        Next = null;
+        Parent = null;
+    }
+
+    public bool IsFull() => Keys.Count >= Order - 1;
+
+    public bool IsUnderflow() => Keys.Count < (Order - 1) / 2;
+}
+
+public class BPlusTree<TKey, TValue> where TKey : IComparable<TKey>
+{
+    private readonly int order;
+    private BPlusTreeNode<TKey, TValue> root;
+    private BPlusTreeNode<TKey, TValue> leafHead;  // First leaf for range queries
+
+    public BPlusTree(int order = 4)
+    {
+        this.order = order;
+        this.root = new BPlusTreeNode<TKey, TValue>(order, isLeaf: true);
+        this.leafHead = root;
+    }
+
+    public TValue Search(TKey key)
+    {
+        var node = FindLeaf(key);
+
+        int idx = node.Keys.IndexOf(key);
+        if (idx >= 0)
+            return node.Values[idx];
+
+        return default(TValue);
+    }
+
+    private BPlusTreeNode<TKey, TValue> FindLeaf(TKey key)
+    {
+        var node = root;
+
+        while (!node.IsLeaf)
+        {
+            // Find child to descend to
+            int idx = 0;
+            while (idx < node.Keys.Count && key.CompareTo(node.Keys[idx]) > 0)
+            {
+                idx++;
+            }
+            node = node.Children[idx];
+        }
+
+        return node;
+    }
+
+    public void Insert(TKey key, TValue value)
+    {
+        var leaf = FindLeaf(key);
+
+        // Update if key exists
+        int existingIdx = leaf.Keys.IndexOf(key);
+        if (existingIdx >= 0)
+        {
+            leaf.Values[existingIdx] = value;
+            return;
+        }
+
+        // Find insertion position
+        int idx = 0;
+        while (idx < leaf.Keys.Count && key.CompareTo(leaf.Keys[idx]) > 0)
+        {
+            idx++;
+        }
+
+        leaf.Keys.Insert(idx, key);
+        leaf.Values.Insert(idx, value);
+
+        // Split if necessary
+        if (leaf.IsFull())
+        {
+            SplitLeaf(leaf);
+        }
+    }
+
+    private void SplitLeaf(BPlusTreeNode<TKey, TValue> node)
+    {
+        int mid = node.Keys.Count / 2;
+
+        // Create new leaf node
+        var newLeaf = new BPlusTreeNode<TKey, TValue>(order, isLeaf: true);
+        newLeaf.Keys = node.Keys.GetRange(mid, node.Keys.Count - mid);
+        newLeaf.Values = node.Values.GetRange(mid, node.Values.Count - mid);
+
+        // Update current leaf
+        node.Keys.RemoveRange(mid, node.Keys.Count - mid);
+        node.Values.RemoveRange(mid, node.Values.Count - mid);
+
+        // Update leaf links
+        newLeaf.Next = node.Next;
+        node.Next = newLeaf;
+
+        // Insert separator into parent
+        TKey separatorKey = newLeaf.Keys[0];
+
+        if (node == root)
+        {
+            // Create new root
+            var newRoot = new BPlusTreeNode<TKey, TValue>(order, isLeaf: false);
+            newRoot.Keys.Add(separatorKey);
+            newRoot.Children.Add(node);
+            newRoot.Children.Add(newLeaf);
+            node.Parent = newRoot;
+            newLeaf.Parent = newRoot;
+            root = newRoot;
+        }
+        else
+        {
+            InsertIntoParent(node.Parent, separatorKey, node, newLeaf);
+        }
+    }
+
+    private void InsertIntoParent(
+        BPlusTreeNode<TKey, TValue> parent,
+        TKey key,
+        BPlusTreeNode<TKey, TValue> left,
+        BPlusTreeNode<TKey, TValue> right)
+    {
+        // Find position to insert
+        int idx = 0;
+        while (idx < parent.Keys.Count && key.CompareTo(parent.Keys[idx]) > 0)
+        {
+            idx++;
+        }
+
+        parent.Keys.Insert(idx, key);
+        parent.Children.Insert(idx + 1, right);
+        right.Parent = parent;
+
+        // Split parent if necessary
+        if (parent.IsFull())
+        {
+            SplitInternal(parent);
+        }
+    }
+
+    private void SplitInternal(BPlusTreeNode<TKey, TValue> node)
+    {
+        int mid = node.Keys.Count / 2;
+        TKey separator = node.Keys[mid];
+
+        // Create new internal node
+        var newNode = new BPlusTreeNode<TKey, TValue>(order, isLeaf: false);
+        newNode.Keys = node.Keys.GetRange(mid + 1, node.Keys.Count - mid - 1);
+        newNode.Children = node.Children.GetRange(mid + 1, node.Children.Count - mid - 1);
+
+        // Update children's parent references
+        foreach (var child in newNode.Children)
+        {
+            child.Parent = newNode;
+        }
+
+        // Update current node
+        node.Keys.RemoveRange(mid, node.Keys.Count - mid);
+        node.Children.RemoveRange(mid + 1, node.Children.Count - mid - 1);
+
+        // Insert separator into parent
+        if (node == root)
+        {
+            var newRoot = new BPlusTreeNode<TKey, TValue>(order, isLeaf: false);
+            newRoot.Keys.Add(separator);
+            newRoot.Children.Add(node);
+            newRoot.Children.Add(newNode);
+            node.Parent = newRoot;
+            newNode.Parent = newRoot;
+            root = newRoot;
+        }
+        else
+        {
+            InsertIntoParent(node.Parent, separator, node, newNode);
+        }
+    }
+
+    public List<(TKey key, TValue value)> RangeQuery(TKey start, TKey end)
+    {
+        var result = new List<(TKey, TValue)>();
+        var node = FindLeaf(start);
+
+        while (node != null)
+        {
+            for (int i = 0; i < node.Keys.Count; i++)
+            {
+                if (node.Keys[i].CompareTo(start) >= 0 && node.Keys[i].CompareTo(end) <= 0)
+                {
+                    result.Add((node.Keys[i], node.Values[i]));
+                }
+                else if (node.Keys[i].CompareTo(end) > 0)
+                {
+                    return result;  // Beyond range
+                }
+            }
+            node = node.Next;  // Move to next leaf
+        }
+
+        return result;
+    }
+
+    public void BulkLoad(List<(TKey key, TValue value)> sortedData)
+    {
+        // Efficient loading of pre-sorted data: O(n)
+        if (sortedData.Count == 0)
+            return;
+
+        // Clear existing tree
+        root = new BPlusTreeNode<TKey, TValue>(order, isLeaf: true);
+        leafHead = root;
+
+        var leaves = new List<BPlusTreeNode<TKey, TValue>>();
+        var currentLeaf = root;
+
+        foreach (var (key, value) in sortedData)
+        {
+            if (currentLeaf.Keys.Count >= order - 1)
+            {
+                // Create new leaf
+                var newLeaf = new BPlusTreeNode<TKey, TValue>(order, isLeaf: true);
+                currentLeaf.Next = newLeaf;
+                leaves.Add(currentLeaf);
+                currentLeaf = newLeaf;
+            }
+
+            currentLeaf.Keys.Add(key);
+            currentLeaf.Values.Add(value);
+        }
+
+        leaves.Add(currentLeaf);
+
+        // Build internal nodes bottom-up
+        BuildInternalLevels(leaves);
+    }
+
+    private void BuildInternalLevels(List<BPlusTreeNode<TKey, TValue>> nodes)
+    {
+        if (nodes.Count == 1)
+        {
+            root = nodes[0];
+            return;
+        }
+
+        var parentNodes = new List<BPlusTreeNode<TKey, TValue>>();
+        BPlusTreeNode<TKey, TValue> currentParent = null;
+
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            if (currentParent == null || currentParent.Children.Count >= order)
+            {
+                currentParent = new BPlusTreeNode<TKey, TValue>(order, isLeaf: false);
+                parentNodes.Add(currentParent);
+            }
+
+            if (currentParent.Children.Count > 0)
+            {
+                // Add separator key (first key of new child)
+                currentParent.Keys.Add(nodes[i].Keys[0]);
+            }
+
+            currentParent.Children.Add(nodes[i]);
+            nodes[i].Parent = currentParent;
+        }
+
+        // Recursively build next level
+        BuildInternalLevels(parentNodes);
+    }
+
+    public void PrintTree(BPlusTreeNode<TKey, TValue> node = null, int level = 0)
+    {
+        if (node == null)
+            node = root;
+
+        string prefix = new string(' ', level * 2);
+        string nodeType = node.IsLeaf ? "LEAF" : "INTERNAL";
+        Console.WriteLine($"{prefix}{nodeType}: [{string.Join(", ", node.Keys)}]");
+
+        if (!node.IsLeaf)
+        {
+            foreach (var child in node.Children)
+            {
+                PrintTree(child, level + 1);
+            }
+        }
+    }
+}
+
+// Usage and performance demonstration
+class BPlusTreeExample
+{
+    static void Main()
+    {
+        // Create B+ tree with order 4 (3 keys max per node)
+        var tree = new BPlusTree<int, string>(order: 4);
+
+        // Insert data
+        var data = new (int, string)[]
+        {
+            (10, "ten"), (20, "twenty"), (5, "five"), (6, "six"),
+            (12, "twelve"), (30, "thirty"), (7, "seven"), (17, "seventeen")
+        };
+
+        foreach (var (key, value) in data)
+        {
+            tree.Insert(key, value);
+        }
+
+        Console.WriteLine("Tree structure after insertions:");
+        tree.PrintTree();
+
+        // Point query
+        Console.WriteLine($"\nSearch for key 12: {tree.Search(12)}");
+
+        // Range query (efficient due to leaf links)
+        var rangeResult = tree.RangeQuery(6, 20);
+        Console.WriteLine($"\nRange query [6, 20]:");
+        foreach (var (key, value) in rangeResult)
+        {
+            Console.WriteLine($"  {key}: {value}");
+        }
+
+        // Bulk load demonstration
+        var tree2 = new BPlusTree<int, string>(order: 4);
+        var sortedData = Enumerable.Range(1, 15)
+            .Select(i => (i, $"value_{i}"))
+            .ToList();
+
+        tree2.BulkLoad(sortedData);
+
+        Console.WriteLine("\n\nBulk loaded tree:");
+        tree2.PrintTree();
+
+        // Performance comparison output
+        Console.WriteLine("\n\nPerformance characteristics:");
+        Console.WriteLine("Point query: O(log_m n)");
+        Console.WriteLine("Range query: O(log_m n + k) where k = result size");
+        Console.WriteLine("Insert: O(log_m n)");
+        Console.WriteLine("Bulk load: O(n)");
+    }
+}
+```
+
+**C# Implementation - Generic B+ Tree with Advanced Features:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public interface IBPlusTreePersistence<TKey, TValue>
+{
+    // For disk-based implementations
+    void WritePage(int pageId, BPlusTreeNode<TKey, TValue> node);
+    BPlusTreeNode<TKey, TValue> ReadPage(int pageId);
+}
+
+public class BPlusTreeDiskBased<TKey, TValue> where TKey : IComparable<TKey>
+{
+    private readonly int order;
+    private readonly int pageSize;  // Matches disk page size
+    private readonly IBPlusTreePersistence<TKey, TValue> persistence;
+    private int rootPageId;
+
+    public BPlusTreeDiskBased(
+        int pageSize = 4096,  // 4KB typical
+        IBPlusTreePersistence<TKey, TValue> persistence = null)
+    {
+        // Calculate order based on page size
+        // Simplified: order ≈ pageSize / (keySize + pointerSize)
+        this.pageSize = pageSize;
+        this.order = CalculateOptimalOrder(pageSize);
+        this.persistence = persistence;
+    }
+
+    private int CalculateOptimalOrder(int pageSize)
+    {
+        // Simplified calculation
+        // Real implementation would consider:
+        // - Size of TKey
+        // - Size of TValue (for leaves)
+        // - Pointer size (typically 8 bytes)
+        // - Metadata overhead
+
+        int estimatedKeySize = 8;  // Assuming int or long keys
+        int pointerSize = 8;
+
+        // For internal node: (order - 1) * keySize + order * pointerSize ≤ pageSize
+        // For leaf node: (order - 1) * (keySize + valueSize) ≤ pageSize
+
+        return Math.Max(4, pageSize / (estimatedKeySize + pointerSize));
+    }
+
+    public int GetOptimalOrder() => order;
+
+    public int GetHeight()
+    {
+        // Calculate height for given number of keys
+        // Height = ceil(log_order(n))
+        // For 1M keys with order 200: ~3 levels
+        return 0; // Implementation would traverse from root
+    }
+
+    public void PrintStatistics(int totalKeys)
+    {
+        double height = Math.Ceiling(Math.Log(totalKeys) / Math.Log(order));
+        Console.WriteLine($"B+ Tree Statistics:");
+        Console.WriteLine($"  Order: {order}");
+        Console.WriteLine($"  Page Size: {pageSize} bytes");
+        Console.WriteLine($"  Total Keys: {totalKeys}");
+        Console.WriteLine($"  Estimated Height: {height}");
+        Console.WriteLine($"  Disk I/Os per search: ~{height}");
+    }
+}
+
+// Example demonstrating why databases use B+ trees
+class DatabaseComparison
+{
+    static void Main()
+    {
+        const int totalRecords = 1_000_000;
+
+        // Binary Search Tree comparison
+        Console.WriteLine("Binary Search Tree:");
+        int bstHeight = (int)Math.Ceiling(Math.Log2(totalRecords));
+        Console.WriteLine($"  Height: {bstHeight}");
+        Console.WriteLine($"  Disk seeks: ~{bstHeight}");
+        Console.WriteLine($"  Time (5ms/seek): ~{bstHeight * 5}ms");
+
+        Console.WriteLine();
+
+        // B+ Tree with different orders
+        var orders = new[] { 50, 100, 200, 400 };
+        foreach (int order in orders)
+        {
+            int height = (int)Math.Ceiling(Math.Log(totalRecords) / Math.Log(order));
+            Console.WriteLine($"B+ Tree (order {order}):");
+            Console.WriteLine($"  Height: {height}");
+            Console.WriteLine($"  Disk seeks: ~{height}");
+            Console.WriteLine($"  Time (5ms/seek): ~{height * 5}ms");
+            Console.WriteLine();
+        }
+
+        // Range query comparison
+        const int rangeSize = 100;
+        Console.WriteLine($"\nRange query for {rangeSize} consecutive records:");
+        Console.WriteLine($"  BST: {rangeSize * bstHeight * 5}ms (must search each)");
+        Console.WriteLine($"  B+ Tree (order 200): ~{(int)Math.Ceiling(Math.Log(totalRecords) / Math.Log(200)) * 5}ms (sequential leaf scan)");
+    }
+}
+```
+
 ---
 
 ## 3. Advanced Dynamic Programming: Optimal Binary Search Tree
@@ -1055,6 +2012,445 @@ Base case: cost[i][i] = freq[i]
 2. **Databases**: Index structures for read-only data
 3. **Natural Language**: Word frequency dictionaries
 4. **Caching**: Pre-computed lookup structures
+
+**C# Implementation - Optimal Binary Search Tree:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class TreeNode
+{
+    public int Key { get; set; }
+    public TreeNode Left { get; set; }
+    public TreeNode Right { get; set; }
+
+    public TreeNode(int key)
+    {
+        Key = key;
+        Left = null;
+        Right = null;
+    }
+}
+
+public class OptimalBST
+{
+    private int[] keys;
+    private int[] frequencies;
+    private int n;
+
+    // DP tables
+    private int[,] cost;      // cost[i,j] = minimum cost for keys[i..j]
+    private int[,] root;      // root[i,j] = root of optimal BST for keys[i..j]
+    private int[,] freqSum;   // Precomputed frequency sums
+
+    public OptimalBST(int[] keys, int[] frequencies)
+    {
+        this.keys = keys;
+        this.frequencies = frequencies;
+        this.n = keys.Length;
+
+        this.cost = new int[n, n];
+        this.root = new int[n, n];
+        this.freqSum = new int[n, n];
+    }
+
+    public int CalculateOptimalCost()
+    {
+        // Precompute frequency sums
+        for (int i = 0; i < n; i++)
+        {
+            freqSum[i, i] = frequencies[i];
+            for (int j = i + 1; j < n; j++)
+            {
+                freqSum[i, j] = freqSum[i, j - 1] + frequencies[j];
+            }
+        }
+
+        // Base case: single keys
+        for (int i = 0; i < n; i++)
+        {
+            cost[i, i] = frequencies[i];
+            root[i, i] = i;
+        }
+
+        // Build up: solve for increasing chain lengths
+        for (int length = 2; length <= n; length++)
+        {
+            for (int i = 0; i <= n - length; i++)
+            {
+                int j = i + length - 1;
+                cost[i, j] = int.MaxValue;
+
+                // Try each key as root
+                for (int r = i; r <= j; r++)
+                {
+                    // Cost = left subtree + right subtree + sum of frequencies
+                    int leftCost = (r > i) ? cost[i, r - 1] : 0;
+                    int rightCost = (r < j) ? cost[r + 1, j] : 0;
+                    int total = leftCost + rightCost + freqSum[i, j];
+
+                    if (total < cost[i, j])
+                    {
+                        cost[i, j] = total;
+                        root[i, j] = r;
+                    }
+                }
+            }
+        }
+
+        return cost[0, n - 1];
+    }
+
+    public TreeNode ConstructTree()
+    {
+        return Build(0, n - 1);
+    }
+
+    private TreeNode Build(int i, int j)
+    {
+        if (i > j)
+            return null;
+
+        int r = root[i, j];
+        var node = new TreeNode(keys[r]);
+        node.Left = Build(i, r - 1);
+        node.Right = Build(r + 1, j);
+
+        return node;
+    }
+
+    public void PrintCostTable()
+    {
+        Console.WriteLine("\nCost Table:");
+        Console.Write("     ");
+        for (int j = 0; j < n; j++)
+        {
+            Console.Write($"{j,5}");
+        }
+        Console.WriteLine();
+
+        for (int i = 0; i < n; i++)
+        {
+            Console.Write($"{i,3}: ");
+            for (int j = 0; j < n; j++)
+            {
+                if (i <= j)
+                    Console.Write($"{cost[i, j],5}");
+                else
+                    Console.Write("    -");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    public void PrintRootTable()
+    {
+        Console.WriteLine("\nRoot Table:");
+        Console.Write("     ");
+        for (int j = 0; j < n; j++)
+        {
+            Console.Write($"{j,5}");
+        }
+        Console.WriteLine();
+
+        for (int i = 0; i < n; i++)
+        {
+            Console.Write($"{i,3}: ");
+            for (int j = 0; j < n; j++)
+            {
+                if (i <= j)
+                    Console.Write($"{root[i, j],5}");
+                else
+                    Console.Write("    -");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    public static void PrintTree(TreeNode node, string prefix = "", bool isLeft = true)
+    {
+        if (node == null)
+            return;
+
+        Console.WriteLine(prefix + (isLeft ? "├── " : "└── ") + node.Key);
+
+        if (node.Left != null || node.Right != null)
+        {
+            if (node.Left != null)
+                PrintTree(node.Left, prefix + (isLeft ? "│   " : "    "), true);
+            if (node.Right != null)
+                PrintTree(node.Right, prefix + (isLeft ? "│   " : "    "), false);
+        }
+    }
+
+    public int CalculateSearchCost(TreeNode root, int depth = 1)
+    {
+        if (root == null)
+            return 0;
+
+        int keyIdx = Array.IndexOf(keys, root.Key);
+        int cost = frequencies[keyIdx] * depth;
+
+        cost += CalculateSearchCost(root.Left, depth + 1);
+        cost += CalculateSearchCost(root.Right, depth + 1);
+
+        return cost;
+    }
+}
+
+// Example usage
+class OptimalBSTExample
+{
+    static void Main()
+    {
+        int[] keys = { 10, 20, 30, 40 };
+        int[] frequencies = { 4, 2, 6, 3 };
+
+        Console.WriteLine("Keys:        [{0}]", string.Join(", ", keys));
+        Console.WriteLine("Frequencies: [{0}]", string.Join(", ", frequencies));
+
+        var obst = new OptimalBST(keys, frequencies);
+        int minCost = obst.CalculateOptimalCost();
+
+        Console.WriteLine($"\nMinimum cost: {minCost}");
+
+        obst.PrintCostTable();
+        obst.PrintRootTable();
+
+        // Construct and print the optimal tree
+        TreeNode optimalTree = obst.ConstructTree();
+        Console.WriteLine("\nOptimal BST structure:");
+        OptimalBST.PrintTree(optimalTree);
+
+        // Verify the cost
+        int actualCost = obst.CalculateSearchCost(optimalTree);
+        Console.WriteLine($"\nVerified search cost: {actualCost}");
+
+        // Compare with other structures
+        CompareWithOtherStructures(keys, frequencies);
+    }
+
+    static void CompareWithOtherStructures(int[] keys, int[] frequencies)
+    {
+        Console.WriteLine("\n\nComparison with other structures:");
+
+        // Optimal BST
+        var obst = new OptimalBST(keys, frequencies);
+        int optimalCost = obst.CalculateOptimalCost();
+        Console.WriteLine($"Optimal BST cost: {optimalCost}");
+
+        // Balanced BST (e.g., AVL) - all nodes at similar depth
+        int totalFreq = 0;
+        foreach (int f in frequencies)
+            totalFreq += f;
+
+        double avgDepth = Math.Log2(keys.Length) + 1;
+        int balancedCost = (int)(totalFreq * avgDepth);
+        Console.WriteLine($"Balanced BST cost (approx): {balancedCost}");
+
+        // Sequential search
+        int sequentialCost = 0;
+        for (int i = 0; i < keys.Length; i++)
+        {
+            sequentialCost += frequencies[i] * (i + 1);
+        }
+        Console.WriteLine($"Sequential search cost: {sequentialCost}");
+
+        Console.WriteLine($"\nOptimal BST is {(double)balancedCost / optimalCost:F2}x better than balanced BST");
+        Console.WriteLine($"Optimal BST is {(double)sequentialCost / optimalCost:F2}x better than sequential search");
+    }
+}
+```
+
+**C# Implementation - Knuth's Optimization (O(n²)):**
+
+```csharp
+using System;
+
+public class OptimalBSTKnuth
+{
+    private int[] keys;
+    private int[] frequencies;
+    private int n;
+
+    private int[,] cost;
+    private int[,] root;
+    private int[,] freqSum;
+
+    public OptimalBSTKnuth(int[] keys, int[] frequencies)
+    {
+        this.keys = keys;
+        this.frequencies = frequencies;
+        this.n = keys.Length;
+
+        this.cost = new int[n + 1, n + 1];
+        this.root = new int[n + 1, n + 1];
+        this.freqSum = new int[n + 1, n + 1];
+    }
+
+    public int CalculateOptimalCostKnuth()
+    {
+        // Precompute frequency sums
+        for (int i = 1; i <= n; i++)
+        {
+            freqSum[i, i] = frequencies[i - 1];
+            for (int j = i + 1; j <= n; j++)
+            {
+                freqSum[i, j] = freqSum[i, j - 1] + frequencies[j - 1];
+            }
+        }
+
+        // Base case
+        for (int i = 1; i <= n; i++)
+        {
+            cost[i, i] = frequencies[i - 1];
+            root[i, i] = i;
+        }
+
+        // Knuth's optimization: root[i,j-1] <= root[i,j] <= root[i+1,j]
+        // This reduces the search space from O(n) to O(1) amortized
+        for (int length = 2; length <= n; length++)
+        {
+            for (int i = 1; i <= n - length + 1; i++)
+            {
+                int j = i + length - 1;
+                cost[i, j] = int.MaxValue;
+
+                // Knuth's optimization: only search between root[i,j-1] and root[i+1,j]
+                int startRoot = (i == j) ? i : root[i, j - 1];
+                int endRoot = (i == j) ? j : root[i + 1, j];
+
+                for (int r = startRoot; r <= endRoot; r++)
+                {
+                    int leftCost = (r > i) ? cost[i, r - 1] : 0;
+                    int rightCost = (r < j) ? cost[r + 1, j] : 0;
+                    int total = leftCost + rightCost + freqSum[i, j];
+
+                    if (total < cost[i, j])
+                    {
+                        cost[i, j] = total;
+                        root[i, j] = r;
+                    }
+                }
+            }
+        }
+
+        return cost[1, n];
+    }
+
+    static void Main()
+    {
+        int[] keys = { 10, 20, 30, 40, 50, 60, 70, 80 };
+        int[] frequencies = { 5, 10, 15, 20, 15, 10, 5, 3 };
+
+        Console.WriteLine("Testing Knuth's Optimization (O(n²))");
+        Console.WriteLine($"Number of keys: {keys.Length}");
+
+        var obst = new OptimalBSTKnuth(keys, frequencies);
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        int cost = obst.CalculateOptimalCostKnuth();
+        sw.Stop();
+
+        Console.WriteLine($"Optimal cost: {cost}");
+        Console.WriteLine($"Time: {sw.ElapsedMilliseconds}ms");
+        Console.WriteLine($"Time complexity: O(n²) instead of O(n³)");
+    }
+}
+```
+
+**C# Advanced - With Unsuccessful Search Costs:**
+
+```csharp
+using System;
+
+public class OptimalBSTWithUnsuccessful
+{
+    private int[] keys;
+    private int[] successFreq;    // Frequency of successful searches
+    private int[] unsuccessFreq;  // Frequency of unsuccessful searches (gaps)
+    private int n;
+
+    private int[,] cost;
+    private int[,] root;
+
+    public OptimalBSTWithUnsuccessful(
+        int[] keys,
+        int[] successFreq,
+        int[] unsuccessFreq)
+    {
+        this.keys = keys;
+        this.successFreq = successFreq;
+        this.unsuccessFreq = unsuccessFreq;
+        this.n = keys.Length;
+
+        this.cost = new int[n + 2, n + 1];
+        this.root = new int[n + 1, n + 1];
+    }
+
+    public int CalculateOptimalCost()
+    {
+        // Base case: empty trees (only unsuccessful searches)
+        for (int i = 1; i <= n + 1; i++)
+        {
+            cost[i, i - 1] = unsuccessFreq[i - 1];
+        }
+
+        // Build up for increasing lengths
+        for (int length = 1; length <= n; length++)
+        {
+            for (int i = 1; i <= n - length + 1; i++)
+            {
+                int j = i + length - 1;
+                cost[i, j] = int.MaxValue;
+
+                // Calculate weight (sum of all frequencies in range)
+                int weight = unsuccessFreq[i - 1];
+                for (int k = i; k <= j; k++)
+                {
+                    weight += successFreq[k - 1] + unsuccessFreq[k];
+                }
+
+                // Try each key as root
+                for (int r = i; r <= j; r++)
+                {
+                    int total = cost[i, r - 1] + cost[r + 1, j] + weight;
+
+                    if (total < cost[i, j])
+                    {
+                        cost[i, j] = total;
+                        root[i, j] = r;
+                    }
+                }
+            }
+        }
+
+        return cost[1, n];
+    }
+
+    static void Main()
+    {
+        // Example with unsuccessful searches
+        int[] keys = { 10, 20, 30 };
+        int[] successFreq = { 3, 3, 1 };
+        // unsuccessFreq[0] = searches < 10
+        // unsuccessFreq[1] = searches between 10 and 20
+        // unsuccessFreq[2] = searches between 20 and 30
+        // unsuccessFreq[3] = searches > 30
+        int[] unsuccessFreq = { 2, 3, 1, 1 };
+
+        var obst = new OptimalBSTWithUnsuccessful(keys, successFreq, unsuccessFreq);
+        int cost = obst.CalculateOptimalCost();
+
+        Console.WriteLine("Optimal BST with unsuccessful searches:");
+        Console.WriteLine($"Keys: [{string.Join(", ", keys)}]");
+        Console.WriteLine($"Success frequencies: [{string.Join(", ", successFreq)}]");
+        Console.WriteLine($"Unsuccessful frequencies: [{string.Join(", ", unsuccessFreq)}]");
+        Console.WriteLine($"Minimum cost: {cost}");
+    }
+}
+```
 
 **Key Points:**
 - Dynamic programming builds solution bottom-up

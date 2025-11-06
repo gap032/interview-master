@@ -170,3 +170,493 @@ db.users.insertOne({
 | Structured data | Schema evolves frequently |
 | Complex analytics | Simple key-value lookups |
 | Financial systems | Session storage, caching |
+
+**C# Implementation - Entity Framework Core with SQL Server:**
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+// Entity classes
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string City { get; set; }
+    public int Age { get; set; }
+
+    public ICollection<Order> Orders { get; set; }
+}
+
+public class Order
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public decimal Total { get; set; }
+
+    public User User { get; set; }
+}
+
+// DbContext
+public class AppDbContext : DbContext
+{
+    public DbSet<User> Users { get; set; }
+    public DbSet<Order> Orders { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer(
+            "Server=localhost;Database=InterviewDB;Trusted_Connection=True;");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Create indexes
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .HasDatabaseName("idx_users_email");
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.CreatedAt)
+            .HasDatabaseName("idx_users_created");
+
+        // Composite index
+        modelBuilder.Entity<User>()
+            .HasIndex(u => new { u.City, u.Age })
+            .HasDatabaseName("idx_users_city_age");
+
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.UserId)
+            .HasDatabaseName("idx_orders_user_id");
+
+        // Configure relationships
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.User)
+            .WithMany(u => u.Orders)
+            .HasForeignKey(o => o.UserId);
+    }
+}
+
+// Query optimization examples
+public class DatabaseExamples
+{
+    static void Main()
+    {
+        using var db = new AppDbContext();
+
+        // Optimized query with indexes
+        var recentUsers = db.Users
+            .Where(u => u.CreatedAt > new DateTime(2024, 1, 1))
+            .Include(u => u.Orders)
+            .Select(u => new
+            {
+                u.Name,
+                OrderCount = u.Orders.Count
+            })
+            .ToList();
+
+        // Using composite index
+        var nycUsers = db.Users
+            .Where(u => u.City == "NYC" && u.Age == 30)
+            .ToList();
+
+        // Index usage demonstration
+        var user = db.Users
+            .Where(u => u.Email == "user@example.com")
+            .FirstOrDefault();
+
+        Console.WriteLine("Queries executed with index optimization");
+    }
+}
+```
+
+**C# Implementation - Transactions with Entity Framework Core:**
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
+
+public class TransactionExamples
+{
+    // Example 1: Basic transaction
+    public static async Task TransferMoneyAsync(int fromAccountId, int toAccountId, decimal amount)
+    {
+        using var db = new AppDbContext();
+
+        // Begin transaction
+        using var transaction = await db.Database.BeginTransactionAsync();
+
+        try
+        {
+            // Debit from account
+            var fromAccount = await db.Accounts.FindAsync(fromAccountId);
+            if (fromAccount.Balance < amount)
+                throw new InvalidOperationException("Insufficient funds");
+
+            fromAccount.Balance -= amount;
+
+            // Credit to account
+            var toAccount = await db.Accounts.FindAsync(toAccountId);
+            toAccount.Balance += amount;
+
+            // Save changes
+            await db.SaveChangesAsync();
+
+            // Commit transaction
+            await transaction.CommitAsync();
+
+            Console.WriteLine($"Transferred {amount:C} from {fromAccountId} to {toAccountId}");
+        }
+        catch (Exception ex)
+        {
+            // Rollback on error
+            await transaction.RollbackAsync();
+            Console.WriteLine($"Transaction failed: {ex.Message}");
+            throw;
+        }
+    }
+
+    // Example 2: Isolation levels
+    public static async Task DemonstrateIsolationLevelsAsync()
+    {
+        using var db = new AppDbContext();
+
+        // Read Committed (default)
+        using (var transaction = await db.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.ReadCommitted))
+        {
+            var user = await db.Users.FirstAsync();
+            Console.WriteLine($"Read Committed: {user.Name}");
+            await transaction.CommitAsync();
+        }
+
+        // Repeatable Read
+        using (var transaction = await db.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.RepeatableRead))
+        {
+            var user1 = await db.Users.FindAsync(1);
+            // ... do some work ...
+            var user2 = await db.Users.FindAsync(1);
+            // user1 and user2 will have same values even if updated concurrently
+            await transaction.CommitAsync();
+        }
+
+        // Serializable (strictest)
+        using (var transaction = await db.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable))
+        {
+            var users = await db.Users.Where(u => u.Age > 25).ToListAsync();
+            // No other transaction can insert/update/delete users that match this query
+            await transaction.CommitAsync();
+        }
+    }
+
+    // Example 3: Handling concurrency conflicts
+    public static async Task HandleOptimisticConcurrencyAsync(int userId)
+    {
+        using var db = new AppDbContext();
+
+        try
+        {
+            var user = await db.Users.FindAsync(userId);
+            user.Name = "Updated Name";
+
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            // Handle concurrency conflict
+            var entry = ex.Entries.Single();
+            var databaseValues = await entry.GetDatabaseValuesAsync();
+
+            if (databaseValues == null)
+            {
+                Console.WriteLine("Record was deleted by another user");
+            }
+            else
+            {
+                Console.WriteLine("Conflict detected. Merging changes...");
+                entry.OriginalValues.SetValues(databaseValues);
+                await db.SaveChangesAsync();
+            }
+        }
+    }
+}
+
+// Add to User entity for optimistic concurrency
+public class Account
+{
+    public int Id { get; set; }
+    public decimal Balance { get; set; }
+
+    [Timestamp]  // Enables optimistic concurrency
+    public byte[] RowVersion { get; set; }
+}
+```
+
+**C# Implementation - Raw SQL and Dapper (Lightweight ORM):**
+
+```csharp
+using Dapper;
+using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+public class DapperExamples
+{
+    private const string ConnectionString =
+        "Server=localhost;Database=InterviewDB;Trusted_Connection=True;";
+
+    // Example 1: Simple query
+    public static async Task<IEnumerable<User>> GetUsersByEmailAsync(string email)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+
+        // Dapper automatically uses parameters (prevents SQL injection)
+        var users = await connection.QueryAsync<User>(
+            "SELECT * FROM Users WHERE Email = @Email",
+            new { Email = email });
+
+        return users;
+    }
+
+    // Example 2: Complex query with JOIN
+    public static async Task<IEnumerable<UserWithOrderCount>> GetUsersWithOrderCountAsync(
+        DateTime since)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+
+        var sql = @"
+            SELECT u.Name, COUNT(o.Id) as OrderCount
+            FROM Users u
+            LEFT JOIN Orders o ON u.Id = o.UserId
+            WHERE u.CreatedAt > @Since
+            GROUP BY u.Id, u.Name";
+
+        var results = await connection.QueryAsync<UserWithOrderCount>(
+            sql,
+            new { Since = since });
+
+        return results;
+    }
+
+    // Example 3: Transaction with Dapper
+    public static async Task TransferWithDapperAsync(
+        int fromId,
+        int toId,
+        decimal amount)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+        await connection.OpenAsync();
+
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            // Debit
+            await connection.ExecuteAsync(
+                "UPDATE Accounts SET Balance = Balance - @Amount WHERE Id = @Id",
+                new { Amount = amount, Id = fromId },
+                transaction);
+
+            // Credit
+            await connection.ExecuteAsync(
+                "UPDATE Accounts SET Balance = Balance + @Amount WHERE Id = @Id",
+                new { Amount = amount, Id = toId },
+                transaction);
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
+    public class UserWithOrderCount
+    {
+        public string Name { get; set; }
+        public int OrderCount { get; set; }
+    }
+}
+```
+
+**C# Implementation - MongoDB (NoSQL):**
+
+```csharp
+using MongoDB.Driver;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+// MongoDB document model
+public class UserDocument
+{
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
+
+    public string Name { get; set; }
+    public string Email { get; set; }
+
+    public List<Address> Addresses { get; set; } = new List<Address>();
+
+    public Dictionary<string, object> Metadata { get; set; } = new();
+}
+
+public class Address
+{
+    public string Type { get; set; }  // "home", "work"
+    public string City { get; set; }
+    public string Street { get; set; }
+}
+
+public class MongoDbExamples
+{
+    private static IMongoDatabase GetDatabase()
+    {
+        var client = new MongoClient("mongodb://localhost:27017");
+        return client.GetDatabase("interview_db");
+    }
+
+    // Example 1: Insert document
+    public static async Task InsertUserAsync()
+    {
+        var database = GetDatabase();
+        var collection = database.GetCollection<UserDocument>("users");
+
+        var user = new UserDocument
+        {
+            Name = "John Doe",
+            Email = "john@example.com",
+            Addresses = new List<Address>
+            {
+                new Address { Type = "home", City = "NYC", Street = "5th Ave" },
+                new Address { Type = "work", City = "SF", Street = "Market St" }
+            },
+            Metadata = new Dictionary<string, object>
+            {
+                { "created_at", DateTime.UtcNow },
+                { "tier", "premium" }
+            }
+        };
+
+        await collection.InsertOneAsync(user);
+        Console.WriteLine($"Inserted user with ID: {user.Id}");
+    }
+
+    // Example 2: Query with filters
+    public static async Task<List<UserDocument>> FindUsersByCityAsync(string city)
+    {
+        var database = GetDatabase();
+        var collection = database.GetCollection<UserDocument>("users");
+
+        // Find users who have any address in the specified city
+        var filter = Builders<UserDocument>.Filter.ElemMatch(
+            u => u.Addresses,
+            a => a.City == city);
+
+        var users = await collection.Find(filter).ToListAsync();
+        return users;
+    }
+
+    // Example 3: Update document (flexible schema)
+    public static async Task AddMetadataAsync(string userId, string key, object value)
+    {
+        var database = GetDatabase();
+        var collection = database.GetCollection<UserDocument>("users");
+
+        var filter = Builders<UserDocument>.Filter.Eq(u => u.Id, userId);
+        var update = Builders<UserDocument>.Update.Set($"Metadata.{key}", value);
+
+        await collection.UpdateOneAsync(filter, update);
+    }
+
+    // Example 4: Aggregation pipeline
+    public static async Task GetUserStatisticsByCityAsync()
+    {
+        var database = GetDatabase();
+        var collection = database.GetCollection<UserDocument>("users");
+
+        var pipeline = new[]
+        {
+            new BsonDocument("$unwind", "$Addresses"),
+            new BsonDocument("$group", new BsonDocument
+            {
+                { "_id", "$Addresses.City" },
+                { "count", new BsonDocument("$sum", 1) }
+            }),
+            new BsonDocument("$sort", new BsonDocument("count", -1))
+        };
+
+        var results = await collection.Aggregate<BsonDocument>(pipeline).ToListAsync();
+
+        foreach (var result in results)
+        {
+            Console.WriteLine($"City: {result["_id"]}, Users: {result["count"]}");
+        }
+    }
+}
+```
+
+**C# Decision Guide - When to Use Each Approach:**
+
+```csharp
+public class DatabaseStrategy
+{
+    // Use Entity Framework Core when:
+    // - Complex object graphs with relationships
+    // - Need change tracking
+    // - Want LINQ support
+    // - Rapid development
+    public void UseEntityFramework()
+    {
+        using var db = new AppDbContext();
+
+        var usersWithOrders = db.Users
+            .Include(u => u.Orders)
+            .Where(u => u.Age > 25)
+            .ToList();
+    }
+
+    // Use Dapper when:
+    // - Performance critical
+    // - Complex SQL queries
+    // - Simple mapping
+    // - Microservices
+    public async Task UseDapper()
+    {
+        using var connection = new SqlConnection("...");
+
+        var users = await connection.QueryAsync<User>(
+            "SELECT * FROM Users WHERE Age > @Age",
+            new { Age = 25 });
+    }
+
+    // Use MongoDB when:
+    // - Flexible/evolving schema
+    // - Hierarchical/nested data
+    // - Horizontal scaling
+    // - Document-oriented storage
+    public async Task UseMongoDB()
+    {
+        var database = new MongoClient("...").GetDatabase("db");
+        var collection = database.GetCollection<UserDocument>("users");
+
+        var users = await collection
+            .Find(u => u.Addresses.Any(a => a.City == "NYC"))
+            .ToListAsync();
+    }
+}
+```
+
