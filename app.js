@@ -95,10 +95,14 @@ async function loadMarkdownFile(filepath) {
         // Display content
         contentDiv.innerHTML = html;
 
-        // Highlight code blocks
-        contentDiv.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightElement(block);
-        });
+        // Highlight code blocks (if highlight.js is loaded)
+        if (typeof hljs !== 'undefined') {
+            contentDiv.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        } else {
+            console.warn('highlight.js not loaded, skipping syntax highlighting');
+        }
 
         loadingDiv.style.display = 'none';
         contentDiv.style.display = 'block';
@@ -469,7 +473,7 @@ function updateStatsDisplay() {
     });
 
     if (Object.keys(stats.categoryStats).length === 0) {
-        categoryBreakdownDiv.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nie ukończono jeszcze żadnych quizów</p>';
+        categoryBreakdownDiv.innerHTML = `<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">${t('statsNoData')}</p>`;
     }
 }
 
