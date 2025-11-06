@@ -473,7 +473,7 @@ function updateStatsDisplay() {
     });
 
     if (Object.keys(stats.categoryStats).length === 0) {
-        categoryBreakdownDiv.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nie ukończono jeszcze żadnych quizów</p>';
+        categoryBreakdownDiv.innerHTML = `<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">${t('statsNoData')}</p>`;
     }
 }
 
