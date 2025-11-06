@@ -78,6 +78,7 @@ This repository includes an interactive web application with:
 - Identify areas for improvement
 
 **Features:**
+- **Bilingual support** - English/Polish with language switcher 🇬🇧 🇵🇱
 - Dark theme optimized for readability
 - Offline-capable (after first load)
 - No backend required - runs entirely in browser
