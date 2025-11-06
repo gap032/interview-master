@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Prep - Przygotowanie do Rozmów Kwalifikacyjnych</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>Interview Prep</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="materials">
+                    <i class="fas fa-book"></i> Materiały
+                </button>
+                <button class="nav-btn" data-section="quiz">
+                    <i class="fas fa-question-circle"></i> Quiz
+                </button>
+                <button class="nav-btn" data-section="stats">
+                    <i class="fas fa-chart-bar"></i> Statystyki
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Materials Section -->
+        <section id="materials-section" class="content-section active">
+            <div class="container">
+                <div class="content-grid">
+                    <!-- Sidebar with categories -->
+                    <aside class="sidebar">
+                        <h2><i class="fas fa-folder-open"></i> Kategorie</h2>
+                        <div class="category-list">
+                            <div class="category-group">
+                                <button class="category-btn" data-category="data-structures-algorithms">
+                                    <i class="fas fa-project-diagram"></i>
+                                    Data Structures & Algorithms
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="data-structures-algorithms/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="data-structures-algorithms/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="data-structures-algorithms/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+
+                            <div class="category-group">
+                                <button class="category-btn" data-category="system-design">
+                                    <i class="fas fa-sitemap"></i>
+                                    System Design
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="system-design/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="system-design/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="system-design/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+
+                            <div class="category-group">
+                                <button class="category-btn" data-category="programming-languages">
+                                    <i class="fas fa-code"></i>
+                                    Programming Languages
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="programming-languages/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="programming-languages/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="programming-languages/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+
+                            <div class="category-group">
+                                <button class="category-btn" data-category="architecture">
+                                    <i class="fas fa-building"></i>
+                                    Architecture
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="architecture/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="architecture/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="architecture/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+
+                            <div class="category-group">
+                                <button class="category-btn" data-category="databases">
+                                    <i class="fas fa-database"></i>
+                                    Databases
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="databases/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="databases/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="databases/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+
+                            <div class="category-group">
+                                <button class="category-btn" data-category="devops-cloud">
+                                    <i class="fas fa-cloud"></i>
+                                    DevOps & Cloud
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="devops-cloud/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="devops-cloud/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="devops-cloud/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+
+                            <div class="category-group">
+                                <button class="category-btn" data-category="behavioral">
+                                    <i class="fas fa-users"></i>
+                                    Behavioral
+                                </button>
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-file="behavioral/mid-level.md">Mid</button>
+                                    <button class="level-btn" data-file="behavioral/senior-level.md">Senior</button>
+                                    <button class="level-btn" data-file="behavioral/principal-level.md">Principal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Content Area -->
+                    <div class="content-area">
+                        <div class="welcome-message" id="welcome">
+                            <i class="fas fa-rocket"></i>
+                            <h2>Witaj w Interview Prep!</h2>
+                            <p>Wybierz kategorię i poziom z menu po lewej, aby rozpocząć naukę.</p>
+                            <div class="quick-stats">
+                                <div class="stat-card">
+                                    <i class="fas fa-book-open"></i>
+                                    <h3>21</h3>
+                                    <p>Plików z materiałami</p>
+                                </div>
+                                <div class="stat-card">
+                                    <i class="fas fa-question"></i>
+                                    <h3>100+</h3>
+                                    <p>Pytań quizowych</p>
+                                </div>
+                                <div class="stat-card">
+                                    <i class="fas fa-layer-group"></i>
+                                    <h3>7</h3>
+                                    <p>Kategorii technicznych</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="markdown-content" id="content" style="display: none;"></div>
+                        <div class="loading" id="loading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Ładowanie...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz-section" class="content-section">
+            <div class="container">
+                <div class="quiz-container">
+                    <!-- Quiz Start Screen -->
+                    <div class="quiz-start" id="quiz-start">
+                        <i class="fas fa-brain"></i>
+                        <h2>Sprawdź swoją wiedzę!</h2>
+                        <p>Wybierz kategorię i poziom trudności quizu</p>
+
+                        <div class="quiz-selector">
+                            <div class="form-group">
+                                <label><i class="fas fa-list"></i> Kategoria:</label>
+                                <select id="quiz-category">
+                                    <option value="all">Wszystkie kategorie</option>
+                                    <option value="algorithms">Data Structures & Algorithms</option>
+                                    <option value="system-design">System Design</option>
+                                    <option value="programming">Programming Languages</option>
+                                    <option value="architecture">Architecture</option>
+                                    <option value="databases">Databases</option>
+                                    <option value="devops">DevOps & Cloud</option>
+                                    <option value="behavioral">Behavioral</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-signal"></i> Poziom:</label>
+                                <select id="quiz-level">
+                                    <option value="all">Wszystkie poziomy</option>
+                                    <option value="mid">Mid-Level</option>
+                                    <option value="senior">Senior-Level</option>
+                                    <option value="principal">Principal-Level</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-hashtag"></i> Liczba pytań:</label>
+                                <select id="quiz-count">
+                                    <option value="5">5 pytań</option>
+                                    <option value="10" selected>10 pytań</option>
+                                    <option value="20">20 pytań</option>
+                                    <option value="50">50 pytań</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-large" id="start-quiz">
+                            <i class="fas fa-play"></i> Rozpocznij Quiz
+                        </button>
+                    </div>
+
+                    <!-- Quiz Questions -->
+                    <div class="quiz-questions" id="quiz-questions" style="display: none;">
+                        <div class="quiz-header">
+                            <div class="quiz-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <span class="progress-text" id="progress-text">Pytanie 1 z 10</span>
+                            </div>
+                            <button class="btn btn-secondary" id="quit-quiz">
+                                <i class="fas fa-times"></i> Zakończ
+                            </button>
+                        </div>
+
+                        <div class="question-card">
+                            <div class="question-category" id="question-category"></div>
+                            <h3 class="question-text" id="question-text"></h3>
+                            <div class="answers" id="answers"></div>
+                            <button class="btn btn-primary" id="next-question" style="display: none;">
+                                Następne pytanie <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Results -->
+                    <div class="quiz-results" id="quiz-results" style="display: none;">
+                        <div class="results-icon" id="results-icon"></div>
+                        <h2 id="results-title"></h2>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span class="score-number" id="score-number">0</span>
+                                <span class="score-total" id="score-total">/ 10</span>
+                            </div>
+                            <p class="score-percentage" id="score-percentage">0%</p>
+                        </div>
+                        <div class="results-breakdown" id="results-breakdown"></div>
+                        <div class="results-actions">
+                            <button class="btn btn-primary" id="retry-quiz">
+                                <i class="fas fa-redo"></i> Spróbuj ponownie
+                            </button>
+                            <button class="btn btn-secondary" id="new-quiz">
+                                <i class="fas fa-plus"></i> Nowy quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="stats-section" class="content-section">
+            <div class="container">
+                <h2><i class="fas fa-chart-line"></i> Twoje Statystyki</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <i class="fas fa-check-circle"></i>
+                        <h3 id="total-quizzes">0</h3>
+                        <p>Ukończonych quizów</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-percent"></i>
+                        <h3 id="avg-score">0%</h3>
+                        <p>Średni wynik</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-trophy"></i>
+                        <h3 id="best-score">0%</h3>
+                        <p>Najlepszy wynik</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-fire"></i>
+                        <h3 id="streak">0</h3>
+                        <p>Dni z rzędu</p>
+                    </div>
+                </div>
+
+                <div class="category-stats">
+                    <h3><i class="fas fa-list-ul"></i> Wyniki według kategorii</h3>
+                    <div id="category-breakdown"></div>
+                </div>
+
+                <button class="btn btn-danger" id="reset-stats">
+                    <i class="fas fa-trash"></i> Resetuj statystyki
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Interview Prep | <a href="https://github.com/gap032/claude" target="_blank">
+                <i class="fab fa-github"></i> GitHub Repository
+            </a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/lib/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/github-dark.min.css">
+    <script src="quiz-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

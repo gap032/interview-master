@@ -53,8 +53,44 @@ Leadership, communication, and soft skills.
 - [Senior-Level Questions](./behavioral/senior-level.md)
 - [Principal-Level Questions](./behavioral/principal-level.md)
 
+## 🌐 Interactive Web Application
+
+**[Launch Interview Prep App](https://gap032.github.io/claude/)** *(Coming soon - enable GitHub Pages)*
+
+This repository includes an interactive web application with:
+
+### 📖 Materials Browser
+- Browse all interview questions by category and level
+- Syntax-highlighted code examples
+- Easy navigation between topics
+- Mobile-responsive design
+
+### 🎯 Quiz Mode
+- Test your knowledge with 100+ quiz questions
+- Filter by category and difficulty level
+- Instant feedback with explanations
+- Track your progress and statistics
+
+### 📊 Statistics Dashboard
+- Track completed quizzes and scores
+- View performance by category
+- Monitor learning streaks
+- Identify areas for improvement
+
+**Features:**
+- Dark theme optimized for readability
+- Offline-capable (after first load)
+- No backend required - runs entirely in browser
+- Progress saved in browser localStorage
+
 ## 🎓 How to Use This Repository
 
+### Option 1: Interactive Web App (Recommended)
+1. Open `index.html` in your browser or visit the hosted version
+2. Browse materials or take quizzes
+3. Track your progress over time
+
+### Option 2: Direct File Access
 1. **Interview Preparation**: Navigate to your target role level and review questions in relevant domains
 2. **Self-Assessment**: Test your knowledge by attempting to answer questions before reading the responses
 3. **Learning Resource**: Use detailed answers to deepen your understanding of technical concepts
