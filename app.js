@@ -72,11 +72,21 @@ async function loadMarkdownFile(filepath) {
     loadingDiv.style.display = 'block';
 
     try {
-        const response = await fetch(filepath);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        let markdown;
+
+        // Try to get from embedded data first (offline support)
+        if (typeof MATERIALS_DATA !== 'undefined' && MATERIALS_DATA[filepath]) {
+            markdown = MATERIALS_DATA[filepath];
+            console.log(`Loaded from embedded data: ${filepath}`);
+        } else {
+            // Fallback to fetch if available (when hosted on server)
+            const response = await fetch(filepath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            markdown = await response.text();
+            console.log(`Loaded via fetch: ${filepath}`);
         }
-        const markdown = await response.text();
 
         // Convert markdown to HTML
         const html = marked.parse(markdown);
