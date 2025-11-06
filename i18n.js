@@ -40,6 +40,7 @@ const translations = {
         quizNext: "Next Question",
         quizQuestion: "Question",
         quizOf: "of",
+        quizNoQuestions: "No questions available for selected criteria!",
 
         // Quiz Categories (dropdown)
         quizAllCategories: "All categories",
@@ -140,6 +141,7 @@ const translations = {
         quizNext: "Następne pytanie",
         quizQuestion: "Pytanie",
         quizOf: "z",
+        quizNoQuestions: "Brak pytań dla wybranych kryteriów!",
 
         // Quiz Categories (dropdown)
         quizAllCategories: "Wszystkie kategorie",
