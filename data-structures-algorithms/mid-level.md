@@ -57,6 +57,67 @@ class LinkedList:
         self.head = new_node  # O(1) insertion
 ```
 
+**Example in C#:**
+```csharp
+using System;
+using System.Collections.Generic;
+
+// Array
+int[] arr = { 1, 2, 3, 4, 5 };
+Console.WriteLine(arr[2]);  // O(1) access
+
+// List<T> - dynamic array
+List<int> list = new List<int> { 1, 2, 3, 4, 5 };
+Console.WriteLine(list[2]);  // O(1) access
+
+// Linked List (simple implementation)
+public class Node<T>
+{
+    public T Data { get; set; }
+    public Node<T> Next { get; set; }
+
+    public Node(T data)
+    {
+        Data = data;
+        Next = null;
+    }
+}
+
+public class LinkedList<T>
+{
+    private Node<T> head;
+
+    public LinkedList()
+    {
+        head = null;
+    }
+
+    public void InsertAtBeginning(T data)
+    {
+        Node<T> newNode = new Node<T>(data);
+        newNode.Next = head;
+        head = newNode;  // O(1) insertion
+    }
+
+    public void Display()
+    {
+        Node<T> current = head;
+        while (current != null)
+        {
+            Console.Write(current.Data + " -> ");
+            current = current.Next;
+        }
+        Console.WriteLine("null");
+    }
+}
+
+// Built-in LinkedList<T>
+LinkedList<int> linkedList = new LinkedList<int>();
+linkedList.AddFirst(5);  // O(1)
+linkedList.AddFirst(4);  // O(1)
+linkedList.AddLast(6);   // O(1)
+```
+
 **Key Points:**
 - Arrays provide O(1) access but O(n) insertion/deletion
 - Linked lists provide O(1) insertion/deletion but O(n) access
@@ -155,6 +216,132 @@ print(ht)
 - Average case: O(1) for insert, get, remove
 - Worst case: O(n) when all keys hash to same index
 - Load factor (n/m) should be kept below 0.7 for good performance
+
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class HashTable<TKey, TValue>
+{
+    private class Entry
+    {
+        public TKey Key { get; set; }
+        public TValue Value { get; set; }
+
+        public Entry(TKey key, TValue value)
+        {
+            Key = key;
+            Value = value;
+        }
+    }
+
+    private int size;
+    private List<Entry>[] table;
+
+    public HashTable(int size = 10)
+    {
+        this.size = size;
+        table = new List<Entry>[size];
+        for (int i = 0; i < size; i++)
+        {
+            table[i] = new List<Entry>();
+        }
+    }
+
+    private int Hash(TKey key)
+    {
+        // Hash function using modulo
+        return Math.Abs(key.GetHashCode() % size);
+    }
+
+    public void Insert(TKey key, TValue value)
+    {
+        int hashIndex = Hash(key);
+
+        // Check if key already exists and update
+        for (int i = 0; i < table[hashIndex].Count; i++)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(table[hashIndex][i].Key, key))
+            {
+                table[hashIndex][i] = new Entry(key, value);
+                return;
+            }
+        }
+
+        // Key doesn't exist, add new entry
+        table[hashIndex].Add(new Entry(key, value));
+    }
+
+    public TValue Get(TKey key)
+    {
+        int hashIndex = Hash(key);
+
+        foreach (var entry in table[hashIndex])
+        {
+            if (EqualityComparer<TKey>.Default.Equals(entry.Key, key))
+            {
+                return entry.Value;
+            }
+        }
+
+        throw new KeyNotFoundException($"Key '{key}' not found");
+    }
+
+    public bool Remove(TKey key)
+    {
+        int hashIndex = Hash(key);
+
+        for (int i = 0; i < table[hashIndex].Count; i++)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(table[hashIndex][i].Key, key))
+            {
+                table[hashIndex].RemoveAt(i);
+                return true;
+            }
+        }
+
+        throw new KeyNotFoundException($"Key '{key}' not found");
+    }
+
+    public override string ToString()
+    {
+        var items = new List<string>();
+        for (int i = 0; i < size; i++)
+        {
+            if (table[i].Count > 0)
+            {
+                var bucketItems = string.Join(", ",
+                    table[i].Select(e => $"({e.Key}, {e.Value})"));
+                items.Add($"Bucket {i}: [{bucketItems}]");
+            }
+        }
+        return items.Count > 0 ? string.Join("\n", items) : "Empty hash table";
+    }
+}
+
+// Usage example
+var ht = new HashTable<string, object>(5);
+ht.Insert("name", "Alice");
+ht.Insert("age", 30);
+ht.Insert("city", "New York");
+ht.Insert("email", "alice@example.com");
+
+Console.WriteLine(ht.Get("name"));  // Output: Alice
+Console.WriteLine(ht);
+
+// Using built-in Dictionary<TKey, TValue> (hash table)
+Dictionary<string, object> dict = new Dictionary<string, object>
+{
+    { "name", "Alice" },
+    { "age", 30 },
+    { "city", "New York" }
+};
+
+Console.WriteLine(dict["name"]);  // O(1) average
+```
 
 **Key Points:**
 - Hash functions should distribute keys uniformly
@@ -296,6 +483,151 @@ print(bst.inorder_traversal())  # [20, 40, 50, 60, 70, 80]
 **Average case** assumes balanced tree.
 
 **Space Complexity:** O(n) for storing n nodes, O(h) for recursive call stack where h is height.
+
+**C# Implementation:**
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class TreeNode<T> where T : IComparable<T>
+{
+    public T Value { get; set; }
+    public TreeNode<T> Left { get; set; }
+    public TreeNode<T> Right { get; set; }
+
+    public TreeNode(T value)
+    {
+        Value = value;
+        Left = null;
+        Right = null;
+    }
+}
+
+public class BinarySearchTree<T> where T : IComparable<T>
+{
+    private TreeNode<T> root;
+
+    public BinarySearchTree()
+    {
+        root = null;
+    }
+
+    public void Insert(T value)
+    {
+        root = InsertRecursive(root, value);
+    }
+
+    private TreeNode<T> InsertRecursive(TreeNode<T> node, T value)
+    {
+        if (node == null)
+            return new TreeNode<T>(value);
+
+        if (value.CompareTo(node.Value) < 0)
+            node.Left = InsertRecursive(node.Left, value);
+        else
+            node.Right = InsertRecursive(node.Right, value);
+
+        return node;
+    }
+
+    public bool Search(T value)
+    {
+        return SearchRecursive(root, value);
+    }
+
+    private bool SearchRecursive(TreeNode<T> node, T value)
+    {
+        if (node == null)
+            return false;
+
+        if (value.CompareTo(node.Value) == 0)
+            return true;
+        else if (value.CompareTo(node.Value) < 0)
+            return SearchRecursive(node.Left, value);
+        else
+            return SearchRecursive(node.Right, value);
+    }
+
+    public void Delete(T value)
+    {
+        root = DeleteRecursive(root, value);
+    }
+
+    private TreeNode<T> DeleteRecursive(TreeNode<T> node, T value)
+    {
+        if (node == null)
+            return null;
+
+        if (value.CompareTo(node.Value) < 0)
+            node.Left = DeleteRecursive(node.Left, value);
+        else if (value.CompareTo(node.Value) > 0)
+            node.Right = DeleteRecursive(node.Right, value);
+        else
+        {
+            // Node to delete found
+            // Case 1: Leaf node or node with one child
+            if (node.Left == null)
+                return node.Right;
+            else if (node.Right == null)
+                return node.Left;
+
+            // Case 2: Node with two children
+            // Find minimum value in right subtree (inorder successor)
+            TreeNode<T> minNode = FindMin(node.Right);
+            node.Value = minNode.Value;
+            node.Right = DeleteRecursive(node.Right, minNode.Value);
+        }
+
+        return node;
+    }
+
+    private TreeNode<T> FindMin(TreeNode<T> node)
+    {
+        while (node.Left != null)
+            node = node.Left;
+        return node;
+    }
+
+    public List<T> InorderTraversal()
+    {
+        List<T> result = new List<T>();
+        InorderRecursive(root, result);
+        return result;
+    }
+
+    private void InorderRecursive(TreeNode<T> node, List<T> result)
+    {
+        if (node != null)
+        {
+            InorderRecursive(node.Left, result);
+            result.Add(node.Value);
+            InorderRecursive(node.Right, result);
+        }
+    }
+}
+
+// Usage example
+var bst = new BinarySearchTree<int>();
+int[] values = { 50, 30, 70, 20, 40, 60, 80 };
+foreach (var val in values)
+{
+    bst.Insert(val);
+}
+
+Console.WriteLine(bst.Search(40));  // True
+Console.WriteLine(bst.Search(25));  // False
+Console.WriteLine(string.Join(", ", bst.InorderTraversal()));
+// Output: 20, 30, 40, 50, 60, 70, 80
+
+bst.Delete(30);
+Console.WriteLine(string.Join(", ", bst.InorderTraversal()));
+// Output: 20, 40, 50, 60, 70, 80
+
+// Using built-in SortedSet<T> (Red-Black tree)
+SortedSet<int> sortedSet = new SortedSet<int> { 50, 30, 70, 20 };
+Console.WriteLine(sortedSet.Contains(30));  // True, O(log n)
+```
 
 **Key Points:**
 - BST property enables efficient search through binary decisions
