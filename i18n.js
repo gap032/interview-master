@@ -16,6 +16,7 @@ const translations = {
 
         // Categories
         catCategories: "Categories",
+        catAll: "All",
         catAlgorithms: "Data Structures & Algorithms",
         catSystemDesign: "System Design",
         catProgramming: "Programming Languages",
@@ -26,6 +27,7 @@ const translations = {
         catInterviewCategories: "Interview Categories & Questions",
         catProblemSolving: "Problem-Solving Framework",
         catResumeTips: "Resume & Interview Tips",
+        catCompetitiveProgramming: "Competitive Programming (C#)",
 
         // Levels
         levelMid: "Mid",
@@ -123,6 +125,7 @@ const translations = {
 
         // Categories
         catCategories: "Kategorie",
+        catAll: "Wszystkie",
         catAlgorithms: "Struktury Danych i Algorytmy",
         catSystemDesign: "Projektowanie Systemów",
         catProgramming: "Języki Programowania",
@@ -133,6 +136,7 @@ const translations = {
         catInterviewCategories: "Kategorie i Pytania Rekrutacyjne",
         catProblemSolving: "Framework Rozwiązywania Problemów",
         catResumeTips: "CV i Porady Rekrutacyjne",
+        catCompetitiveProgramming: "Programowanie Konkursowe (C#)",
 
         // Levels
         levelMid: "Mid",
@@ -283,6 +287,11 @@ function updateUI() {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === currentLanguage);
     });
+
+    // Update statistics display if the function exists
+    if (typeof updateStatsDisplay === 'function') {
+        updateStatsDisplay();
+    }
 }
 
 // Initialize language on page load

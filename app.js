@@ -443,14 +443,14 @@ function updateStatsDisplay() {
     categoryBreakdownDiv.innerHTML = '';
 
     const categoryNames = {
-        'all': 'Wszystkie',
-        'algorithms': 'Data Structures & Algorithms',
-        'system-design': 'System Design',
-        'programming': 'Programming Languages',
-        'architecture': 'Architecture',
-        'databases': 'Databases',
-        'devops': 'DevOps & Cloud',
-        'behavioral': 'Behavioral'
+        'all': t('catAll'),
+        'algorithms': t('catAlgorithms'),
+        'system-design': t('catSystemDesign'),
+        'programming': t('catProgramming'),
+        'architecture': t('catArchitecture'),
+        'databases': t('catDatabases'),
+        'devops': t('catDevOps'),
+        'behavioral': t('catBehavioral')
     };
 
     Object.keys(stats.categoryStats).forEach(category => {
@@ -468,7 +468,7 @@ function updateStatsDisplay() {
                 <div style="height: 100%; width: ${percentage}%; background: linear-gradient(90deg, var(--primary-color), var(--success-color)); transition: width 0.3s;"></div>
             </div>
             <div style="margin-top: 0.25rem; font-size: 0.85rem; color: var(--text-secondary);">
-                ${catStats.quizzes} quizów • ${catStats.correct}/${catStats.questions} poprawnych
+                ${catStats.quizzes} ${t('statsQuizzes')} • ${catStats.correct}/${catStats.questions} ${t('statsCorrect')}
             </div>
         `;
         categoryBreakdownDiv.appendChild(catDiv);
