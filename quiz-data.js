@@ -4475,25 +4475,35 @@ function shuffleArray(array) {
 
 // Helper function to get filtered questions based on current language
 function getFilteredQuestions(category = 'all', level = 'all', count = 10, language = null) {
+    console.log('[DEBUG] getFilteredQuestions() called with:', { category, level, count, language });
+
     // Auto-detect language from i18n if available, fallback to 'en'
     if (!language) {
         language = (typeof currentLanguage !== 'undefined') ? currentLanguage : 'en';
+        console.log('[DEBUG] Auto-detected language:', language);
     }
 
     // Get questions for the current language
     let filtered = quizQuestionsData[language] || quizQuestionsData['en'];
+    console.log('[DEBUG] Initial questions count for language', language + ':', filtered ? filtered.length : 0);
 
     if (category !== 'all') {
+        const beforeFilter = filtered.length;
         filtered = filtered.filter(q => q.category === category);
+        console.log('[DEBUG] After category filter:', filtered.length, '(was', beforeFilter + ')');
     }
 
     if (level !== 'all') {
+        const beforeFilter = filtered.length;
         filtered = filtered.filter(q => q.level === level);
+        console.log('[DEBUG] After level filter:', filtered.length, '(was', beforeFilter + ')');
     }
 
     // Shuffle using Fisher-Yates algorithm and take 'count' questions
     const shuffled = shuffleArray(filtered);
-    return shuffled.slice(0, Math.min(count, shuffled.length));
+    const result = shuffled.slice(0, Math.min(count, shuffled.length));
+    console.log('[DEBUG] Returning', result.length, 'questions after shuffle');
+    return result;
 }
 
 // For backward compatibility - use English by default if no language specified
