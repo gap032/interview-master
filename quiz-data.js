@@ -579,6 +579,16 @@ const quizQuestions = [
     }
 ];
 
+// Helper function to shuffle array using Fisher-Yates algorithm
+function shuffleArray(array) {
+    const shuffled = [...array]; // Create a copy to avoid mutating original
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 // Helper function to get filtered questions
 function getFilteredQuestions(category = 'all', level = 'all', count = 10) {
     let filtered = quizQuestions;
@@ -591,7 +601,7 @@ function getFilteredQuestions(category = 'all', level = 'all', count = 10) {
         filtered = filtered.filter(q => q.level === level);
     }
 
-    // Shuffle and take 'count' questions
-    const shuffled = filtered.sort(() => 0.5 - Math.random());
+    // Shuffle using Fisher-Yates algorithm and take 'count' questions
+    const shuffled = shuffleArray(filtered);
     return shuffled.slice(0, Math.min(count, shuffled.length));
 }
