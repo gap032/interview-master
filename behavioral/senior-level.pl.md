@@ -1,58 +1,58 @@
-# Behavioral Questions - Senior-Level
+# Pytania Behawioralne - Poziom Senior
 
-## 1. Tell me about a time you disagreed with a technical decision
+## 1. Opowiedz o sytuacji, gdy nie zgodziłeś się z decyzją techniczną
 
-**Question**: Describe a technical disagreement and how you handled it.
+**Pytanie**: Opisz techniczną niezgodę i jak sobie z nią poradziłeś.
 
-**Answer:**
+**Odpowiedź:**
 
-**Situation:**
-"Team wanted to adopt NoSQL for all new services, but I believed relational DB was better for our transactional workload."
+**Sytuacja:**
+"Zespół chciał przyjąć NoSQL dla wszystkich nowych serwisów, ale uważałem, że relacyjna baza danych jest lepsza dla naszego obciążenia transakcyjnego."
 
-**Task:**
-"Find the right solution while maintaining team cohesion."
+**Zadanie:**
+"Znaleźć właściwe rozwiązanie zachowując jednocześnie spójność zespołu."
 
-**Action:**
-- Prepared data: comparison of consistency models, performance benchmarks
-- Organized technical discussion with concrete examples
-- Listened to team's concerns (scalability, flexibility)
-- Proposed hybrid: NoSQL for caching/sessions, SQL for transactions
-- Created decision matrix for future db choices
+**Działanie:**
+- Przygotowałem dane: porównanie modeli spójności, testy wydajności
+- Zorganizowałem dyskusję techniczną z konkretnymi przykładami
+- Słuchałem obaw zespołu (skalowalność, elastyczność)
+- Zaproponowałem hybrydę: NoSQL dla cachingu/sesji, SQL dla transakcji
+- Stworzyłem macierz decyzyjną dla przyszłych wyborów baz danych
 
-**Result:**
-"Team adopted hybrid approach. Created guidelines preventing future confusion. System performed well under load."
+**Rezultat:**
+"Zespół przyjął podejście hybrydowe. Stworzyliśmy wytyczne zapobiegające przyszłym nieporozumieniom. System działał dobrze pod obciążeniem."
 
-**Key Points:**
-- Back disagreements with data
-- Listen to understand others' perspectives
-- Focus on team goals, not being right
-- Document decisions for future reference
+**Kluczowe Punkty:**
+- Wspieraj niezgody danymi
+- Słuchaj aby zrozumieć perspektywy innych
+- Skup się na celach zespołu, a nie na racji
+- Dokumentuj decyzje dla przyszłego odniesienia
 
 ---
 
-## 2. How do you handle technical debt?
+## 2. Jak radzisz sobie z długiem technicznym?
 
-**Answer:**
+**Odpowiedź:**
 
-"I treat technical debt as a business decision requiring balance:
+"Traktuję dług techniczny jako decyzję biznesową wymagającą balansu:
 
-**Tracking:**
-- Maintain backlog of technical debt items
-- Categorize by risk and impact
-- Estimate effort to fix
+**Śledzenie:**
+- Utrzymuję backlog elementów długu technicznego
+- Kategoryzuję według ryzyka i wpływu
+- Szacuję wysiłek potrzebny do naprawy
 
-**Prioritization:**
-- Security vulnerabilities: immediate
-- Performance issues affecting users: high priority
-- Code quality improvements: balanced with features
+**Priorytetyzacja:**
+- Luki bezpieczeństwa: natychmiastowo
+- Problemy wydajności wpływające na użytkowników: wysoki priorytet
+- Poprawy jakości kodu: balansowane z funkcjonalnościami
 
-**Communication:**
-- Explain debt in business terms to stakeholders
-- Show cost of not addressing (slower development, bugs)
-- Reserve 20% of sprint capacity for debt reduction
+**Komunikacja:**
+- Wyjaśniam dług w kategoriach biznesowych dla interesariuszy
+- Pokazuję koszt nieadresowania (wolniejszy rozwój, błędy)
+- Rezerwuję 20% pojemności sprintu na redukcję długu
 
-**Example:**
-Had legacy payment service with no tests. Rather than full rewrite:
-1. Added tests for critical paths
-2. Refactored incrementally during feature work
-3. After 6 months: 80% coverage, reduced bugs by 60%"
+**Przykład:**
+Miałem legacy serwis płatności bez testów. Zamiast pełnego przepisania:
+1. Dodałem testy dla krytycznych ścieżek
+2. Refaktoryzowałem stopniowo podczas pracy nad funkcjonalnościami
+3. Po 6 miesiącach: 80% pokrycia, zredukowane błędy o 60%"

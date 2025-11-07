@@ -1,69 +1,69 @@
-# Behavioral Questions - Principal-Level
+# Pytania Behawioralne - Poziom Principal
 
-## 1. How do you drive technical strategy across an organization?
+## 1. Jak napędzasz strategię techniczną w całej organizacji?
 
-**Question**: Describe how you influence technical direction at scale.
+**Pytanie**: Opisz jak wpływasz na kierunek techniczny na dużą skalę.
 
-**Answer:**
+**Odpowiedź:**
 
-"As a Principal Engineer, I focus on:
+"Jako Principal Engineer skupiam się na:
 
-**1. Building Consensus:**
-- Identify common pain points across teams
-- Form working groups with representatives from each team
-- Create RFCs (Request for Comments) for major decisions
-- Gather feedback early and often
+**1. Budowaniu Konsensusu:**
+- Identyfikuję wspólne punkty bólu między zespołami
+- Tworzę grupy robocze z przedstawicielami każdego zespołu
+- Tworzę RFC (Request for Comments) dla głównych decyzji
+- Zbieram feedback wcześnie i często
 
-**Example:**
-Drove adoption of event-driven architecture:
-- Started with pilot team, proved value
-- Documented patterns and best practices
-- Presented at engineering all-hands
-- Created self-service templates and libraries
-- Now 15 teams using the pattern
+**Przykład:**
+Napędzałem adopcję architektury event-driven:
+- Zacząłem od pilotażowego zespołu, udowodniłem wartość
+- Udokumentowałem wzorce i best practices
+- Zaprezentowałem na spotkaniu całego działu inżynierii
+- Stworzyłem self-service szablony i biblioteki
+- Teraz 15 zespołów używa tego wzorca
 
-**2. Balancing Innovation & Stability:**
-- New tech on non-critical paths first
-- Prove value before mandating adoption
-- Support legacy systems during transition
+**2. Balansowanie Innowacji i Stabilności:**
+- Nowe technologie najpierw na niekrytycznych ścieżkach
+- Udowadniam wartość przed mandatowym przyjęciem
+- Wspieram legacy systemy podczas tranzycji
 
-**3. Metrics-Driven:**
-- Define success metrics upfront
-- Regular reviews of technology decisions
-- Adjust based on data, not opinions"
+**3. Oparte na Metrykach:**
+- Definiuję metryki sukcesu z góry
+- Regularne przeglądy decyzji technologicznych
+- Dostosowuję na podstawie danych, nie opinii"
 
 ---
 
-## 2. Tell me about a time you had to make a critical architectural decision under pressure
+## 2. Opowiedz o sytuacji, gdy musiałeś podjąć krytyczną decyzję architektoniczną pod presją
 
-**Answer:**
+**Odpowiedź:**
 
-**Situation:**
-"Our database hit 90% capacity. Outages likely within weeks. Full migration would take months."
+**Sytuacja:**
+"Nasza baza danych osiągnęła 90% pojemności. Awarie prawdopodobne w ciągu tygodni. Pełna migracja zajęłaby miesiące."
 
-**Task:**
-"Stabilize system immediately while planning long-term solution."
+**Zadanie:**
+"Ustabilizować system natychmiast planując jednocześnie długoterminowe rozwiązanie."
 
-**Action:**
-Short-term (week 1):
-- Implemented aggressive caching
-- Archived old data
-- Optimized slow queries
-- Added read replicas
+**Działanie:**
+Krótkoterminowo (tydzień 1):
+- Zaimplementowałem agresywne cachowanie
+- Zarchiwizowałem stare dane
+- Zoptymalizowałem wolne zapytania
+- Dodałem repliki read
 
-Long-term (3 months):
-- Designed sharding strategy
-- Built data migration pipeline
-- Migrated incrementally, table by table
-- Zero downtime migration
+Długoterminowo (3 miesiące):
+- Zaprojektowałem strategię shardingu
+- Zbudowałem pipeline migracji danych
+- Migrowałem stopniowo, tabela po tabeli
+- Migracja bez przestojów
 
-**Result:**
-- Immediate: Reduced DB load by 40%, avoided outages
-- 3 months: Scaled to 10x capacity
-- Process became playbook for future migrations
+**Rezultat:**
+- Natychmiastowo: Zredukowane obciążenie DB o 40%, uniknąłem awarii
+- 3 miesiące: Skalowanie do 10x pojemności
+- Proces stał się playbookiem dla przyszłych migracji
 
-**Lessons:**
-- Buy time with tactical fixes
-- Plan strategic solution in parallel
-- Communicate progress to stakeholders
-- Document for future similar situations"
+**Lekcje:**
+- Kupuj czas taktycznymi naprawami
+- Planuj strategiczne rozwiązanie równolegle
+- Komunikuj postęp do interesariuszy
+- Dokumentuj dla przyszłych podobnych sytuacji"
