@@ -1672,6 +1672,203 @@ const quizQuestionsData = {
             ],
             correct: 1,
             explanation: "Service Mesh provides infrastructure layer for microservices communication, handling traffic management, security, observability, and resilience patterns."
+        },
+
+        // Competitive Programming Questions - Mid Level
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Write C# code to find the two numbers in an array that sum to a target value. What's the optimal time complexity?",
+            answers: [
+                "O(n²) - nested loops comparing all pairs",
+                "O(n log n) - sort array then use two pointers",
+                "O(n) - use hash set to track complements",
+                "O(n³) - brute force all combinations"
+            ],
+            correct: 2,
+            explanation: "Optimal O(n) solution using HashSet:\n```csharp\npublic int[] TwoSum(int[] nums, int target) {\n    var seen = new HashSet<int>();\n    for (int i = 0; i < nums.Length; i++) {\n        int complement = target - nums[i];\n        if (seen.Contains(complement)) {\n            return new int[] { complement, nums[i] };\n        }\n        seen.Add(nums[i]);\n    }\n    return null;\n}\n```\nTime: O(n), Space: O(n). Better than O(n²) nested loops or O(n log n) sort approach."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "How would you implement a function to reverse a linked list in C#?",
+            answers: [
+                "Use recursion",
+                "Iterate with three pointers (prev, current, next)",
+                "Convert to array, reverse, rebuild",
+                "Use Stack<T>"
+            ],
+            correct: 1,
+            explanation: "Iterative solution with O(n) time, O(1) space:\n```csharp\npublic ListNode ReverseList(ListNode head) {\n    ListNode prev = null;\n    ListNode current = head;\n    while (current != null) {\n        ListNode next = current.next;\n        current.next = prev;\n        prev = current;\n        current = next;\n    }\n    return prev;\n}\n```\nMost efficient approach - modifies pointers in-place without extra space."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "What's the best approach to check if a string is a palindrome in C#?",
+            answers: [
+                "Reverse string and compare",
+                "Two pointers from start and end",
+                "Use LINQ Reverse()",
+                "Recursion"
+            ],
+            correct: 1,
+            explanation: "Optimal two-pointer solution:\n```csharp\npublic bool IsPalindrome(string s) {\n    int left = 0, right = s.Length - 1;\n    while (left < right) {\n        if (s[left] != s[right])\n            return false;\n        left++;\n        right--;\n    }\n    return true;\n}\n```\nTime: O(n/2) = O(n), Space: O(1). No extra string allocation."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "How to find the maximum subarray sum (Kadane's algorithm) in C#?",
+            answers: [
+                "Check all possible subarrays - O(n³)",
+                "Use prefix sums - O(n²)",
+                "Dynamic programming with current/max sum - O(n)",
+                "Divide and conquer - O(n log n)"
+            ],
+            correct: 2,
+            explanation: "Kadane's Algorithm - O(n) solution:\n```csharp\npublic int MaxSubArray(int[] nums) {\n    int maxSoFar = nums[0];\n    int maxEndingHere = nums[0];\n    for (int i = 1; i < nums.Length; i++) {\n        maxEndingHere = Math.Max(nums[i], maxEndingHere + nums[i]);\n        maxSoFar = Math.Max(maxSoFar, maxEndingHere);\n    }\n    return maxSoFar;\n}\n```\nClassic DP problem with optimal O(n) time and O(1) space."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Implement binary search in C# - what's the correct way to avoid integer overflow?",
+            answers: [
+                "int mid = (left + right) / 2;",
+                "int mid = left + (right - left) / 2;",
+                "int mid = (left + right) >> 1;",
+                "float mid = (left + right) / 2.0;"
+            ],
+            correct: 1,
+            explanation: "Safe binary search avoiding overflow:\n```csharp\npublic int BinarySearch(int[] arr, int target) {\n    int left = 0, right = arr.Length - 1;\n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}\n```\nTime: O(log n). Formula prevents overflow when left+right > int.MaxValue."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "How to solve the 'Longest Increasing Subsequence' problem optimally in C#?",
+            answers: [
+                "Recursion with memoization - O(n²)",
+                "Dynamic programming - O(n²)",
+                "Binary search with DP - O(n log n)",
+                "Greedy approach - O(n)"
+            ],
+            correct: 2,
+            explanation: "Optimal O(n log n) solution with binary search:\n```csharp\npublic int LengthOfLIS(int[] nums) {\n    var tails = new List<int>();\n    foreach (int num in nums) {\n        int left = 0, right = tails.Count;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (tails[mid] < num) left = mid + 1;\n            else right = mid;\n        }\n        if (left == tails.Count) tails.Add(num);\n        else tails[left] = num;\n    }\n    return tails.Count;\n}\n```\nUses binary search to maintain smallest tail for each length."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "What's the optimal way to detect a cycle in a linked list?",
+            answers: [
+                "Store all nodes in HashSet - O(n) space",
+                "Floyd's Cycle Detection (tortoise & hare) - O(1) space",
+                "Mark visited nodes - modifies structure",
+                "Reverse list and check if same - O(n) space"
+            ],
+            correct: 1,
+            explanation: "Floyd's Cycle Detection Algorithm:\n```csharp\npublic bool HasCycle(ListNode head) {\n    if (head == null) return false;\n    ListNode slow = head;\n    ListNode fast = head;\n    while (fast?.next != null) {\n        slow = slow.next;\n        fast = fast.next.next;\n        if (slow == fast) return true;\n    }\n    return false;\n}\n```\nTime: O(n), Space: O(1). Slow moves 1 step, fast moves 2 - they meet if cycle exists."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "How to implement a Trie (Prefix Tree) for word search in C#?",
+            answers: [
+                "Use Dictionary<string, bool>",
+                "Use HashSet<string>",
+                "Create TrieNode class with Dictionary<char, TrieNode>",
+                "Use array of 26 children per node"
+            ],
+            correct: 2,
+            explanation: "Trie implementation with Dictionary:\n```csharp\npublic class TrieNode {\n    public Dictionary<char, TrieNode> Children = new();\n    public bool IsEndOfWord = false;\n}\npublic class Trie {\n    private TrieNode root = new();\n    public void Insert(string word) {\n        var node = root;\n        foreach (char c in word) {\n            if (!node.Children.ContainsKey(c))\n                node.Children[c] = new TrieNode();\n            node = node.Children[c];\n        }\n        node.IsEndOfWord = true;\n    }\n    public bool Search(string word) {\n        var node = root;\n        foreach (char c in word) {\n            if (!node.Children.ContainsKey(c)) return false;\n            node = node.Children[c];\n        }\n        return node.IsEndOfWord;\n    }\n}\n```\nInsert/Search: O(m) where m is word length."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Solve the 'Merge K Sorted Lists' problem optimally in C#:",
+            answers: [
+                "Merge lists one by one - O(kN)",
+                "Use PriorityQueue (Min Heap) - O(N log k)",
+                "Merge all into array and sort - O(N log N)",
+                "Divide and conquer - O(N log k)"
+            ],
+            correct: 1,
+            explanation: "Optimal solution using PriorityQueue:\n```csharp\npublic ListNode MergeKLists(ListNode[] lists) {\n    var pq = new PriorityQueue<ListNode, int>();\n    foreach (var list in lists) {\n        if (list != null)\n            pq.Enqueue(list, list.val);\n    }\n    var dummy = new ListNode(0);\n    var current = dummy;\n    while (pq.Count > 0) {\n        var node = pq.Dequeue();\n        current.next = node;\n        current = current.next;\n        if (node.next != null)\n            pq.Enqueue(node.next, node.next.val);\n    }\n    return dummy.next;\n}\n```\nTime: O(N log k), where N is total nodes, k is number of lists."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "How to solve the 'Knapsack 0/1' problem with DP in C#?",
+            answers: [
+                "2D DP array - O(n×W) space",
+                "Recursion with memoization - O(n×W) space",
+                "1D DP array with reverse iteration - O(W) space",
+                "Greedy by value/weight ratio - incorrect"
+            ],
+            correct: 2,
+            explanation: "Space-optimized 1D DP solution:\n```csharp\npublic int Knapsack(int[] weights, int[] values, int capacity) {\n    int n = weights.Length;\n    int[] dp = new int[capacity + 1];\n    for (int i = 0; i < n; i++) {\n        for (int w = capacity; w >= weights[i]; w--) {\n            dp[w] = Math.Max(dp[w], dp[w - weights[i]] + values[i]);\n        }\n    }\n    return dp[capacity];\n}\n```\nTime: O(n×W), Space: O(W). Backwards iteration prevents item reuse."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Find all permutations of a string using backtracking in C#:",
+            answers: [
+                "Use built-in library",
+                "Iterative with queue",
+                "Recursive backtracking with swap",
+                "Generate using factorials"
+            ],
+            correct: 2,
+            explanation: "Classic backtracking solution:\n```csharp\npublic IList<string> Permute(string str) {\n    var result = new List<string>();\n    Backtrack(str.ToCharArray(), 0, result);\n    return result;\n}\nprivate void Backtrack(char[] arr, int start, List<string> result) {\n    if (start == arr.Length) {\n        result.Add(new string(arr));\n        return;\n    }\n    for (int i = start; i < arr.Length; i++) {\n        (arr[start], arr[i]) = (arr[i], arr[start]);\n        Backtrack(arr, start + 1, result);\n        (arr[start], arr[i]) = (arr[i], arr[start]);\n    }\n}\n```\nTime: O(n!), Space: O(n) for recursion stack."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Implement Dijkstra's shortest path algorithm in C#:",
+            answers: [
+                "Use BFS with queue - incorrect for weighted graphs",
+                "Use DFS - doesn't guarantee shortest path",
+                "Use PriorityQueue with distances - O((V+E) log V)",
+                "Use simple array iteration - O(V²)"
+            ],
+            correct: 2,
+            explanation: "Dijkstra's with PriorityQueue:\n```csharp\npublic int[] Dijkstra(List<(int node, int weight)>[] graph, int start) {\n    int n = graph.Length;\n    int[] dist = new int[n];\n    Array.Fill(dist, int.MaxValue);\n    dist[start] = 0;\n    var pq = new PriorityQueue<int, int>();\n    pq.Enqueue(start, 0);\n    while (pq.Count > 0) {\n        int u = pq.Dequeue();\n        foreach (var (v, weight) in graph[u]) {\n            int newDist = dist[u] + weight;\n            if (newDist < dist[v]) {\n                dist[v] = newDist;\n                pq.Enqueue(v, newDist);\n            }\n        }\n    }\n    return dist;\n}\n```\nTime: O((V+E) log V) with binary heap."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "How to find Lowest Common Ancestor (LCA) in a Binary Tree?",
+            answers: [
+                "Store path to both nodes, find intersection - O(n) space",
+                "Recursive DFS checking if nodes are in subtrees - O(h) space",
+                "Level-order traversal - inefficient",
+                "Parent pointers - requires modification"
+            ],
+            correct: 1,
+            explanation: "Elegant recursive solution:\n```csharp\npublic TreeNode LowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n    if (root == null || root == p || root == q)\n        return root;\n    TreeNode left = LowestCommonAncestor(root.left, p, q);\n    TreeNode right = LowestCommonAncestor(root.right, p, q);\n    if (left != null && right != null)\n        return root;\n    return left ?? right;\n}\n```\nTime: O(n), Space: O(h) for recursion where h is height."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Solve 'Coin Change' (minimum coins to make amount) with DP:",
+            answers: [
+                "Greedy by largest coin first - incorrect",
+                "BFS level-order - O(amount×coins) space",
+                "Bottom-up DP - O(amount) space",
+                "Recursion without memoization - exponential"
+            ],
+            correct: 2,
+            explanation: "Bottom-up DP solution:\n```csharp\npublic int CoinChange(int[] coins, int amount) {\n    int[] dp = new int[amount + 1];\n    Array.Fill(dp, amount + 1);\n    dp[0] = 0;\n    for (int i = 1; i <= amount; i++) {\n        foreach (int coin in coins) {\n            if (coin <= i) {\n                dp[i] = Math.Min(dp[i], dp[i - coin] + 1);\n            }\n        }\n    }\n    return dp[amount] > amount ? -1 : dp[amount];\n}\n```\nTime: O(amount × coins), Space: O(amount)."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Implement Union-Find (Disjoint Set) with path compression:",
+            answers: [
+                "Simple parent array - O(n) per operation",
+                "Path compression only - O(log n) amortized",
+                "Union by rank only - O(log n) amortized",
+                "Path compression + union by rank - O(α(n)) amortized"
+            ],
+            correct: 3,
+            explanation: "Optimized Union-Find:\n```csharp\npublic class UnionFind {\n    private int[] parent;\n    private int[] rank;\n    public UnionFind(int n) {\n        parent = new int[n];\n        rank = new int[n];\n        for (int i = 0; i < n; i++)\n            parent[i] = i;\n    }\n    public int Find(int x) {\n        if (parent[x] != x)\n            parent[x] = Find(parent[x]);\n        return parent[x];\n    }\n    public void Union(int x, int y) {\n        int rootX = Find(x);\n        int rootY = Find(y);\n        if (rootX == rootY) return;\n        if (rank[rootX] < rank[rootY])\n            parent[rootX] = rootY;\n        else if (rank[rootX] > rank[rootY])\n            parent[rootY] = rootX;\n        else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n    }\n}\n```\nBoth operations: O(α(n)) - inverse Ackermann function."
         }
     ],
     pl: [
@@ -3346,6 +3543,203 @@ const quizQuestionsData = {
             ],
             correct: 1,
             explanation: "Service Mesh zapewnia warstwę infrastruktury dla komunikacji mikrousług, obsługując zarządzanie ruchem, bezpieczeństwo, observability i wzorce odporności."
+        },
+
+        // Pytania z programowania konkursowego - Mid Level
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Napisz kod C# aby znaleźć dwie liczby w tablicy, które sumują się do wartości docelowej. Jaka jest optymalna złożoność czasowa?",
+            answers: [
+                "O(n²) - zagnieżdżone pętle porównujące wszystkie pary",
+                "O(n log n) - sortowanie tablicy a potem dwa wskaźniki",
+                "O(n) - użycie hash set do śledzenia dopełnień",
+                "O(n³) - brute force wszystkich kombinacji"
+            ],
+            correct: 2,
+            explanation: "Optymalne rozwiązanie O(n) używające HashSet:\n```csharp\npublic int[] TwoSum(int[] nums, int target) {\n    var seen = new HashSet<int>();\n    for (int i = 0; i < nums.Length; i++) {\n        int complement = target - nums[i];\n        if (seen.Contains(complement)) {\n            return new int[] { complement, nums[i] };\n        }\n        seen.Add(nums[i]);\n    }\n    return null;\n}\n```\nCzas: O(n), Pamięć: O(n). Lepsze niż O(n²) zagnieżdżone pętle lub O(n log n) sortowanie."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Jak zaimplementować funkcję odwracania listy linkowanej w C#?",
+            answers: [
+                "Użyć rekurencji",
+                "Iterować z trzema wskaźnikami (prev, current, next)",
+                "Konwersja do tablicy, odwrócenie, przebudowa",
+                "Użyć Stack<T>"
+            ],
+            correct: 1,
+            explanation: "Rozwiązanie iteracyjne z O(n) czasem, O(1) pamięcią:\n```csharp\npublic ListNode ReverseList(ListNode head) {\n    ListNode prev = null;\n    ListNode current = head;\n    while (current != null) {\n        ListNode next = current.next;\n        current.next = prev;\n        prev = current;\n        current = next;\n    }\n    return prev;\n}\n```\nNajbardziej efektywne podejście - modyfikuje wskaźniki in-place bez dodatkowej pamięci."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Jakie jest najlepsze podejście do sprawdzenia czy string jest palindromem w C#?",
+            answers: [
+                "Odwrócić string i porównać",
+                "Dwa wskaźniki od początku i końca",
+                "Użyć LINQ Reverse()",
+                "Rekurencja"
+            ],
+            correct: 1,
+            explanation: "Optymalne rozwiązanie z dwoma wskaźnikami:\n```csharp\npublic bool IsPalindrome(string s) {\n    int left = 0, right = s.Length - 1;\n    while (left < right) {\n        if (s[left] != s[right])\n            return false;\n        left++;\n        right--;\n    }\n    return true;\n}\n```\nCzas: O(n/2) = O(n), Pamięć: O(1). Bez dodatkowej alokacji stringów."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Jak znaleźć maksymalną sumę podtablicy (algorytm Kadane'a) w C#?",
+            answers: [
+                "Sprawdzić wszystkie możliwe podtablice - O(n³)",
+                "Użyć sum prefiksowych - O(n²)",
+                "Programowanie dynamiczne z bieżącą/max sumą - O(n)",
+                "Dziel i zwyciężaj - O(n log n)"
+            ],
+            correct: 2,
+            explanation: "Algorytm Kadane'a - rozwiązanie O(n):\n```csharp\npublic int MaxSubArray(int[] nums) {\n    int maxSoFar = nums[0];\n    int maxEndingHere = nums[0];\n    for (int i = 1; i < nums.Length; i++) {\n        maxEndingHere = Math.Max(nums[i], maxEndingHere + nums[i]);\n        maxSoFar = Math.Max(maxSoFar, maxEndingHere);\n    }\n    return maxSoFar;\n}\n```\nKlasyczny problem DP z optymalnym czasem O(n) i pamięcią O(1)."
+        },
+        {
+            category: "competitive-programming",
+            level: "mid",
+            question: "Implementacja binary search w C# - jaki jest poprawny sposób uniknięcia integer overflow?",
+            answers: [
+                "int mid = (left + right) / 2;",
+                "int mid = left + (right - left) / 2;",
+                "int mid = (left + right) >> 1;",
+                "float mid = (left + right) / 2.0;"
+            ],
+            correct: 1,
+            explanation: "Bezpieczne binary search unikające overflow:\n```csharp\npublic int BinarySearch(int[] arr, int target) {\n    int left = 0, right = arr.Length - 1;\n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}\n```\nCzas: O(log n). Formuła zapobiega overflow gdy left+right > int.MaxValue."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Jak rozwiązać problem 'Longest Increasing Subsequence' optymalnie w C#?",
+            answers: [
+                "Rekurencja z memoizacją - O(n²)",
+                "Programowanie dynamiczne - O(n²)",
+                "Binary search z DP - O(n log n)",
+                "Podejście zachłanne - O(n)"
+            ],
+            correct: 2,
+            explanation: "Optymalne rozwiązanie O(n log n) z binary search:\n```csharp\npublic int LengthOfLIS(int[] nums) {\n    var tails = new List<int>();\n    foreach (int num in nums) {\n        int left = 0, right = tails.Count;\n        while (left < right) {\n            int mid = left + (right - left) / 2;\n            if (tails[mid] < num) left = mid + 1;\n            else right = mid;\n        }\n        if (left == tails.Count) tails.Add(num);\n        else tails[left] = num;\n    }\n    return tails.Count;\n}\n```\nUżywa binary search do utrzymywania najmniejszego ogona dla każdej długości."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Jaki jest optymalny sposób wykrycia cyklu w liście linkowanej?",
+            answers: [
+                "Przechować wszystkie węzły w HashSet - O(n) pamięci",
+                "Wykrywanie cyklu Floyda (żółw i zając) - O(1) pamięci",
+                "Oznaczać odwiedzone węzły - modyfikuje strukturę",
+                "Odwrócić listę i sprawdzić czy ta sama - O(n) pamięci"
+            ],
+            correct: 1,
+            explanation: "Algorytm wykrywania cyklu Floyda:\n```csharp\npublic bool HasCycle(ListNode head) {\n    if (head == null) return false;\n    ListNode slow = head;\n    ListNode fast = head;\n    while (fast?.next != null) {\n        slow = slow.next;\n        fast = fast.next.next;\n        if (slow == fast) return true;\n    }\n    return false;\n}\n```\nCzas: O(n), Pamięć: O(1). Slow porusza się o 1 krok, fast o 2 - spotykają się jeśli istnieje cykl."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Jak zaimplementować Trie (Prefix Tree) do wyszukiwania słów w C#?",
+            answers: [
+                "Użyć Dictionary<string, bool>",
+                "Użyć HashSet<string>",
+                "Stworzyć klasę TrieNode z Dictionary<char, TrieNode>",
+                "Użyć tablicy 26 dzieci na węzeł"
+            ],
+            correct: 2,
+            explanation: "Implementacja Trie z Dictionary:\n```csharp\npublic class TrieNode {\n    public Dictionary<char, TrieNode> Children = new();\n    public bool IsEndOfWord = false;\n}\npublic class Trie {\n    private TrieNode root = new();\n    public void Insert(string word) {\n        var node = root;\n        foreach (char c in word) {\n            if (!node.Children.ContainsKey(c))\n                node.Children[c] = new TrieNode();\n            node = node.Children[c];\n        }\n        node.IsEndOfWord = true;\n    }\n    public bool Search(string word) {\n        var node = root;\n        foreach (char c in word) {\n            if (!node.Children.ContainsKey(c)) return false;\n            node = node.Children[c];\n        }\n        return node.IsEndOfWord;\n    }\n}\n```\nInsert/Search: O(m) gdzie m to długość słowa."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Rozwiąż problem 'Merge K Sorted Lists' optymalnie w C#:",
+            answers: [
+                "Łącz listy jedna po drugiej - O(kN)",
+                "Użyj PriorityQueue (Min Heap) - O(N log k)",
+                "Połącz wszystko w tablicę i posortuj - O(N log N)",
+                "Dziel i zwyciężaj - O(N log k)"
+            ],
+            correct: 1,
+            explanation: "Optymalne rozwiązanie używające PriorityQueue:\n```csharp\npublic ListNode MergeKLists(ListNode[] lists) {\n    var pq = new PriorityQueue<ListNode, int>();\n    foreach (var list in lists) {\n        if (list != null)\n            pq.Enqueue(list, list.val);\n    }\n    var dummy = new ListNode(0);\n    var current = dummy;\n    while (pq.Count > 0) {\n        var node = pq.Dequeue();\n        current.next = node;\n        current = current.next;\n        if (node.next != null)\n            pq.Enqueue(node.next, node.next.val);\n    }\n    return dummy.next;\n}\n```\nCzas: O(N log k), gdzie N to łączna liczba węzłów, k to liczba list."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Jak rozwiązać problem 'Knapsack 0/1' z DP w C#?",
+            answers: [
+                "Tablica 2D DP - O(n×W) pamięci",
+                "Rekurencja z memoizacją - O(n×W) pamięci",
+                "Tablica 1D DP z iteracją wsteczną - O(W) pamięci",
+                "Zachłannie przez stosunek wartość/waga - niepoprawne"
+            ],
+            correct: 2,
+            explanation: "Zoptymalizowane pod kątem pamięci rozwiązanie 1D DP:\n```csharp\npublic int Knapsack(int[] weights, int[] values, int capacity) {\n    int n = weights.Length;\n    int[] dp = new int[capacity + 1];\n    for (int i = 0; i < n; i++) {\n        for (int w = capacity; w >= weights[i]; w--) {\n            dp[w] = Math.Max(dp[w], dp[w - weights[i]] + values[i]);\n        }\n    }\n    return dp[capacity];\n}\n```\nCzas: O(n×W), Pamięć: O(W). Iteracja wsteczna zapobiega ponownemu użyciu przedmiotu."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Znajdź wszystkie permutacje stringa używając backtrackingu w C#:",
+            answers: [
+                "Użyj wbudowanej biblioteki",
+                "Iteracyjnie z kolejką",
+                "Rekurencyjny backtracking z zamianą",
+                "Generuj używając silni"
+            ],
+            correct: 2,
+            explanation: "Klasyczne rozwiązanie backtrackingowe:\n```csharp\npublic IList<string> Permute(string str) {\n    var result = new List<string>();\n    Backtrack(str.ToCharArray(), 0, result);\n    return result;\n}\nprivate void Backtrack(char[] arr, int start, List<string> result) {\n    if (start == arr.Length) {\n        result.Add(new string(arr));\n        return;\n    }\n    for (int i = start; i < arr.Length; i++) {\n        (arr[start], arr[i]) = (arr[i], arr[start]);\n        Backtrack(arr, start + 1, result);\n        (arr[start], arr[i]) = (arr[i], arr[start]);\n    }\n}\n```\nCzas: O(n!), Pamięć: O(n) dla stosu rekurencji."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Zaimplementuj algorytm najkrótszej ścieżki Dijkstry w C#:",
+            answers: [
+                "Użyj BFS z kolejką - niepoprawne dla grafów ważonych",
+                "Użyj DFS - nie gwarantuje najkrótszej ścieżki",
+                "Użyj PriorityQueue z odległościami - O((V+E) log V)",
+                "Użyj prostej iteracji po tablicy - O(V²)"
+            ],
+            correct: 2,
+            explanation: "Dijkstra z PriorityQueue:\n```csharp\npublic int[] Dijkstra(List<(int node, int weight)>[] graph, int start) {\n    int n = graph.Length;\n    int[] dist = new int[n];\n    Array.Fill(dist, int.MaxValue);\n    dist[start] = 0;\n    var pq = new PriorityQueue<int, int>();\n    pq.Enqueue(start, 0);\n    while (pq.Count > 0) {\n        int u = pq.Dequeue();\n        foreach (var (v, weight) in graph[u]) {\n            int newDist = dist[u] + weight;\n            if (newDist < dist[v]) {\n                dist[v] = newDist;\n                pq.Enqueue(v, newDist);\n            }\n        }\n    }\n    return dist;\n}\n```\nCzas: O((V+E) log V) z kopcem binarnym."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Jak znaleźć Lowest Common Ancestor (LCA) w drzewie binarnym?",
+            answers: [
+                "Przechować ścieżkę do obu węzłów, znaleźć przecięcie - O(n) pamięci",
+                "Rekurencyjny DFS sprawdzający czy węzły są w poddrzewach - O(h) pamięci",
+                "Przeszukiwanie poziomowe - nieefektywne",
+                "Wskaźniki rodzica - wymaga modyfikacji"
+            ],
+            correct: 1,
+            explanation: "Eleganckie rozwiązanie rekurencyjne:\n```csharp\npublic TreeNode LowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n    if (root == null || root == p || root == q)\n        return root;\n    TreeNode left = LowestCommonAncestor(root.left, p, q);\n    TreeNode right = LowestCommonAncestor(root.right, p, q);\n    if (left != null && right != null)\n        return root;\n    return left ?? right;\n}\n```\nCzas: O(n), Pamięć: O(h) dla rekurencji gdzie h to wysokość."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Rozwiąż 'Coin Change' (minimalna liczba monet dla kwoty) z DP:",
+            answers: [
+                "Zachłannie przez największą monetę - niepoprawne",
+                "BFS poziomowe - O(amount×coins) pamięci",
+                "Bottom-up DP - O(amount) pamięci",
+                "Rekurencja bez memoizacji - wykładnicze"
+            ],
+            correct: 2,
+            explanation: "Rozwiązanie Bottom-up DP:\n```csharp\npublic int CoinChange(int[] coins, int amount) {\n    int[] dp = new int[amount + 1];\n    Array.Fill(dp, amount + 1);\n    dp[0] = 0;\n    for (int i = 1; i <= amount; i++) {\n        foreach (int coin in coins) {\n            if (coin <= i) {\n                dp[i] = Math.Min(dp[i], dp[i - coin] + 1);\n            }\n        }\n    }\n    return dp[amount] > amount ? -1 : dp[amount];\n}\n```\nCzas: O(amount × coins), Pamięć: O(amount)."
+        },
+        {
+            category: "competitive-programming",
+            level: "senior",
+            question: "Zaimplementuj Union-Find (Disjoint Set) z kompresją ścieżki:",
+            answers: [
+                "Prosta tablica rodziców - O(n) na operację",
+                "Tylko kompresja ścieżki - O(log n) zamortyzowane",
+                "Tylko union by rank - O(log n) zamortyzowane",
+                "Kompresja ścieżki + union by rank - O(α(n)) zamortyzowane"
+            ],
+            correct: 3,
+            explanation: "Zoptymalizowany Union-Find:\n```csharp\npublic class UnionFind {\n    private int[] parent;\n    private int[] rank;\n    public UnionFind(int n) {\n        parent = new int[n];\n        rank = new int[n];\n        for (int i = 0; i < n; i++)\n            parent[i] = i;\n    }\n    public int Find(int x) {\n        if (parent[x] != x)\n            parent[x] = Find(parent[x]);\n        return parent[x];\n    }\n    public void Union(int x, int y) {\n        int rootX = Find(x);\n        int rootY = Find(y);\n        if (rootX == rootY) return;\n        if (rank[rootX] < rank[rootY])\n            parent[rootX] = rootY;\n        else if (rank[rootX] > rank[rootY])\n            parent[rootY] = rootX;\n        else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n    }\n}\n```\nObie operacje: O(α(n)) - odwrotna funkcja Ackermanna."
         }
     ]
 };
