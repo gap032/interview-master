@@ -116,7 +116,7 @@ This repository includes an interactive web application with:
 - Mobile-responsive design
 
 ### 🎯 Quiz Mode
-- Test your knowledge with 100+ quiz questions
+- Test your knowledge with 330+ quiz questions
 - Filter by category and difficulty level
 - Instant feedback with explanations
 - Track your progress and statistics
@@ -253,7 +253,7 @@ This repository is provided as-is for educational purposes.
   - Programming Languages (LINQ, async/await, modern .NET)
 - 🌐 **Interactive Web Application**:
   - Materials browser with syntax highlighting
-  - Quiz mode with 100+ questions
+  - Quiz mode with 330+ questions
   - Statistics dashboard
   - Bilingual support (English/Polish)
 - 🔧 **Technologies**: Angular 17+, RxJS, NgRx, TypeScript, React, T-SQL, C#, .NET 6+, EF Core, Python, JavaScript
