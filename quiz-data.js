@@ -1030,6 +1030,648 @@ const quizQuestionsData = {
             ],
             correct: 2,
             explanation: "Principal Engineers grow others by providing challenging opportunities, sharing organizational context, sponsoring visibility, and mentoring."
+        },
+
+        // Additional Algorithms Questions - Mid Level
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "What is the purpose of dynamic programming?",
+            answers: [
+                "To make programs run faster by using more memory",
+                "To solve problems by breaking them into overlapping subproblems and storing results",
+                "To dynamically allocate memory",
+                "To write programs that modify themselves"
+            ],
+            correct: 1,
+            explanation: "Dynamic programming solves complex problems by breaking them down into simpler overlapping subproblems and storing their results to avoid redundant calculations."
+        },
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "Which sorting algorithm is most suitable for sorting a linked list?",
+            answers: [
+                "Quick Sort",
+                "Heap Sort",
+                "Merge Sort",
+                "Insertion Sort"
+            ],
+            correct: 2,
+            explanation: "Merge Sort is ideal for linked lists because it doesn't require random access and works efficiently with sequential access, unlike Quick Sort or Heap Sort."
+        },
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "What is the time complexity of finding an element in a balanced AVL tree?",
+            answers: [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)"
+            ],
+            correct: 1,
+            explanation: "AVL trees are self-balancing binary search trees that guarantee O(log n) search time by maintaining balance through rotations."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "What is the Bellman-Ford algorithm used for?",
+            answers: [
+                "Sorting arrays",
+                "Finding shortest paths in graphs with negative weights",
+                "Balancing binary trees",
+                "Compressing data"
+            ],
+            correct: 1,
+            explanation: "Bellman-Ford algorithm finds shortest paths from a source vertex to all other vertices in a weighted graph, even with negative edge weights."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "What is the difference between Kruskal's and Prim's algorithms?",
+            answers: [
+                "Kruskal's is for shortest path, Prim's for minimum spanning tree",
+                "Both find MST but Kruskal's works on edges, Prim's on vertices",
+                "There is no difference",
+                "Kruskal's is faster for dense graphs"
+            ],
+            correct: 1,
+            explanation: "Both find minimum spanning trees, but Kruskal's algorithm sorts and processes edges, while Prim's algorithm grows the tree by adding vertices."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "What is memoization in the context of algorithms?",
+            answers: [
+                "Memorizing the code",
+                "Caching function results to optimize recursive algorithms",
+                "Using more memory",
+                "Writing memory to disk"
+            ],
+            correct: 1,
+            explanation: "Memoization is an optimization technique where function results are cached and reused, particularly useful for optimizing recursive algorithms with overlapping subproblems."
+        },
+
+        // Additional System Design Questions - Mid Level
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What is the purpose of a message broker?",
+            answers: [
+                "To trade stocks",
+                "To enable asynchronous communication between services",
+                "To compress messages",
+                "To encrypt data"
+            ],
+            correct: 1,
+            explanation: "A message broker facilitates asynchronous communication between services by receiving, routing, and delivering messages, improving decoupling and scalability."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What does 'idempotent' mean in the context of REST APIs?",
+            answers: [
+                "The API is very fast",
+                "Multiple identical requests have the same effect as a single request",
+                "The API uses encryption",
+                "The API can handle multiple users"
+            ],
+            correct: 1,
+            explanation: "An idempotent operation can be performed multiple times with the same result. GET, PUT, and DELETE are typically idempotent in REST APIs."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What is the purpose of rate limiting in APIs?",
+            answers: [
+                "To make APIs slower",
+                "To prevent abuse and ensure fair resource usage",
+                "To compress data",
+                "To cache responses"
+            ],
+            correct: 1,
+            explanation: "Rate limiting restricts the number of API requests a client can make in a given time period, preventing abuse and ensuring system stability."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What is the purpose of a Circuit Breaker in microservices?",
+            answers: [
+                "To turn services on and off",
+                "To prevent cascading failures by failing fast when a service is down",
+                "To balance load",
+                "To encrypt communication"
+            ],
+            correct: 1,
+            explanation: "Circuit Breaker monitors for failures and 'opens the circuit' to fail fast and prevent cascading failures, giving the failing service time to recover."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What is the difference between vertical and horizontal partitioning in databases?",
+            answers: [
+                "Vertical splits by rows, horizontal by columns",
+                "Vertical splits by columns, horizontal by rows",
+                "No difference",
+                "Vertical is faster"
+            ],
+            correct: 1,
+            explanation: "Vertical partitioning splits tables by columns (different attributes in different tables), while horizontal partitioning splits by rows (sharding)."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What is the purpose of a reverse proxy?",
+            answers: [
+                "To hide client IP addresses",
+                "To sit in front of servers, handling SSL, caching, and load balancing",
+                "To reverse data flow",
+                "To encrypt all traffic"
+            ],
+            correct: 1,
+            explanation: "A reverse proxy sits in front of web servers, providing SSL termination, caching, load balancing, and protection from direct exposure."
+        },
+
+        // Additional Programming Questions - Mid Level
+        {
+            category: "programming",
+            level: "mid",
+            question: "What is the difference between 'let' and 'var' in JavaScript?",
+            answers: [
+                "No difference",
+                "'let' is block-scoped, 'var' is function-scoped",
+                "'var' is block-scoped, 'let' is function-scoped",
+                "'let' is faster"
+            ],
+            correct: 1,
+            explanation: "'let' has block scope and doesn't get hoisted in the same way as 'var', which has function scope and can lead to unexpected behavior."
+        },
+        {
+            category: "programming",
+            level: "mid",
+            question: "What is a decorator in Python?",
+            answers: [
+                "A design pattern for UI",
+                "A function that modifies another function's behavior",
+                "A way to add colors to output",
+                "A class inheritance method"
+            ],
+            correct: 1,
+            explanation: "A decorator is a function that takes another function and extends or modifies its behavior without permanently modifying the function itself."
+        },
+        {
+            category: "programming",
+            level: "mid",
+            question: "What does REST stand for in web services?",
+            answers: [
+                "Rapid External Service Transfer",
+                "Representational State Transfer",
+                "Remote Execution Service Technology",
+                "Reliable Stateful Transmission"
+            ],
+            correct: 1,
+            explanation: "REST (Representational State Transfer) is an architectural style for distributed hypermedia systems using stateless communication and standard HTTP methods."
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "What is the event loop in JavaScript?",
+            answers: [
+                "A loop that processes events from the DOM",
+                "A mechanism that handles asynchronous operations by managing callback queue",
+                "A debugging tool",
+                "A way to loop through events"
+            ],
+            correct: 1,
+            explanation: "The event loop is a mechanism that handles asynchronous operations by continuously checking the call stack and callback queue, executing callbacks when the stack is empty."
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "What is the purpose of virtual DOM in React?",
+            answers: [
+                "To virtualize the application",
+                "To minimize direct DOM manipulation by batching updates efficiently",
+                "To run React in virtual machines",
+                "To create virtual reality interfaces"
+            ],
+            correct: 1,
+            explanation: "Virtual DOM is an in-memory representation of the real DOM that allows React to batch updates and minimize expensive direct DOM manipulations, improving performance."
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "What is tail recursion optimization?",
+            answers: [
+                "Recursion that processes the tail of a list",
+                "Compiler optimization that converts tail-recursive calls into iterative loops",
+                "A way to limit recursion depth",
+                "Recursion that returns early"
+            ],
+            correct: 1,
+            explanation: "Tail recursion optimization allows compilers to convert tail-recursive functions into iterative loops, preventing stack overflow and improving performance."
+        },
+
+        // Additional Architecture Questions - Mid Level
+        {
+            category: "architecture",
+            level: "mid",
+            question: "What is the Repository Pattern?",
+            answers: [
+                "A Git workflow",
+                "A pattern that abstracts data access logic from business logic",
+                "A way to organize files",
+                "A deployment strategy"
+            ],
+            correct: 1,
+            explanation: "Repository Pattern creates an abstraction layer between the data access logic and business logic, making the code more maintainable and testable."
+        },
+        {
+            category: "architecture",
+            level: "mid",
+            question: "What is the Singleton pattern and when should you use it cautiously?",
+            answers: [
+                "A pattern for single-threaded applications",
+                "A pattern ensuring one instance of a class; be cautious as it can create global state and testing issues",
+                "A pattern for creating unique objects",
+                "A pattern for single-page applications"
+            ],
+            correct: 1,
+            explanation: "Singleton ensures only one instance of a class exists. Use cautiously as it introduces global state, can complicate testing, and may hide dependencies."
+        },
+        {
+            category: "architecture",
+            level: "mid",
+            question: "What is the Observer pattern?",
+            answers: [
+                "A pattern for monitoring system performance",
+                "A pattern where objects subscribe to and receive notifications about state changes",
+                "A pattern for user authentication",
+                "A pattern for logging"
+            ],
+            correct: 1,
+            explanation: "Observer pattern defines a one-to-many dependency between objects where when one object changes state, all dependents are notified automatically."
+        },
+        {
+            category: "architecture",
+            level: "senior",
+            question: "What is the difference between orchestration and choreography in microservices?",
+            answers: [
+                "No difference, they're synonyms",
+                "Orchestration has central control, choreography is decentralized event-driven",
+                "Orchestration is faster",
+                "Choreography uses more resources"
+            ],
+            correct: 1,
+            explanation: "Orchestration uses a central coordinator to control service interactions, while choreography is decentralized with services reacting to events independently."
+        },
+        {
+            category: "architecture",
+            level: "senior",
+            question: "What is Domain-Driven Design (DDD)?",
+            answers: [
+                "Designing domains for websites",
+                "An approach to software design focusing on modeling complex business domains",
+                "A database design methodology",
+                "A UI design pattern"
+            ],
+            correct: 1,
+            explanation: "DDD is a software design approach that focuses on understanding and modeling complex business domains through collaboration between technical and domain experts."
+        },
+        {
+            category: "architecture",
+            level: "senior",
+            question: "What is a Bounded Context in Domain-Driven Design?",
+            answers: [
+                "A limited time frame for development",
+                "A boundary where a particular domain model is defined and applicable",
+                "A restricted access area",
+                "A performance constraint"
+            ],
+            correct: 1,
+            explanation: "A Bounded Context defines explicit boundaries where a particular domain model is valid, helping to manage complexity in large systems."
+        },
+
+        // Additional Database Questions - Mid Level
+        {
+            category: "databases",
+            level: "mid",
+            question: "What is a database view?",
+            answers: [
+                "A way to visualize data",
+                "A virtual table based on a SQL query result",
+                "A database monitoring tool",
+                "A GUI for databases"
+            ],
+            correct: 1,
+            explanation: "A view is a virtual table created from a SQL query result. It doesn't store data but provides a way to present data in a specific format or hide complexity."
+        },
+        {
+            category: "databases",
+            level: "mid",
+            question: "What is a foreign key constraint?",
+            answers: [
+                "A key from a foreign country",
+                "A constraint that ensures referential integrity between tables",
+                "An encryption key",
+                "A primary key from another database"
+            ],
+            correct: 1,
+            explanation: "A foreign key constraint ensures referential integrity by requiring that values in one table match values in another table's primary key."
+        },
+        {
+            category: "databases",
+            level: "mid",
+            question: "What is database indexing and when should you avoid it?",
+            answers: [
+                "Always use indexes on every column",
+                "Indexes speed up reads but slow writes; avoid on frequently updated columns with low selectivity",
+                "Indexes only work on primary keys",
+                "Indexes are automatic and can't be controlled"
+            ],
+            correct: 1,
+            explanation: "While indexes speed up queries, they slow down INSERT/UPDATE/DELETE operations. Avoid indexes on columns with low selectivity or high update frequency."
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "What is the CAP theorem?",
+            answers: [
+                "Compression, Access, Performance",
+                "Consistency, Availability, Partition tolerance - you can only guarantee 2 of 3",
+                "Cache, API, Processing",
+                "Capacity, Availability, Performance"
+            ],
+            correct: 1,
+            explanation: "CAP theorem states that a distributed system can only guarantee 2 out of 3: Consistency, Availability, and Partition tolerance simultaneously."
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "What is a materialized view?",
+            answers: [
+                "A physical view of the database",
+                "A view that stores query results physically for faster access",
+                "A temporary view",
+                "A view with material design"
+            ],
+            correct: 1,
+            explanation: "A materialized view stores the query result physically, improving read performance but requiring periodic refresh to stay current with source data."
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "What is optimistic locking vs pessimistic locking?",
+            answers: [
+                "Optimistic is faster, pessimistic is slower",
+                "Optimistic assumes no conflicts and checks at commit; pessimistic locks resources immediately",
+                "They're the same",
+                "Optimistic uses less memory"
+            ],
+            correct: 1,
+            explanation: "Optimistic locking assumes conflicts are rare and checks at commit time, while pessimistic locking prevents conflicts by locking resources immediately."
+        },
+
+        // Additional DevOps Questions - Mid Level
+        {
+            category: "devops",
+            level: "mid",
+            question: "What is the difference between Docker image and Docker container?",
+            answers: [
+                "No difference",
+                "Image is a template, container is a running instance of an image",
+                "Image is larger than container",
+                "Container is a template, image is running"
+            ],
+            correct: 1,
+            explanation: "A Docker image is an immutable template containing the application and dependencies. A container is a running instance created from an image."
+        },
+        {
+            category: "devops",
+            level: "mid",
+            question: "What is a health check in containerized applications?",
+            answers: [
+                "A medical examination for developers",
+                "A mechanism to verify if a container is running correctly and ready to serve traffic",
+                "A security scan",
+                "A performance test"
+            ],
+            correct: 1,
+            explanation: "Health checks are probes that determine if a container is running correctly, helping orchestrators decide whether to route traffic or restart containers."
+        },
+        {
+            category: "devops",
+            level: "mid",
+            question: "What is the purpose of a .dockerignore file?",
+            answers: [
+                "To ignore Docker commands",
+                "To exclude files from being copied into Docker image, reducing image size",
+                "To hide Docker from security scans",
+                "To configure Docker settings"
+            ],
+            correct: 1,
+            explanation: ".dockerignore file specifies which files and directories should be excluded when building Docker images, reducing image size and build time."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "What is GitOps?",
+            answers: [
+                "Using Git for all operations",
+                "A methodology where Git repos are the source of truth for declarative infrastructure and applications",
+                "Git operations training",
+                "A Git GUI tool"
+            ],
+            correct: 1,
+            explanation: "GitOps uses Git repositories as the single source of truth for declarative infrastructure and applications, with automated deployment on Git changes."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "What is a StatefulSet in Kubernetes?",
+            answers: [
+                "A set of static files",
+                "A workload API object for managing stateful applications with stable network identities",
+                "A collection of state variables",
+                "A configuration file"
+            ],
+            correct: 1,
+            explanation: "StatefulSet manages stateful applications that require stable, unique network identifiers and persistent storage that stays with each pod."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "What is the difference between ConfigMap and Secret in Kubernetes?",
+            answers: [
+                "No difference",
+                "ConfigMap for non-sensitive config, Secret for sensitive data with base64 encoding",
+                "ConfigMap is faster",
+                "Secret is larger"
+            ],
+            correct: 1,
+            explanation: "ConfigMap stores non-sensitive configuration data in plain text, while Secret stores sensitive data like passwords with base64 encoding and restricted access."
+        },
+
+        // Additional Behavioral Questions - Mid Level
+        {
+            category: "behavioral",
+            level: "mid",
+            question: "How do you handle a situation where you disagree with your manager's technical decision?",
+            answers: [
+                "Ignore and implement your way anyway",
+                "Express concerns with data, suggest alternatives, but support final decision",
+                "Complain to other team members",
+                "Refuse to work on it"
+            ],
+            correct: 1,
+            explanation: "Express concerns professionally with supporting data, propose alternatives, but ultimately support the final decision and maintain trust and professionalism."
+        },
+        {
+            category: "behavioral",
+            level: "mid",
+            question: "What do you do when you're blocked on a task?",
+            answers: [
+                "Wait for someone to notice",
+                "Proactively communicate the blocker, document what you've tried, ask for help",
+                "Switch to another task without telling anyone",
+                "Give up"
+            ],
+            correct: 1,
+            explanation: "Proactively communicate blockers, document attempted solutions, seek help from appropriate people, and provide context to enable quick resolution."
+        },
+        {
+            category: "behavioral",
+            level: "senior",
+            question: "How do you handle a team member who consistently produces low-quality code?",
+            answers: [
+                "Report them to management immediately",
+                "Ignore it",
+                "Provide specific feedback, pair program, offer resources, escalate only if no improvement",
+                "Rewrite all their code yourself"
+            ],
+            correct: 2,
+            explanation: "Address through constructive feedback with examples, pair programming, sharing resources, and mentoring. Escalate to management only if issues persist."
+        },
+        {
+            category: "behavioral",
+            level: "senior",
+            question: "How do you prioritize technical debt vs new features?",
+            answers: [
+                "Always do new features first",
+                "Always fix tech debt first",
+                "Balance based on business impact, risk, and velocity impact; communicate tradeoffs",
+                "Let management decide everything"
+            ],
+            correct: 2,
+            explanation: "Balance technical debt and features by assessing business impact, risk, and velocity effects. Communicate tradeoffs clearly to stakeholders."
+        },
+        {
+            category: "behavioral",
+            level: "principal",
+            question: "How do you drive technical standards across multiple teams?",
+            answers: [
+                "Mandate standards without input",
+                "Build consensus through RFCs, demonstrate value, provide tooling and support",
+                "Let each team do whatever they want",
+                "Copy what other companies do"
+            ],
+            correct: 1,
+            explanation: "Build consensus through RFCs and working groups, demonstrate value with pilots, provide tooling and support, and iterate based on feedback."
+        },
+        {
+            category: "behavioral",
+            level: "principal",
+            question: "How do you handle technical disagreements between senior engineers?",
+            answers: [
+                "Pick the person with higher seniority",
+                "Facilitate data-driven discussion, focus on tradeoffs, build consensus or make informed decision",
+                "Let them fight it out",
+                "Avoid the conflict"
+            ],
+            correct: 1,
+            explanation: "Facilitate objective discussion with data, analyze tradeoffs, seek consensus, and if needed, make informed decision with clear rationale."
+        },
+
+        // Security Questions - Mid Level
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What is SQL injection and how do you prevent it?",
+            answers: [
+                "A medical procedure",
+                "An attack where malicious SQL is inserted; prevent with parameterized queries",
+                "A database feature",
+                "A performance optimization"
+            ],
+            correct: 1,
+            explanation: "SQL injection is an attack where malicious SQL code is inserted into queries. Prevent it using parameterized queries/prepared statements, never string concatenation."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What is CORS (Cross-Origin Resource Sharing)?",
+            answers: [
+                "A database system",
+                "A security feature that controls how resources are shared between different origins",
+                "A programming language",
+                "A testing framework"
+            ],
+            correct: 1,
+            explanation: "CORS is a security mechanism that controls which origins can access resources on a web server, preventing unauthorized cross-origin requests."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What is OAuth 2.0 used for?",
+            answers: [
+                "Password encryption",
+                "Authorization framework for delegated access without sharing credentials",
+                "User authentication",
+                "Database access control"
+            ],
+            correct: 1,
+            explanation: "OAuth 2.0 is an authorization framework that enables applications to obtain limited access to user accounts without exposing user credentials."
+        },
+
+        // Cloud Computing Questions - Mid Level
+        {
+            category: "devops",
+            level: "mid",
+            question: "What is the difference between IaaS, PaaS, and SaaS?",
+            answers: [
+                "They're all the same",
+                "IaaS provides infrastructure, PaaS provides platform, SaaS provides software applications",
+                "IaaS is fastest",
+                "PaaS is most expensive"
+            ],
+            correct: 1,
+            explanation: "IaaS provides virtual infrastructure (servers, storage), PaaS provides development platforms (with runtime, middleware), SaaS provides complete applications."
+        },
+        {
+            category: "devops",
+            level: "mid",
+            question: "What is auto-scaling in cloud computing?",
+            answers: [
+                "Automatic software updates",
+                "Automatically adjusting resource capacity based on demand",
+                "Automatic billing",
+                "Automatic backups"
+            ],
+            correct: 1,
+            explanation: "Auto-scaling automatically adjusts computing resources (scale up or down) based on actual demand, optimizing cost and performance."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "What is the purpose of a Service Mesh like Istio?",
+            answers: [
+                "To create meshes for visualization",
+                "To handle service-to-service communication with observability, security, and traffic control",
+                "To mesh network cables",
+                "To create service documentation"
+            ],
+            correct: 1,
+            explanation: "Service Mesh provides infrastructure layer for microservices communication, handling traffic management, security, observability, and resilience patterns."
         }
     ],
     pl: [
@@ -2062,6 +2704,648 @@ const quizQuestionsData = {
             ],
             correct: 2,
             explanation: "Principal Engineers rozwijają innych zapewniając wymagające możliwości, dzieląc się kontekstem organizacyjnym, sponsorując widoczność i mentoringiem."
+        },
+
+        // Dodatkowe pytania algorytmiczne - Mid Level
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "Jaki jest cel programowania dynamicznego?",
+            answers: [
+                "Aby programy działały szybciej używając więcej pamięci",
+                "Rozwiązywanie problemów przez rozdzielenie na nakładające się podproblemy i przechowywanie wyników",
+                "Dynamiczne alokowanie pamięci",
+                "Pisanie programów które modyfikują same siebie"
+            ],
+            correct: 1,
+            explanation: "Programowanie dynamiczne rozwiązuje złożone problemy rozdzielając je na prostsze nakładające się podproblemy i przechowując ich wyniki aby uniknąć redundantnych obliczeń."
+        },
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "Który algorytm sortowania jest najbardziej odpowiedni do sortowania listy linkowanej?",
+            answers: [
+                "Quick Sort",
+                "Heap Sort",
+                "Merge Sort",
+                "Insertion Sort"
+            ],
+            correct: 2,
+            explanation: "Merge Sort jest idealny dla list linkowanych, ponieważ nie wymaga dostępu losowego i działa efektywnie z dostępem sekwencyjnym, w przeciwieństwie do Quick Sort czy Heap Sort."
+        },
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "Jaka jest złożoność czasowa znajdowania elementu w zrównoważonym drzewie AVL?",
+            answers: [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)"
+            ],
+            correct: 1,
+            explanation: "Drzewa AVL to samobalansujące się drzewa binarne wyszukiwania, które gwarantują czas wyszukiwania O(log n) poprzez utrzymywanie równowagi przez rotacje."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Do czego służy algorytm Bellmana-Forda?",
+            answers: [
+                "Sortowania tablic",
+                "Znajdowania najkrótszych ścieżek w grafach z ujemnymi wagami",
+                "Balansowania drzew binarnych",
+                "Kompresji danych"
+            ],
+            correct: 1,
+            explanation: "Algorytm Bellmana-Forda znajduje najkrótsze ścieżki od wierzchołka źródłowego do wszystkich innych wierzchołków w grafie ważonym, nawet z ujemnymi wagami krawędzi."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Jaka jest różnica między algorytmami Kruskala i Prima?",
+            answers: [
+                "Kruskal jest dla najkrótszej ścieżki, Prim dla minimalnego drzewa rozpinającego",
+                "Oba znajdują MST ale Kruskal pracuje na krawędziach, Prim na wierzchołkach",
+                "Nie ma różnicy",
+                "Kruskal jest szybszy dla gęstych grafów"
+            ],
+            correct: 1,
+            explanation: "Oba algorytmy znajdują minimalne drzewa rozpinające, ale algorytm Kruskala sortuje i przetwarza krawędzie, podczas gdy algorytm Prima rozbudowuje drzewo dodając wierzchołki."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Co to jest memoizacja w kontekście algorytmów?",
+            answers: [
+                "Zapamiętywanie kodu",
+                "Cache'owanie wyników funkcji aby zoptymalizować algorytmy rekurencyjne",
+                "Używanie więcej pamięci",
+                "Zapisywanie pamięci na dysk"
+            ],
+            correct: 1,
+            explanation: "Memoizacja to technika optymalizacyjna, w której wyniki funkcji są cache'owane i ponownie używane, szczególnie przydatna dla optymalizacji algorytmów rekurencyjnych z nakładającymi się podproblemami."
+        },
+
+        // Dodatkowe pytania System Design - Mid Level
+        {
+            category: "system-design",
+            level: "mid",
+            question: "Jaki jest cel message brokera?",
+            answers: [
+                "Handlowanie akcjami",
+                "Umożliwienie asynchronicznej komunikacji między serwisami",
+                "Kompresja wiadomości",
+                "Szyfrowanie danych"
+            ],
+            correct: 1,
+            explanation: "Message broker ułatwia asynchroniczną komunikację między serwisami poprzez odbieranie, przekierowywanie i dostarczanie wiadomości, poprawiając rozdzielenie i skalowalność."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "Co oznacza 'idempotent' w kontekście REST API?",
+            answers: [
+                "API jest bardzo szybkie",
+                "Wielokrotne identyczne żądania mają taki sam efekt jak pojedyncze żądanie",
+                "API używa szyfrowania",
+                "API może obsługiwać wielu użytkowników"
+            ],
+            correct: 1,
+            explanation: "Operacja idempotentna może być wykonana wielokrotnie z tym samym rezultatem. GET, PUT i DELETE są zazwyczaj idempotentne w REST API."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "Jaki jest cel rate limiting w API?",
+            answers: [
+                "Aby API działało wolniej",
+                "Aby zapobiec nadużyciom i zapewnić sprawiedliwe użycie zasobów",
+                "Aby kompresować dane",
+                "Aby cache'ować odpowiedzi"
+            ],
+            correct: 1,
+            explanation: "Rate limiting ogranicza liczbę żądań API, które klient może wykonać w danym okresie czasu, zapobiegając nadużyciom i zapewniając stabilność systemu."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jaki jest cel Circuit Breakera w mikrousługach?",
+            answers: [
+                "Włączanie i wyłączanie serwisów",
+                "Zapobieganie kaskadowym awariom poprzez szybkie zawodzenie gdy serwis nie działa",
+                "Balansowanie obciążenia",
+                "Szyfrowanie komunikacji"
+            ],
+            correct: 1,
+            explanation: "Circuit Breaker monitoruje awarie i 'otwiera obwód' aby szybko zawieść i zapobiec kaskadowym awariom, dając zawodzącemu serwisowi czas na odzyskanie."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jaka jest różnica między partycjonowaniem wertykalnym a horyzontalnym w bazach danych?",
+            answers: [
+                "Wertykalne dzieli po wierszach, horyzontalne po kolumnach",
+                "Wertykalne dzieli po kolumnach, horyzontalne po wierszach",
+                "Nie ma różnicy",
+                "Wertykalne jest szybsze"
+            ],
+            correct: 1,
+            explanation: "Partycjonowanie wertykalne dzieli tabele po kolumnach (różne atrybuty w różnych tabelach), podczas gdy partycjonowanie horyzontalne dzieli po wierszach (sharding)."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jaki jest cel reverse proxy?",
+            answers: [
+                "Ukrywanie adresów IP klientów",
+                "Stanie przed serwerami, obsługa SSL, cache'owanie i load balancing",
+                "Odwracanie przepływu danych",
+                "Szyfrowanie całego ruchu"
+            ],
+            correct: 1,
+            explanation: "Reverse proxy stoi przed serwerami webowymi, zapewniając terminację SSL, cache'owanie, load balancing i ochronę przed bezpośrednim narażeniem."
+        },
+
+        // Dodatkowe pytania programistyczne - Mid Level
+        {
+            category: "programming",
+            level: "mid",
+            question: "Jaka jest różnica między 'let' a 'var' w JavaScript?",
+            answers: [
+                "Nie ma różnicy",
+                "'let' ma zakres blokowy, 'var' ma zakres funkcyjny",
+                "'var' ma zakres blokowy, 'let' ma zakres funkcyjny",
+                "'let' jest szybsze"
+            ],
+            correct: 1,
+            explanation: "'let' ma zakres blokowy i nie jest hoistowane w ten sam sposób co 'var', który ma zakres funkcyjny i może prowadzić do nieoczekiwanego zachowania."
+        },
+        {
+            category: "programming",
+            level: "mid",
+            question: "Co to jest dekorator w Pythonie?",
+            answers: [
+                "Wzorzec projektowy dla UI",
+                "Funkcja, która modyfikuje zachowanie innej funkcji",
+                "Sposób dodawania kolorów do wyjścia",
+                "Metoda dziedziczenia klas"
+            ],
+            correct: 1,
+            explanation: "Dekorator to funkcja, która przyjmuje inną funkcję i rozszerza lub modyfikuje jej zachowanie bez stałej modyfikacji samej funkcji."
+        },
+        {
+            category: "programming",
+            level: "mid",
+            question: "Co oznacza REST w web services?",
+            answers: [
+                "Rapid External Service Transfer",
+                "Representational State Transfer",
+                "Remote Execution Service Technology",
+                "Reliable Stateful Transmission"
+            ],
+            correct: 1,
+            explanation: "REST (Representational State Transfer) to styl architektoniczny dla rozproszonych systemów hipermedialnych używających bezstanowej komunikacji i standardowych metod HTTP."
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "Co to jest event loop w JavaScript?",
+            answers: [
+                "Pętla przetwarzająca zdarzenia z DOM",
+                "Mechanizm obsługujący operacje asynchroniczne przez zarządzanie kolejką callbacków",
+                "Narzędzie do debugowania",
+                "Sposób pętlowania przez zdarzenia"
+            ],
+            correct: 1,
+            explanation: "Event loop to mechanizm obsługujący operacje asynchroniczne poprzez ciągłe sprawdzanie stosu wywołań i kolejki callbacków, wykonując callbacki gdy stos jest pusty."
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "Jaki jest cel virtual DOM w React?",
+            answers: [
+                "Wirtualizacja aplikacji",
+                "Minimalizacja bezpośredniej manipulacji DOM przez efektywne batch'owanie aktualizacji",
+                "Uruchamianie React w maszynach wirtualnych",
+                "Tworzenie interfejsów wirtualnej rzeczywistości"
+            ],
+            correct: 1,
+            explanation: "Virtual DOM to reprezentacja rzeczywistego DOM w pamięci, która pozwala React na batch'owanie aktualizacji i minimalizację drogich bezpośrednich manipulacji DOM, poprawiając wydajność."
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "Co to jest optymalizacja rekurencji ogonowej?",
+            answers: [
+                "Rekurencja przetwarzająca ogon listy",
+                "Optymalizacja kompilatora konwertująca wywołania tail-recursive na pętle iteracyjne",
+                "Sposób ograniczania głębokości rekurencji",
+                "Rekurencja która zwraca wcześnie"
+            ],
+            correct: 1,
+            explanation: "Optymalizacja rekurencji ogonowej pozwala kompilatorom konwertować funkcje tail-recursive na pętle iteracyjne, zapobiegając przepełnieniu stosu i poprawiając wydajność."
+        },
+
+        // Dodatkowe pytania architektoniczne - Mid Level
+        {
+            category: "architecture",
+            level: "mid",
+            question: "Co to jest wzorzec Repository?",
+            answers: [
+                "Workflow Git",
+                "Wzorzec abstrahujący logikę dostępu do danych od logiki biznesowej",
+                "Sposób organizacji plików",
+                "Strategia deploymentu"
+            ],
+            correct: 1,
+            explanation: "Wzorzec Repository tworzy warstwę abstrakcji między logiką dostępu do danych a logiką biznesową, czyniąc kod bardziej utrzymywalnym i testowalnym."
+        },
+        {
+            category: "architecture",
+            level: "mid",
+            question: "Co to jest wzorzec Singleton i kiedy używać go ostrożnie?",
+            answers: [
+                "Wzorzec dla aplikacji jednowątkowych",
+                "Wzorzec zapewniający jedną instancję klasy; używaj ostrożnie bo może tworzyć stan globalny i problemy z testowaniem",
+                "Wzorzec tworzenia unikalnych obiektów",
+                "Wzorzec dla aplikacji jednostronicowych"
+            ],
+            correct: 1,
+            explanation: "Singleton zapewnia, że istnieje tylko jedna instancja klasy. Używaj ostrożnie, bo wprowadza stan globalny, może komplikować testowanie i ukrywać zależności."
+        },
+        {
+            category: "architecture",
+            level: "mid",
+            question: "Co to jest wzorzec Observer?",
+            answers: [
+                "Wzorzec monitorowania wydajności systemu",
+                "Wzorzec gdzie obiekty subskrybują i otrzymują powiadomienia o zmianach stanu",
+                "Wzorzec uwierzytelniania użytkowników",
+                "Wzorzec logowania"
+            ],
+            correct: 1,
+            explanation: "Wzorzec Observer definiuje zależność jeden-do-wielu między obiektami, gdzie gdy jeden obiekt zmienia stan, wszyscy zależni są automatycznie powiadamiani."
+        },
+        {
+            category: "architecture",
+            level: "senior",
+            question: "Jaka jest różnica między orkiestracją a choreografią w mikrousługach?",
+            answers: [
+                "Nie ma różnicy, to synonimy",
+                "Orkiestracja ma centralną kontrolę, choreografia jest zdecentralizowana i sterowana zdarzeniami",
+                "Orkiestracja jest szybsza",
+                "Choreografia używa więcej zasobów"
+            ],
+            correct: 1,
+            explanation: "Orkiestracja używa centralnego koordynatora do kontrolowania interakcji serwisów, podczas gdy choreografia jest zdecentralizowana z serwisami reagującymi na zdarzenia niezależnie."
+        },
+        {
+            category: "architecture",
+            level: "senior",
+            question: "Co to jest Domain-Driven Design (DDD)?",
+            answers: [
+                "Projektowanie domen dla stron internetowych",
+                "Podejście do projektowania oprogramowania skupiające się na modelowaniu złożonych domen biznesowych",
+                "Metodologia projektowania baz danych",
+                "Wzorzec projektowania UI"
+            ],
+            correct: 1,
+            explanation: "DDD to podejście do projektowania oprogramowania skupiające się na zrozumieniu i modelowaniu złożonych domen biznesowych przez współpracę między ekspertami technicznymi i domenowymi."
+        },
+        {
+            category: "architecture",
+            level: "senior",
+            question: "Co to jest Bounded Context w Domain-Driven Design?",
+            answers: [
+                "Ograniczony czas na development",
+                "Granica gdzie konkretny model domeny jest zdefiniowany i obowiązuje",
+                "Obszar o ograniczonym dostępie",
+                "Ograniczenie wydajnościowe"
+            ],
+            correct: 1,
+            explanation: "Bounded Context definiuje wyraźne granice, gdzie konkretny model domeny jest ważny, pomagając zarządzać złożonością w dużych systemach."
+        },
+
+        // Dodatkowe pytania o bazy danych - Mid Level
+        {
+            category: "databases",
+            level: "mid",
+            question: "Co to jest widok bazy danych?",
+            answers: [
+                "Sposób wizualizacji danych",
+                "Wirtualna tabela oparta na wyniku zapytania SQL",
+                "Narzędzie monitorowania bazy danych",
+                "GUI dla baz danych"
+            ],
+            correct: 1,
+            explanation: "Widok to wirtualna tabela utworzona z wyniku zapytania SQL. Nie przechowuje danych ale zapewnia sposób prezentacji danych w określonym formacie lub ukrycia złożoności."
+        },
+        {
+            category: "databases",
+            level: "mid",
+            question: "Co to jest ograniczenie klucza obcego?",
+            answers: [
+                "Klucz z obcego kraju",
+                "Ograniczenie zapewniające integralność referencyjną między tabelami",
+                "Klucz szyfrowania",
+                "Klucz główny z innej bazy danych"
+            ],
+            correct: 1,
+            explanation: "Ograniczenie klucza obcego zapewnia integralność referencyjną wymagając, aby wartości w jednej tabeli odpowiadały wartościom w kluczu głównym innej tabeli."
+        },
+        {
+            category: "databases",
+            level: "mid",
+            question: "Co to jest indeksowanie bazy danych i kiedy go unikać?",
+            answers: [
+                "Zawsze używaj indeksów na każdej kolumnie",
+                "Indeksy przyspieszają odczyty ale spowalniają zapisy; unikaj na często aktualizowanych kolumnach z niską selektywnością",
+                "Indeksy działają tylko na kluczach głównych",
+                "Indeksy są automatyczne i nie można ich kontrolować"
+            ],
+            correct: 1,
+            explanation: "Chociaż indeksy przyspieszają zapytania, spowalniają operacje INSERT/UPDATE/DELETE. Unikaj indeksów na kolumnach z niską selektywnością lub wysoką częstotliwością aktualizacji."
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "Co to jest twierdzenie CAP?",
+            answers: [
+                "Compression, Access, Performance",
+                "Consistency, Availability, Partition tolerance - możesz zagwarantować tylko 2 z 3",
+                "Cache, API, Processing",
+                "Capacity, Availability, Performance"
+            ],
+            correct: 1,
+            explanation: "Twierdzenie CAP mówi, że system rozproszony może zagwarantować tylko 2 z 3: Consistency, Availability i Partition tolerance jednocześnie."
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "Co to jest zmaterializowany widok?",
+            answers: [
+                "Fizyczny widok bazy danych",
+                "Widok przechowujący wyniki zapytania fizycznie dla szybszego dostępu",
+                "Tymczasowy widok",
+                "Widok z material design"
+            ],
+            correct: 1,
+            explanation: "Zmaterializowany widok przechowuje wynik zapytania fizycznie, poprawiając wydajność odczytu ale wymagając okresowego odświeżania aby być aktualnym z danymi źródłowymi."
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "Co to jest optimistic locking vs pessimistic locking?",
+            answers: [
+                "Optimistic jest szybsze, pessimistic jest wolniejsze",
+                "Optimistic zakłada brak konfliktów i sprawdza przy commicie; pessimistic blokuje zasoby natychmiast",
+                "Są takie same",
+                "Optimistic używa mniej pamięci"
+            ],
+            correct: 1,
+            explanation: "Optimistic locking zakłada, że konflikty są rzadkie i sprawdza przy commicie, podczas gdy pessimistic locking zapobiega konfliktom blokując zasoby natychmiast."
+        },
+
+        // Dodatkowe pytania DevOps - Mid Level
+        {
+            category: "devops",
+            level: "mid",
+            question: "Jaka jest różnica między obrazem Docker a kontenerem Docker?",
+            answers: [
+                "Nie ma różnicy",
+                "Obraz to szablon, kontener to uruchomiona instancja obrazu",
+                "Obraz jest większy niż kontener",
+                "Kontener to szablon, obraz jest uruchomiony"
+            ],
+            correct: 1,
+            explanation: "Obraz Docker to niezmienny szablon zawierający aplikację i zależności. Kontener to uruchomiona instancja utworzona z obrazu."
+        },
+        {
+            category: "devops",
+            level: "mid",
+            question: "Co to jest health check w aplikacjach kontenerowych?",
+            answers: [
+                "Badanie lekarskie dla developerów",
+                "Mechanizm weryfikujący czy kontener działa poprawnie i jest gotowy do obsługi ruchu",
+                "Skanowanie bezpieczeństwa",
+                "Test wydajności"
+            ],
+            correct: 1,
+            explanation: "Health checks to sondy określające czy kontener działa poprawnie, pomagające orkiestratorom zdecydować czy kierować ruch lub restartować kontenery."
+        },
+        {
+            category: "devops",
+            level: "mid",
+            question: "Jaki jest cel pliku .dockerignore?",
+            answers: [
+                "Ignorowanie poleceń Docker",
+                "Wykluczenie plików z kopiowania do obrazu Docker, zmniejszając rozmiar obrazu",
+                "Ukrywanie Docker przed skanowaniem bezpieczeństwa",
+                "Konfiguracja ustawień Docker"
+            ],
+            correct: 1,
+            explanation: "Plik .dockerignore określa, które pliki i katalogi powinny być wykluczone podczas budowania obrazów Docker, zmniejszając rozmiar obrazu i czas budowy."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "Co to jest GitOps?",
+            answers: [
+                "Używanie Git do wszystkich operacji",
+                "Metodologia gdzie repozytoria Git są źródłem prawdy dla deklaratywnej infrastruktury i aplikacji",
+                "Szkolenie z operacji Git",
+                "Narzędzie GUI Git"
+            ],
+            correct: 1,
+            explanation: "GitOps używa repozytoriów Git jako pojedynczego źródła prawdy dla deklaratywnej infrastruktury i aplikacji, z automatycznym wdrażaniem przy zmianach Git."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "Co to jest StatefulSet w Kubernetes?",
+            answers: [
+                "Zestaw plików statycznych",
+                "Obiekt API workload do zarządzania aplikacjami stanowymi ze stabilnymi tożsamościami sieciowymi",
+                "Kolekcja zmiennych stanu",
+                "Plik konfiguracyjny"
+            ],
+            correct: 1,
+            explanation: "StatefulSet zarządza aplikacjami stanowymi, które wymagają stabilnych, unikalnych identyfikatorów sieciowych i trwałego przechowywania, które pozostaje z każdym podem."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "Jaka jest różnica między ConfigMap a Secret w Kubernetes?",
+            answers: [
+                "Nie ma różnicy",
+                "ConfigMap dla nie-wrażliwej konfiguracji, Secret dla wrażliwych danych z kodowaniem base64",
+                "ConfigMap jest szybszy",
+                "Secret jest większy"
+            ],
+            correct: 1,
+            explanation: "ConfigMap przechowuje nie-wrażliwe dane konfiguracyjne w czystym tekście, podczas gdy Secret przechowuje wrażliwe dane jak hasła z kodowaniem base64 i ograniczonym dostępem."
+        },
+
+        // Dodatkowe pytania behawioralne - Mid Level
+        {
+            category: "behavioral",
+            level: "mid",
+            question: "Jak obsługujesz sytuację gdy nie zgadzasz się z techniczną decyzją swojego managera?",
+            answers: [
+                "Ignoruj i zaimplementuj na swój sposób",
+                "Wyrażaj obawy z danymi, sugeruj alternatywy, ale wspieraj ostateczną decyzję",
+                "Narzekaj innym członkom zespołu",
+                "Odmów pracy nad tym"
+            ],
+            correct: 1,
+            explanation: "Wyrażaj obawy profesjonalnie z danymi wspierającymi, proponuj alternatywy, ale ostatecznie wspieraj ostateczną decyzję i utrzymuj zaufanie i profesjonalizm."
+        },
+        {
+            category: "behavioral",
+            level: "mid",
+            question: "Co robisz gdy jesteś zablokowany w zadaniu?",
+            answers: [
+                "Czekaj aż ktoś zauważy",
+                "Proaktywnie komunikuj blocker, dokumentuj co próbowałeś, poproś o pomoc",
+                "Przełącz się na inne zadanie bez mówienia nikomu",
+                "Poddaj się"
+            ],
+            correct: 1,
+            explanation: "Proaktywnie komunikuj blokery, dokumentuj próbowane rozwiązania, szukaj pomocy od odpowiednich osób i dostarczaj kontekst aby umożliwić szybkie rozwiązanie."
+        },
+        {
+            category: "behavioral",
+            level: "senior",
+            question: "Jak obsługujesz członka zespołu, który konsekwentnie produkuje kod niskiej jakości?",
+            answers: [
+                "Natychmiast zgłoś do zarządu",
+                "Ignoruj to",
+                "Dostarczaj konkretny feedback, programuj w parze, oferuj zasoby, eskaluj tylko jeśli nie ma poprawy",
+                "Przepisz cały ich kod sam"
+            ],
+            correct: 2,
+            explanation: "Adresuj poprzez konstruktywny feedback z przykładami, programowanie w parach, dzielenie się zasobami i mentoring. Eskaluj do zarządu tylko jeśli problemy utrzymują się."
+        },
+        {
+            category: "behavioral",
+            level: "senior",
+            question: "Jak priorytetujesz dług techniczny vs nowe funkcje?",
+            answers: [
+                "Zawsze najpierw nowe funkcje",
+                "Zawsze najpierw naprawiaj dług techniczny",
+                "Balansuj w oparciu o wpływ biznesowy, ryzyko i wpływ na velocity; komunikuj trade-offy",
+                "Pozwól zarządowi decydować o wszystkim"
+            ],
+            correct: 2,
+            explanation: "Balansuj dług techniczny i funkcje oceniając wpływ biznesowy, ryzyko i efekty velocity. Komunikuj trade-offy jasno interesariuszom."
+        },
+        {
+            category: "behavioral",
+            level: "principal",
+            question: "Jak kierujesz standardami technicznymi w wielu zespołach?",
+            answers: [
+                "Nakazuj standardy bez wkładu",
+                "Buduj konsensus przez RFC, demonstruj wartość, zapewniaj narzędzia i wsparcie",
+                "Pozwól każdemu zespołowi robić co chce",
+                "Kopiuj to co robią inne firmy"
+            ],
+            correct: 1,
+            explanation: "Buduj konsensus przez RFC i grupy robocze, demonstruj wartość pilotażami, zapewniaj narzędzia i wsparcie, iteruj w oparciu o feedback."
+        },
+        {
+            category: "behavioral",
+            level: "principal",
+            question: "Jak obsługujesz techniczne nieporozumienia między senior engineerami?",
+            answers: [
+                "Wybierz osobę z wyższym starszeństwem",
+                "Ułatwiaj dyskusję opartą na danych, skup się na trade-offach, buduj konsensus lub podejmij świadomą decyzję",
+                "Pozwól im to wywalczyć",
+                "Unikaj konfliktu"
+            ],
+            correct: 1,
+            explanation: "Ułatwiaj obiektywną dyskusję z danymi, analizuj trade-offy, szukaj konsensusu, a jeśli potrzeba, podejmij świadomą decyzję z jasnym uzasadnieniem."
+        },
+
+        // Pytania bezpieczeństwa - Mid Level
+        {
+            category: "system-design",
+            level: "mid",
+            question: "Co to jest SQL injection i jak go zapobiegać?",
+            answers: [
+                "Procedura medyczna",
+                "Atak gdzie wstrzykiwany jest złośliwy SQL; zapobiegaj używając zapytań parametryzowanych",
+                "Funkcja bazy danych",
+                "Optymalizacja wydajności"
+            ],
+            correct: 1,
+            explanation: "SQL injection to atak gdzie złośliwy kod SQL jest wstrzykiwany do zapytań. Zapobiegaj używając zapytań parametryzowanych/prepared statements, nigdy konkatenacji stringów."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "Co to jest CORS (Cross-Origin Resource Sharing)?",
+            answers: [
+                "System bazy danych",
+                "Funkcja bezpieczeństwa kontrolująca jak zasoby są udostępniane między różnymi pochodzeniami",
+                "Język programowania",
+                "Framework testowy"
+            ],
+            correct: 1,
+            explanation: "CORS to mechanizm bezpieczeństwa kontrolujący które pochodzenia mogą uzyskać dostęp do zasobów na serwerze web, zapobiegając nieautoryzowanym żądaniom cross-origin."
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Do czego służy OAuth 2.0?",
+            answers: [
+                "Szyfrowanie haseł",
+                "Framework autoryzacyjny dla delegowanego dostępu bez dzielenia się credentials",
+                "Uwierzytelnianie użytkowników",
+                "Kontrola dostępu do bazy danych"
+            ],
+            correct: 1,
+            explanation: "OAuth 2.0 to framework autoryzacyjny, który umożliwia aplikacjom uzyskanie ograniczonego dostępu do kont użytkowników bez ujawniania credentials użytkownika."
+        },
+
+        // Pytania Cloud Computing - Mid Level
+        {
+            category: "devops",
+            level: "mid",
+            question: "Jaka jest różnica między IaaS, PaaS i SaaS?",
+            answers: [
+                "Wszystkie są takie same",
+                "IaaS zapewnia infrastrukturę, PaaS platformę, SaaS aplikacje oprogramowania",
+                "IaaS jest najszybsze",
+                "PaaS jest najdroższe"
+            ],
+            correct: 1,
+            explanation: "IaaS zapewnia wirtualną infrastrukturę (serwery, storage), PaaS zapewnia platformy deweloperskie (z runtime, middleware), SaaS zapewnia kompletne aplikacje."
+        },
+        {
+            category: "devops",
+            level: "mid",
+            question: "Co to jest auto-scaling w cloud computing?",
+            answers: [
+                "Automatyczne aktualizacje oprogramowania",
+                "Automatyczne dostosowywanie pojemności zasobów w oparciu o zapotrzebowanie",
+                "Automatyczne rozliczanie",
+                "Automatyczne backupy"
+            ],
+            correct: 1,
+            explanation: "Auto-scaling automatycznie dostosowuje zasoby obliczeniowe (skaluje w górę lub w dół) w oparciu o rzeczywiste zapotrzebowanie, optymalizując koszty i wydajność."
+        },
+        {
+            category: "devops",
+            level: "senior",
+            question: "Jaki jest cel Service Mesh jak Istio?",
+            answers: [
+                "Tworzenie siatek do wizualizacji",
+                "Obsługa komunikacji serwis-do-serwis z observability, security i kontrolą ruchu",
+                "Łączenie kabli sieciowych",
+                "Tworzenie dokumentacji serwisów"
+            ],
+            correct: 1,
+            explanation: "Service Mesh zapewnia warstwę infrastruktury dla komunikacji mikrousług, obsługując zarządzanie ruchem, bezpieczeństwo, observability i wzorce odporności."
         }
     ]
 };
