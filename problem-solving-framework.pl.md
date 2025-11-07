@@ -1,619 +1,252 @@
-# Problem-Solving Framework for Technical Interviews
+# Framework Rozwiązywania Problemów dla Rozmów Technicznych
 
-## Overview
+## Przegląd
 
-This guide provides a systematic approach to solving coding interview problems. Following a structured framework helps you:
-- Stay organized under pressure
-- Communicate your thought process clearly
-- Avoid missing edge cases
-- Write cleaner, more maintainable code
-- Demonstrate professional problem-solving skills
+Ten przewodnik przedstawia systematyczne podejście do rozwiązywania problemów kodowania podczas rozmów kwalifikacyjnych. Ustrukturyzowany framework pomaga:
+- Zachować organizację pod presją
+- Jasno komunikować proces myślowy
+- Unikać pomijania przypadków brzegowych
+- Pisać czystszy, bardziej utrzymywalny kod
+- Demonstrować profesjonalne umiejętności rozwiązywania problemów
 
-## The UMPIRE Method
+## Metoda UMPIRE
 
-**UMPIRE** is an acronym for a comprehensive problem-solving framework:
+**UMPIRE** to akronim kompleksowego frameworka rozwiązywania problemów:
 
-- **U**nderstand
-- **M**atch
-- **P**lan
-- **I**mplement
-- **R**eview
-- **E**valuate
+- **U**nderstand (Zrozum)
+- **M**atch (Dopasuj)
+- **P**lan (Zaplanuj)
+- **I**mplement (Zaimplementuj)
+- **R**eview (Przejrzyj)
+- **E**valuate (Oceń)
 
-### 1. Understand the Problem
+### 1. Zrozum Problem
 
-**Goal**: Ensure you fully understand the requirements before writing code.
+**Cel**: Upewnij się, że w pełni rozumiesz wymagania przed pisaniem kodu.
 
-**Steps**:
+**Kroki**:
 
-1. **Restate the problem in your own words**
-   - "So I need to find the shortest path between..."
-   - "The task is to return all combinations where..."
+1. **Przeformułuj problem własnymi słowami**
+   - "Więc muszę znaleźć najkrótszą ścieżkę między..."
+   - "Zadanie polega na zwróceniu wszystkich kombinacji gdzie..."
 
-2. **Clarify inputs and outputs**
-   - What data types are the inputs?
-   - What should be returned?
-   - What should happen with invalid inputs?
+2. **Wyjaśnij wejścia i wyjścia**
+   - Jakie typy danych są wejściami?
+   - Co powinno być zwrócone?
+   - Co powinno się stać z nieprawidłowymi wejściami?
 
-3. **Ask clarifying questions**
+3. **Zadawaj pytania wyjaśniające**
    ```
-   - "Can the array be empty?"
-   - "Are the numbers always positive?"
-   - "Should I consider duplicate values?"
-   - "What's the expected size of the input?"
-   - "Is the input sorted?"
-   - "Are there memory constraints?"
+   - "Czy tablica może być pusta?"
+   - "Czy liczby są zawsze dodatnie?"
+   - "Czy powinienem rozważyć duplikaty?"
+   - "Jaki jest oczekiwany rozmiar wejścia?"
+   - "Czy wejście jest posortowane?"
+   - "Czy są ograniczenia pamięci?"
    ```
 
-4. **Work through examples**
-   - Start with simple examples
-   - Consider edge cases
-   - Trace through the logic manually
+4. **Przepracuj przykłady**
+   - Zacznij od prostych przykładów
+   - Rozważ przypadki brzegowe
+   - Prześledzmanualnie logikę
 
-5. **Identify constraints**
-   - Time complexity expectations
-   - Space complexity limitations
-   - Input size ranges
+5. **Zidentyfikuj ograniczenia**
+   - Oczekiwania złożoności czasowej
+   - Limity złożoności przestrzennej
+   - Zakresy rozmiaru wejścia
 
-**Example**:
+**Przykład**:
 ```
-Problem: Find two numbers in an array that add up to a target sum.
+Problem: Znajdź dwie liczby w tablicy, które sumują się do target.
 
-Questions to ask:
-✓ Can there be duplicate numbers?
-✓ Will there always be exactly one solution?
-✓ Should I return indices or values?
-✓ Can I use the same element twice?
-✓ Is the array sorted?
-✓ What if there's no solution?
-✓ What's the expected array size?
+Pytania do zadania:
+✓ Czy mogą być duplikaty liczb?
+✓ Czy zawsze będzie dokładnie jedno rozwiązanie?
+✓ Czy powinienem zwrócić indeksy czy wartości?
+✓ Czy mogę użyć tego samego elementu dwa razy?
+✓ Czy tablica jest posortowana?
+✓ Co jeśli nie ma rozwiązania?
+✓ Jaki jest oczekiwany rozmiar tablicy?
 ```
 
-### 2. Match to Patterns
+### 2. Dopasuj do Wzorców
 
-**Goal**: Recognize common patterns and data structures that fit the problem.
+**Cel**: Rozpoznaj wspólne wzorce i struktury danych pasujące do problemu.
 
-**Common Patterns**:
+**Wspólne Wzorce**:
 
-#### Array/String Patterns
-- **Two Pointers**: Sorted array, pairs with target sum, palindrome checking
-- **Sliding Window**: Subarray/substring problems, fixed/variable window size
-- **Fast & Slow Pointers**: Cycle detection, finding middle element
+#### Wzorce Tablic/Stringów
+- **Two Pointers**: Posortowana tablica, pary z sumą target, sprawdzanie palindromów
+- **Sliding Window**: Problemy podtablic/podstringów, stałe/zmienne okno
+- **Fast & Slow Pointers**: Detekcja cykli, znajdowanie środkowego elementu
 
-#### Data Structure Patterns
-- **Hash Map**: Frequency counting, fast lookups, pairs/triplets
-- **Stack**: Matching parentheses, next greater element, expression evaluation
+#### Wzorce Struktur Danych
+- **Hash Map**: Liczenie częstości, szybkie wyszukiwanie, pary/trójki
+- **Stack**: Dopasowanie nawiasów, następny większy element, ewaluacja wyrażeń
 - **Queue**: BFS, level-order traversal, sliding window maximum
-- **Heap**: Top K elements, merge K sorted lists, median finding
+- **Heap**: Top K elementów, merge K posortowanych list, znajdowanie mediany
 
-#### Tree Patterns
-- **DFS (Recursion)**: Path problems, tree traversal, validation
-- **BFS (Queue)**: Level-order traversal, shortest path in tree
-- **Binary Search Tree**: Search, insert, validate BST properties
+#### Wzorce Drzew
+- **DFS (Rekursja)**: Problemy ścieżek, przechodzenie drzewa, walidacja
+- **BFS (Queue)**: Level-order traversal, najkrótsza ścieżka w drzewie
+- **Binary Search Tree**: Szukanie, wstawianie, walidacja właściwości BST
 
-#### Graph Patterns
-- **DFS**: Connected components, cycle detection, topological sort
-- **BFS**: Shortest path, level traversal
-- **Union Find**: Connected components, cycle detection in undirected graphs
+#### Wzorce Grafów
+- **DFS**: Składowe spójne, detekcja cykli, sortowanie topologiczne
+- **BFS**: Najkrótsza ścieżka, przechodzenie poziomowe
+- **Union Find**: Składowe spójne, detekcja cykli w grafach nieskierowanych
 
-#### Dynamic Programming Patterns
-- **Fibonacci Pattern**: Climbing stairs, decode ways
-- **0/1 Knapsack**: Subset sum, equal partition
-- **Unbounded Knapsack**: Coin change, rod cutting
-- **LCS Pattern**: Longest common subsequence, edit distance
+#### Wzorce Programowania Dynamicznego
+- **Fibonacci Pattern**: Wspinanie po schodach, decode ways
+- **0/1 Knapsack**: Suma podzbioru, równa partycja
+- **Unbounded Knapsack**: Wymiana monet, cięcie pręta
+- **LCS Pattern**: Najdłuższy wspólny podciąg, odległość edycji
 
-#### Algorithm Patterns
-- **Binary Search**: Sorted array search, search in rotated array, find boundaries
-- **Backtracking**: Permutations, combinations, N-Queens, Sudoku
-- **Greedy**: Activity selection, jump game, gas station
-- **Divide & Conquer**: Merge sort, quick sort, closest pair
+#### Wzorce Algorytmiczne
+- **Binary Search**: Szukanie w posortowanej tablicy, szukanie w rotowanej tablicy
+- **Backtracking**: Permutacje, kombinacje, N-Queens, Sudoku
+- **Greedy**: Wybór aktywności, jump game, stacja benzynowa
+- **Divide & Conquer**: Merge sort, quick sort, najbliższa para
 
-**Pattern Matching Process**:
-```
-1. Identify the problem type
-   → Array? String? Tree? Graph?
+### 3. Zaplanuj Rozwiązanie
 
-2. Look for keywords
-   → "Shortest" → BFS, Dijkstra
-   → "All combinations" → Backtracking
-   → "Consecutive" → Sliding window
-   → "Pairs that sum" → Two pointers or hash map
-   → "K largest/smallest" → Heap
-   → "Optimize" → Dynamic programming or greedy
+**Cel**: Zaprojektuj rozwiązanie przed kodowaniem.
 
-3. Consider constraints
-   → Sorted input → Binary search or two pointers
-   → Need fast lookups → Hash map
-   → Need ordered data → BST or heap
-   → Need to track min/max → Stack or heap
-```
+**Kroki**:
 
-### 3. Plan the Solution
+1. **Wybierz podejście**
+   - Zacznij od brute force (pokazuje że rozumiesz problem)
+   - Zidentyfikuj optymalizacje
 
-**Goal**: Design your solution before coding.
+2. **Naszkicuj algorytm**
+   - Napisz pseudokod lub kroki wysokiego poziomu
+   - Nie zacznij kodować natychmiast
 
-**Steps**:
+3. **Analizuj złożoność**
+   - Złożoność czasowa: O(?)
+   - Złożoność przestrzenna: O(?)
+   - Czy to akceptowalne przy danych ograniczeniach?
 
-1. **Choose your approach**
-   - Start with brute force (shows you understand the problem)
-   - Identify optimizations
+4. **Rozważ przypadki brzegowe**
+   - Puste wejście
+   - Pojedynczy element
+   - Wszystkie elementy takie same
+   - Wartości maksymalne/minimalne
+   - Nieprawidłowe wejście
 
-2. **Outline the algorithm**
-   - Write pseudocode or high-level steps
-   - Don't start coding immediately
+5. **Komunikuj swój plan**
+   - Omów swoje podejście
+   - Zapytaj czy rozmówca zgadza się z kierunkiem
 
-3. **Analyze complexity**
-   - Time complexity: O(?)
-   - Space complexity: O(?)
-   - Is this acceptable given the constraints?
-
-4. **Consider edge cases**
-   - Empty input
-   - Single element
-   - All elements the same
-   - Maximum/minimum values
-   - Invalid input
-
-5. **Communicate your plan**
-   - Talk through your approach
-   - Ask if the interviewer agrees with the direction
-
-**Example Plan**:
+**Przykładowy Plan**:
 ```
 Problem: Two Sum
 
-Brute Force Approach:
-- Nested loops to check all pairs
-- Time: O(n²), Space: O(1)
-- Works but too slow for large inputs
+Podejście Brute Force:
+- Zagnieżdżone pętle sprawdzające wszystkie pary
+- Czas: O(n²), Przestrzeń: O(1)
+- Działa ale za wolne dla dużych wejść
 
-Optimized Approach:
-- Use hash map to store seen numbers
-- For each number, check if (target - number) exists
-- Time: O(n), Space: O(n)
-- Trade space for time
+Optymalne Podejście:
+- Użyj hash map do przechowania widzianych liczb
+- Dla każdej liczby sprawdź czy (target - liczba) istnieje
+- Czas: O(n), Przestrzeń: O(n)
+- Wymiana przestrzeni na czas
 
-Pseudocode:
-1. Create empty hash map
-2. For each number in array:
-   a. Calculate complement = target - number
-   b. If complement in hash map:
-      - Return [hash_map[complement], current_index]
-   c. Add number and index to hash map
-3. Return empty if no solution
+Pseudokod:
+1. Utwórz pustą hash mapę
+2. Dla każdej liczby w tablicy:
+   a. Oblicz complement = target - liczba
+   b. Jeśli complement w hash mapie:
+      - Zwróć [hash_map[complement], current_index]
+   c. Dodaj liczbę i indeks do hash mapy
+3. Zwróć pustą jeśli brak rozwiązania
 
-Edge cases:
-- Empty array → return []
-- Single element → return []
-- Duplicate numbers → hash map stores latest index
-- Same element twice → check if complement equals current number
+Przypadki brzegowe:
+- Pusta tablica → zwróć []
+- Pojedynczy element → zwróć []
+- Duplikaty liczb → hash mapa przechowuje ostatni indeks
+- Ten sam element dwa razy → sprawdź czy complement równy current number
 ```
 
-### 4. Implement the Code
+### 4. Zaimplementuj Kod
 
-**Goal**: Write clean, working code.
+**Cel**: Napisz czysty, działający kod.
 
 **Best Practices**:
 
-1. **Start with the structure**
-   ```python
-   def function_name(param1, param2):
-       # Handle edge cases first
+1. **Zacznij od struktury**
+2. **Pisz czytelny kod** - znaczące nazwy zmiennych, komentarze dla złożonej logiki
+3. **Obsługuj przypadki brzegowe wcześnie**
+4. **Myśl na głos** - wyjaśniaj co piszesz
+5. **Testuj podczas pisania** - nie czekaj do końca
 
-       # Initialize variables
+### 5. Przejrzyj Kod
 
-       # Main logic
-
-       # Return result
-   ```
-
-2. **Write readable code**
-   - Use meaningful variable names
-   - Add comments for complex logic
-   - Keep functions focused and short
-
-3. **Handle edge cases early**
-   ```python
-   if not array or len(array) == 0:
-       return []
-   ```
-
-4. **Think out loud**
-   - Explain what you're writing
-   - If stuck, discuss alternatives
-
-5. **Test as you go**
-   - Don't wait until the end
-   - Use simple examples to verify logic
-
-**Example Implementation**:
-```python
-def two_sum(nums, target):
-    """
-    Find two numbers that add up to target.
-
-    Args:
-        nums: List of integers
-        target: Target sum
-
-    Returns:
-        List of two indices, or empty list if no solution
-    """
-    # Edge case: empty or single element
-    if not nums or len(nums) < 2:
-        return []
-
-    # Hash map to store number -> index mapping
-    seen = {}
-
-    # Iterate through array
-    for i, num in enumerate(nums):
-        complement = target - num
-
-        # Check if complement exists
-        if complement in seen:
-            return [seen[complement], i]
-
-        # Store current number
-        seen[num] = i
-
-    # No solution found
-    return []
-```
-
-### 5. Review the Code
-
-**Goal**: Catch bugs and improve code quality.
+**Cel**: Wyłap błędy i popraw jakość kodu.
 
 **Checklist**:
 
-1. **Trace through with examples**
-   - Use your original examples
-   - Walk through line by line
-   - Verify output is correct
+1. **Prześledź z przykładami** - użyj swoich oryginalnych przykładów
+2. **Sprawdź przypadki brzegowe**
+3. **Szukaj błędów** - off-by-one errors, sprawdzenia null/None, integer overflow
+4. **Jakość kodu** - czy kod można uprościć? Czy nazwy zmiennych są jasne?
+5. **Poproś o feedback** - "Czy to ma sens?" "Czy jest coś do wyjaśnienia?"
 
-2. **Check edge cases**
-   - Run through edge cases mentally
-   - Ensure they're handled properly
+### 6. Oceń Złożoność
 
-3. **Look for bugs**
-   - Off-by-one errors
-   - Null/None checks
-   - Integer overflow
-   - Index out of bounds
+**Cel**: Zademonstruj zrozumienie wydajności.
 
-4. **Code quality**
-   - Can any code be simplified?
-   - Are variable names clear?
-   - Is there duplicate logic?
+**Analiza**:
 
-5. **Ask for feedback**
-   - "Does this make sense?"
-   - "Is there anything you'd like me to clarify?"
+1. **Złożoność Czasowa**
+   - Policz operacje w zależności od rozmiaru wejścia
+   - Big-O notation: O(1), O(log n), O(n), O(n log n), O(n²)
 
-**Common Bugs to Check**:
-```python
-# Off-by-one errors
-for i in range(len(array) - 1):  # Missing last element?
+2. **Złożoność Przestrzenna**
+   - Policz dodatkową pamięć użytą
+   - Stack przestrzeń dla rekursji
+   - Struktury danych (hash maps, arrays)
 
-# Integer division (Python 2 vs 3)
-mid = (left + right) // 2  # Use // for integer division
+3. **Trade-offs**
+   - Często można wymienić przestrzeń na czas lub odwrotnie
+   - Omów alternatywne podejścia
 
-# Modifying while iterating
-for item in list:
-    list.remove(item)  # Can cause issues
-
-# Shallow vs deep copy
-new_list = old_list  # Reference, not copy
-new_list = old_list.copy()  # Shallow copy
-new_list = copy.deepcopy(old_list)  # Deep copy
-
-# String immutability
-s = "hello"
-s[0] = "H"  # Error in Python, strings are immutable
+**Przykład Analizy**:
+```
+Two Sum Solution:
+- Czas: O(n) - jedna iteracja przez tablicę
+- Przestrzeń: O(n) - hash mapa może przechować n elementów
+- Trade-off: Użyliśmy O(n) przestrzeni aby uzyskać O(n) czas
+- Alternatywa: Sortowanie + two pointers = O(n log n) czas, O(1) przestrzeń
 ```
 
-### 6. Evaluate Complexity
+## Wskazówki Komunikacyjne
 
-**Goal**: Analyze and communicate the efficiency of your solution.
+**Podczas Rozmowy**:
 
-**Time Complexity Analysis**:
+1. **Myśl na głos** - pokazuje proces myślowy
+2. **Zadawaj pytania** - pokazuje dokładność
+3. **Wyjaśniaj decyzje** - dlaczego wybrałeś dane podejście
+4. **Bądź otwarty na hinty** - słuchaj sugestii rozmówcy
+5. **Nie panikuj przy utknięciu** - omów alternatywy
+6. **Zarządzaj czasem** - nie spędzaj 30 minut na jednej części
 
-```python
-# O(1) - Constant
-def get_first(array):
-    return array[0]
+**Gdy Utkniesz**:
 
-# O(log n) - Logarithmic
-def binary_search(array, target):
-    left, right = 0, len(array) - 1
-    while left <= right:
-        mid = (left + right) // 2
-        # ...
+1. Wróć do przykładów - czasem wzorzec stanie się jasny
+2. Pomyśl na głos o możliwych podejściach
+3. Poproś o hint jeśli naprawdę utknąłeś
+4. Zacznij od brute force i optymalizuj stopniowo
 
-# O(n) - Linear
-def find_max(array):
-    max_val = array[0]
-    for num in array:
-        max_val = max(max_val, num)
-    return max_val
+## Podsumowanie
 
-# O(n log n) - Linearithmic
-def merge_sort(array):
-    # Divide and conquer with linear merge
-    pass
+Framework UMPIRE:
+- **U**nderstand: Wyjaśnij problem, zadawaj pytania
+- **M**atch: Rozpoznaj wzorce
+- **P**lan: Zaprojektuj przed kodowaniem
+- **I**mplement: Pisz czysty kod
+- **R**eview: Testuj i szukaj błędów
+- **E**valuate: Analizuj złożoność
 
-# O(n²) - Quadratic
-def bubble_sort(array):
-    for i in range(len(array)):
-        for j in range(len(array)):
-            # Compare and swap
-
-# O(2^n) - Exponential
-def fibonacci_recursive(n):
-    if n <= 1:
-        return n
-    return fibonacci_recursive(n-1) + fibonacci_recursive(n-2)
-
-# O(n!) - Factorial
-def permutations(array):
-    # Generate all permutations
-    pass
-```
-
-**Space Complexity Analysis**:
-
-```python
-# O(1) - Constant space
-def swap(a, b):
-    temp = a
-    # Only a few variables
-
-# O(n) - Linear space
-def reverse_array(array):
-    return array[::-1]  # Creates new array
-
-# O(n) - Hash map
-def two_sum(nums, target):
-    seen = {}  # Can store up to n elements
-    # ...
-
-# O(log n) - Recursion stack
-def binary_search_recursive(array, target, left, right):
-    if left > right:
-        return -1
-    mid = (left + right) // 2
-    # log n recursive calls
-
-# O(n) - Recursion stack
-def factorial(n):
-    if n <= 1:
-        return 1
-    return n * factorial(n - 1)  # n recursive calls
-```
-
-**Optimization Discussion**:
-- "The current solution is O(n²). Can we do better?"
-- "We're using O(n) extra space. Is there an in-place solution?"
-- "This works for small inputs, but for n > 10⁶, we need a better approach"
-
-## Interview Communication Tips
-
-### 1. Think Out Loud
-```
-✓ "I'm thinking we could use a hash map here because..."
-✓ "Let me consider the edge case where the array is empty..."
-✓ "I notice the array is sorted, so binary search might work..."
-
-✗ Silent coding for 5 minutes
-✗ Jumping straight to code without explanation
-```
-
-### 2. Ask Questions
-```
-✓ "Should I optimize for time or space?"
-✓ "Can I assume the input is valid?"
-✓ "Would you like me to handle this edge case?"
-
-✗ Making assumptions without clarifying
-✗ Proceeding with unclear requirements
-```
-
-### 3. Handle Being Stuck
-```
-✓ "I'm thinking through two approaches. Let me outline both..."
-✓ "This seems similar to problem X. Can I use that pattern?"
-✓ "I'm stuck on this part. Can you give me a hint?"
-
-✗ Sitting in silence when stuck
-✗ Giving up immediately
-```
-
-### 4. Manage Time
-```
-✓ Start with brute force if pressed for time
-✓ Mention optimizations even if you don't code them
-✓ Prioritize working code over perfect code
-
-✗ Spending 30 minutes on the perfect solution
-✗ Over-engineering a simple problem
-```
-
-## Common Problem-Solving Strategies
-
-### 1. Draw It Out
-- Visualize the problem
-- Draw arrays, trees, graphs
-- Trace through examples visually
-
-### 2. Simplify First
-- Start with smallest valid input
-- Solve for n=1, then n=2
-- Find the pattern
-
-### 3. Break It Down
-- Solve subproblems first
-- Build helper functions
-- Combine solutions
-
-### 4. Look for Patterns
-- Similar to problems you've seen?
-- Can you reuse known algorithms?
-- What category does this fit?
-
-### 5. Work Backwards
-- Start from the desired output
-- What would lead to this result?
-- Trace backwards to input
-
-### 6. Consider Trade-offs
-- Time vs Space
-- Readability vs Performance
-- Simple vs Optimal
-
-## Practice Checklist
-
-Before the interview, practice:
-
-- [ ] 5+ easy problems using UMPIRE method
-- [ ] 10+ medium problems with optimization
-- [ ] Explaining solutions out loud
-- [ ] Writing code on whiteboard/paper
-- [ ] Identifying patterns quickly
-- [ ] Calculating time/space complexity
-- [ ] Handling edge cases systematically
-- [ ] Coding without IDE assistance
-
-## Sample Problem Walkthrough
-
-**Problem**: Given an array of integers, find the length of the longest consecutive sequence.
-
-**Example**: `[100, 4, 200, 1, 3, 2]` → `4` (sequence: 1, 2, 3, 4)
-
-### UMPIRE Application:
-
-**U - Understand**
-```
-Input: Array of integers (can be unsorted, duplicates?)
-Output: Integer (length of longest sequence)
-
-Questions:
-- Can array be empty? → Yes, return 0
-- Duplicates? → Ignore them
-- Negative numbers? → Yes, can have any integer
-- Expected size? → Up to 10^5 elements
-
-Example: [100, 4, 200, 1, 3, 2]
-- Sequences: [100], [4, 3, 2, 1], [200]
-- Longest: [1, 2, 3, 4] with length 4
-```
-
-**M - Match**
-```
-Pattern: Need to find consecutive numbers
-- Could sort: O(n log n)
-- Need fast lookups: Hash Set!
-- Each number is start of potential sequence
-
-Similar to: Finding connected components
-```
-
-**P - Plan**
-```
-Approach 1 (Brute Force):
-- Sort array: O(n log n)
-- Linear scan for consecutive: O(n)
-- Total: O(n log n)
-
-Approach 2 (Optimal):
-- Use hash set for O(1) lookups
-- For each number, check if it's start of sequence
-- Count length of sequence from that start
-- Time: O(n), Space: O(n)
-
-Pseudocode:
-1. Create set from array
-2. For each number:
-   a. If number-1 not in set (start of sequence):
-      - Count consecutive numbers
-      - Update max length
-3. Return max length
-
-Edge cases:
-- Empty array → 0
-- Single element → 1
-- All duplicates → 1
-- No consecutive → 1
-```
-
-**I - Implement**
-```python
-def longest_consecutive(nums):
-    if not nums:
-        return 0
-
-    num_set = set(nums)
-    max_length = 0
-
-    for num in num_set:
-        # Only start counting from beginning of sequence
-        if num - 1 not in num_set:
-            current_num = num
-            current_length = 1
-
-            # Count consecutive numbers
-            while current_num + 1 in num_set:
-                current_num += 1
-                current_length += 1
-
-            max_length = max(max_length, current_length)
-
-    return max_length
-```
-
-**R - Review**
-```
-Test with example: [100, 4, 200, 1, 3, 2]
-- Set: {100, 4, 200, 1, 3, 2}
-- Check 100: 99 not in set, count: 1
-- Check 4: 3 in set (not start), skip
-- Check 200: 199 not in set, count: 1
-- Check 1: 0 not in set (start!), count: 1→2→3→4
-- Check 3: 2 in set, skip
-- Check 2: 1 in set, skip
-- Max: 4 ✓
-
-Edge cases:
-- []: → 0 ✓
-- [1]: → 1 ✓
-- [1,1,1]: → 1 ✓
-- [1,3,5]: → 1 ✓
-```
-
-**E - Evaluate**
-```
-Time Complexity: O(n)
-- Creating set: O(n)
-- Iterating nums: O(n)
-- Inner while: Each number visited at most twice
-- Overall: O(n)
-
-Space Complexity: O(n)
-- Set stores all unique numbers
-
-Trade-off: Use O(n) space to achieve O(n) time
-Alternative: Sort in O(n log n) time with O(1) space
-```
-
-## Summary
-
-The UMPIRE method provides a structured approach to tackling any coding problem:
-
-1. **Understand** the problem completely
-2. **Match** to known patterns and data structures
-3. **Plan** your solution before coding
-4. **Implement** clean, working code
-5. **Review** for bugs and improvements
-6. **Evaluate** time and space complexity
-
-Practice this framework until it becomes second nature. The goal is to demonstrate not just coding ability, but systematic problem-solving skills and clear communication.
+**Praktyka jest kluczowa**. Im więcej problemów rozwiążesz używając tego frameworka, tym bardziej naturalny się stanie.
