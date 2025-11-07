@@ -147,21 +147,30 @@ function initializeQuizSection() {
 }
 
 function startQuiz() {
+    console.log('[DEBUG] startQuiz() called');
     const category = document.getElementById('quiz-category').value;
     const level = document.getElementById('quiz-level').value;
     const count = parseInt(document.getElementById('quiz-count').value);
 
+    console.log('[DEBUG] Quiz params:', { category, level, count, currentLanguage });
     startQuizWithParams(category, level, count);
 }
 
 function startQuizWithParams(category, level, count) {
+    console.log('[DEBUG] startQuizWithParams() called with:', { category, level, count, currentLanguage });
+
     // Pass current language to get questions in the right language
     const questions = getFilteredQuestions(category, level, count, currentLanguage);
 
+    console.log('[DEBUG] getFilteredQuestions() returned:', questions.length, 'questions');
+
     if (questions.length === 0) {
+        console.error('[ERROR] No questions found for criteria:', { category, level, count, currentLanguage });
         alert(t('quizNoQuestions') || 'No questions available for selected criteria!');
         return;
     }
+
+    console.log('[DEBUG] Starting quiz with', questions.length, 'questions');
 
     currentQuiz = {
         questions: questions,
