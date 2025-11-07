@@ -23,6 +23,7 @@ const translations = {
         catDatabases: "Databases",
         catDevOps: "DevOps & Cloud",
         catBehavioral: "Behavioral",
+        catCompetitiveProgramming: "Competitive Programming (C#)",
 
         // Levels
         levelMid: "Mid",
@@ -124,6 +125,7 @@ const translations = {
         catDatabases: "Bazy Danych",
         catDevOps: "DevOps i Cloud",
         catBehavioral: "Pytania Behawioralne",
+        catCompetitiveProgramming: "Programowanie Konkursowe (C#)",
 
         // Levels
         levelMid: "Mid",
