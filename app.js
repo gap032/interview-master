@@ -128,11 +128,37 @@ async function loadMarkdownFile(filepath) {
 
 // Quiz Section
 function initializeQuizSection() {
+    console.log('[DEBUG] Initializing quiz section...');
+
     const startQuizBtn = document.getElementById('start-quiz');
     const quitQuizBtn = document.getElementById('quit-quiz');
     const nextQuestionBtn = document.getElementById('next-question');
     const retryQuizBtn = document.getElementById('retry-quiz');
     const newQuizBtn = document.getElementById('new-quiz');
+
+    // Check if buttons exist before adding event listeners
+    if (!startQuizBtn) {
+        console.error('[ERROR] start-quiz button not found!');
+        return;
+    }
+    if (!quitQuizBtn) {
+        console.error('[ERROR] quit-quiz button not found!');
+        return;
+    }
+    if (!nextQuestionBtn) {
+        console.error('[ERROR] next-question button not found!');
+        return;
+    }
+    if (!retryQuizBtn) {
+        console.error('[ERROR] retry-quiz button not found!');
+        return;
+    }
+    if (!newQuizBtn) {
+        console.error('[ERROR] new-quiz button not found!');
+        return;
+    }
+
+    console.log('[DEBUG] All quiz buttons found, adding event listeners...');
 
     startQuizBtn.addEventListener('click', startQuiz);
     quitQuizBtn.addEventListener('click', quitQuiz);
@@ -144,6 +170,8 @@ function initializeQuizSection() {
         startQuizWithParams(category, level, count);
     });
     newQuizBtn.addEventListener('click', resetQuiz);
+
+    console.log('[DEBUG] Quiz section initialized successfully');
 }
 
 function startQuiz() {
