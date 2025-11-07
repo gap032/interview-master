@@ -2919,3 +2919,807 @@ p.sort_stats('cumulative').print_stats(10)
 - Benchmark before and after changes
 - Balance readability with performance
 
+---
+
+## 12. Angular Fundamentals
+
+**Question**: What are the core concepts of Angular? Explain components, services, dependency injection, and directives.
+
+**Answer**:
+
+**Angular Overview:**
+Angular is a TypeScript-based web application framework maintained by Google. It provides a complete solution for building SPAs with routing, forms, HTTP, and more.
+
+**1. Components:**
+
+Components are the building blocks of Angular applications. Each component controls a view template.
+
+```typescript
+// user.component.ts
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styleUrls: ['./user.component.css']
+})
+export class UserComponent implements OnInit {
+  // Properties
+  name: string = 'John Doe';
+  age: number = 30;
+  isActive: boolean = true;
+
+  // Constructor
+  constructor() { }
+
+  // Lifecycle hook
+  ngOnInit(): void {
+    console.log('Component initialized');
+  }
+
+  // Methods
+  updateName(newName: string): void {
+    this.name = newName;
+  }
+
+  greet(): string {
+    return `Hello, ${this.name}!`;
+  }
+}
+```
+
+```html
+<!-- user.component.html -->
+<div class="user-card">
+  <h2>{{ name }}</h2>
+  <p>Age: {{ age }}</p>
+  <p>Status: {{ isActive ? 'Active' : 'Inactive' }}</p>
+
+  <button (click)="updateName('Jane Doe')">Change Name</button>
+
+  <p>{{ greet() }}</p>
+</div>
+```
+
+**2. Data Binding:**
+
+```typescript
+// data-binding.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-data-binding',
+  template: `
+    <!-- Interpolation -->
+    <h1>{{ title }}</h1>
+
+    <!-- Property Binding -->
+    <img [src]="imageUrl" [alt]="imageAlt">
+    <button [disabled]="isDisabled">Click Me</button>
+
+    <!-- Event Binding -->
+    <button (click)="handleClick()">Submit</button>
+    <input (keyup)="onKeyUp($event)">
+
+    <!-- Two-Way Binding -->
+    <input [(ngModel)]="username" placeholder="Enter username">
+    <p>Username: {{ username }}</p>
+  `
+})
+export class DataBindingComponent {
+  // Interpolation
+  title = 'Angular Data Binding';
+
+  // Property binding
+  imageUrl = 'https://angular.io/assets/images/logos/angular/angular.png';
+  imageAlt = 'Angular Logo';
+  isDisabled = false;
+
+  // Event binding
+  handleClick(): void {
+    alert('Button clicked!');
+  }
+
+  onKeyUp(event: KeyboardEvent): void {
+    console.log('Key pressed:', (event.target as HTMLInputElement).value);
+  }
+
+  // Two-way binding
+  username = '';
+}
+```
+
+**3. Services and Dependency Injection:**
+
+```typescript
+// user.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+@Injectable({
+  providedIn: 'root'  // Singleton service
+})
+export class UserService {
+  private apiUrl = 'https://api.example.com/users';
+
+  constructor(private http: HttpClient) { }
+
+  // Get all users
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl);
+  }
+
+  // Get user by ID
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
+  }
+
+  // Create user
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user);
+  }
+
+  // Update user
+  updateUser(id: number, user: User): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
+  }
+
+  // Delete user
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+}
+```
+
+**Using the service in a component:**
+
+```typescript
+// user-list.component.ts
+import { Component, OnInit } from '@angular/core';
+import { UserService, User } from './user.service';
+
+@Component({
+  selector: 'app-user-list',
+  templateUrl: './user-list.component.html'
+})
+export class UserListComponent implements OnInit {
+  users: User[] = [];
+  loading = false;
+  error: string | null = null;
+
+  // Dependency Injection
+  constructor(private userService: UserService) { }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.loading = true;
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load users';
+        this.loading = false;
+        console.error(err);
+      }
+    });
+  }
+
+  deleteUser(id: number): void {
+    if (confirm('Are you sure?')) {
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          this.users = this.users.filter(u => u.id !== id);
+        },
+        error: (err) => console.error(err)
+      });
+    }
+  }
+}
+```
+
+```html
+<!-- user-list.component.html -->
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div *ngIf="!loading && !error">
+  <ul>
+    <li *ngFor="let user of users">
+      {{ user.name }} - {{ user.email }}
+      <button (click)="deleteUser(user.id)">Delete</button>
+    </li>
+  </ul>
+</div>
+```
+
+**4. Directives:**
+
+**Structural Directives (change DOM structure):**
+
+```typescript
+@Component({
+  selector: 'app-directives',
+  template: `
+    <!-- *ngIf - Conditional rendering -->
+    <div *ngIf="isLoggedIn">
+      Welcome back!
+    </div>
+
+    <div *ngIf="isLoggedIn; else loginTemplate">
+      You are logged in
+    </div>
+    <ng-template #loginTemplate>
+      Please log in
+    </ng-template>
+
+    <!-- *ngFor - Loop through items -->
+    <ul>
+      <li *ngFor="let item of items; let i = index; let isFirst = first">
+        {{ i + 1 }}. {{ item }} <span *ngIf="isFirst">(First)</span>
+      </li>
+    </ul>
+
+    <!-- *ngSwitch - Multiple conditions -->
+    <div [ngSwitch]="userRole">
+      <p *ngSwitchCase="'admin'">Admin Panel</p>
+      <p *ngSwitchCase="'user'">User Dashboard</p>
+      <p *ngSwitchDefault>Guest View</p>
+    </div>
+  `
+})
+export class DirectivesComponent {
+  isLoggedIn = true;
+  items = ['Apple', 'Banana', 'Orange'];
+  userRole = 'admin';
+}
+```
+
+**Attribute Directives (change appearance or behavior):**
+
+```typescript
+@Component({
+  selector: 'app-attribute-directives',
+  template: `
+    <!-- ngClass - Dynamic CSS classes -->
+    <div [ngClass]="{'active': isActive, 'disabled': isDisabled}">
+      Dynamic classes
+    </div>
+
+    <div [ngClass]="currentClasses">Classes from object</div>
+
+    <!-- ngStyle - Dynamic inline styles -->
+    <p [ngStyle]="{'color': textColor, 'font-size': fontSize + 'px'}">
+      Styled text
+    </p>
+
+    <p [ngStyle]="currentStyles">Styles from object</p>
+
+    <!-- ngModel - Two-way binding -->
+    <input [(ngModel)]="searchText" placeholder="Search...">
+    <p>You typed: {{ searchText }}</p>
+  `
+})
+export class AttributeDirectivesComponent {
+  isActive = true;
+  isDisabled = false;
+
+  currentClasses = {
+    'highlight': true,
+    'bold': false,
+    'large': true
+  };
+
+  textColor = 'blue';
+  fontSize = 16;
+
+  currentStyles = {
+    'font-weight': 'bold',
+    'text-decoration': 'underline'
+  };
+
+  searchText = '';
+}
+```
+
+**Custom Directive:**
+
+```typescript
+// highlight.directive.ts
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+  @Input() appHighlight = 'yellow';
+  @Input() defaultColor = 'transparent';
+
+  constructor(private el: ElementRef) { }
+
+  @HostListener('mouseenter') onMouseEnter() {
+    this.highlight(this.appHighlight);
+  }
+
+  @HostListener('mouseleave') onMouseLeave() {
+    this.highlight(this.defaultColor);
+  }
+
+  private highlight(color: string) {
+    this.el.nativeElement.style.backgroundColor = color;
+  }
+}
+
+// Usage:
+// <p appHighlight="lightblue">Hover over me!</p>
+```
+
+**5. Input/Output - Component Communication:**
+
+```typescript
+// child.component.ts
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-child',
+  template: `
+    <div class="child">
+      <h3>{{ title }}</h3>
+      <p>Count: {{ count }}</p>
+      <button (click)="increment()">Increment</button>
+      <button (click)="sendMessage()">Send Message</button>
+    </div>
+  `
+})
+export class ChildComponent {
+  // Input - receive data from parent
+  @Input() title: string = 'Child Component';
+  @Input() count: number = 0;
+
+  // Output - emit events to parent
+  @Output() countChange = new EventEmitter<number>();
+  @Output() message = new EventEmitter<string>();
+
+  increment(): void {
+    this.count++;
+    this.countChange.emit(this.count);
+  }
+
+  sendMessage(): void {
+    this.message.emit('Hello from child!');
+  }
+}
+
+// parent.component.ts
+@Component({
+  selector: 'app-parent',
+  template: `
+    <div class="parent">
+      <h2>Parent Component</h2>
+      <p>Parent count: {{ parentCount }}</p>
+      <p>Message: {{ receivedMessage }}</p>
+
+      <app-child
+        [title]="'Child 1'"
+        [count]="parentCount"
+        (countChange)="onCountChange($event)"
+        (message)="onMessage($event)">
+      </app-child>
+    </div>
+  `
+})
+export class ParentComponent {
+  parentCount = 0;
+  receivedMessage = '';
+
+  onCountChange(newCount: number): void {
+    this.parentCount = newCount;
+  }
+
+  onMessage(msg: string): void {
+    this.receivedMessage = msg;
+  }
+}
+```
+
+**6. Routing:**
+
+```typescript
+// app-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { AboutComponent } from './about/about.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'users', component: UserListComponent },
+  { path: 'users/:id', component: UserDetailComponent },  // Route parameter
+  { path: '**', component: NotFoundComponent }  // Wildcard for 404
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+```typescript
+// app.component.ts
+@Component({
+  selector: 'app-root',
+  template: `
+    <nav>
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/about" routerLinkActive="active">About</a>
+      <a routerLink="/users" routerLinkActive="active">Users</a>
+    </nav>
+
+    <router-outlet></router-outlet>
+  `
+})
+export class AppComponent { }
+```
+
+```typescript
+// user-detail.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService, User } from '../user.service';
+
+@Component({
+  selector: 'app-user-detail',
+  template: `
+    <div *ngIf="user">
+      <h2>{{ user.name }}</h2>
+      <p>Email: {{ user.email }}</p>
+      <button (click)="goBack()">Back</button>
+    </div>
+  `
+})
+export class UserDetailComponent implements OnInit {
+  user: User | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService
+  ) { }
+
+  ngOnInit(): void {
+    // Get route parameter
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadUser(id);
+  }
+
+  loadUser(id: number): void {
+    this.userService.getUserById(id).subscribe({
+      next: (data) => this.user = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/users']);
+  }
+}
+```
+
+**7. Forms:**
+
+**Template-Driven Forms:**
+
+```typescript
+// template-form.component.ts
+import { Component } from '@angular/core';
+
+interface FormData {
+  name: string;
+  email: string;
+  age: number;
+}
+
+@Component({
+  selector: 'app-template-form',
+  template: `
+    <form #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
+      <div>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          [(ngModel)]="model.name"
+          #name="ngModel"
+          required
+          minlength="3">
+        <div *ngIf="name.invalid && name.touched" class="error">
+          <span *ngIf="name.errors?.['required']">Name is required</span>
+          <span *ngIf="name.errors?.['minlength']">Min length is 3</span>
+        </div>
+      </div>
+
+      <div>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="model.email"
+          #email="ngModel"
+          required
+          email>
+        <div *ngIf="email.invalid && email.touched" class="error">
+          Email is invalid
+        </div>
+      </div>
+
+      <div>
+        <label>Age:</label>
+        <input
+          type="number"
+          name="age"
+          [(ngModel)]="model.age"
+          #age="ngModel"
+          required
+          min="18"
+          max="100">
+      </div>
+
+      <button type="submit" [disabled]="userForm.invalid">Submit</button>
+    </form>
+
+    <pre>{{ model | json }}</pre>
+  `
+})
+export class TemplateFormComponent {
+  model: FormData = {
+    name: '',
+    email: '',
+    age: 18
+  };
+
+  onSubmit(form: any): void {
+    if (form.valid) {
+      console.log('Form submitted:', this.model);
+    }
+  }
+}
+```
+
+**Reactive Forms:**
+
+```typescript
+// reactive-form.component.ts
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-reactive-form',
+  template: `
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label>Name:</label>
+        <input formControlName="name">
+        <div *ngIf="name?.invalid && name?.touched" class="error">
+          <span *ngIf="name?.errors?.['required']">Name is required</span>
+          <span *ngIf="name?.errors?.['minlength']">
+            Min length is {{ name?.errors?.['minlength'].requiredLength }}
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <label>Email:</label>
+        <input formControlName="email">
+        <div *ngIf="email?.invalid && email?.touched" class="error">
+          Invalid email
+        </div>
+      </div>
+
+      <div formGroupName="address">
+        <h4>Address</h4>
+        <input formControlName="street" placeholder="Street">
+        <input formControlName="city" placeholder="City">
+      </div>
+
+      <button type="submit" [disabled]="userForm.invalid">Submit</button>
+    </form>
+
+    <pre>{{ userForm.value | json }}</pre>
+  `
+})
+export class ReactiveFormComponent implements OnInit {
+  userForm!: FormGroup;
+
+  constructor(private fb: FormBuilder) { }
+
+  ngOnInit(): void {
+    this.userForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      address: this.fb.group({
+        street: [''],
+        city: ['']
+      })
+    });
+
+    // Subscribe to value changes
+    this.userForm.get('name')?.valueChanges.subscribe(value => {
+      console.log('Name changed:', value);
+    });
+  }
+
+  // Getter for easy access in template
+  get name() {
+    return this.userForm.get('name');
+  }
+
+  get email() {
+    return this.userForm.get('email');
+  }
+
+  onSubmit(): void {
+    if (this.userForm.valid) {
+      console.log('Form submitted:', this.userForm.value);
+    }
+  }
+}
+```
+
+**8. Pipes:**
+
+```typescript
+// Built-in pipes
+@Component({
+  selector: 'app-pipes',
+  template: `
+    <!-- Date pipe -->
+    <p>{{ today | date }}</p>
+    <p>{{ today | date:'short' }}</p>
+    <p>{{ today | date:'dd/MM/yyyy' }}</p>
+
+    <!-- Currency pipe -->
+    <p>{{ price | currency }}</p>
+    <p>{{ price | currency:'EUR' }}</p>
+
+    <!-- Uppercase/Lowercase -->
+    <p>{{ name | uppercase }}</p>
+    <p>{{ name | lowercase }}</p>
+
+    <!-- JSON pipe -->
+    <pre>{{ user | json }}</pre>
+
+    <!-- Percent pipe -->
+    <p>{{ 0.75 | percent }}</p>
+
+    <!-- Async pipe -->
+    <p>{{ users$ | async | json }}</p>
+  `
+})
+export class PipesComponent {
+  today = new Date();
+  price = 99.99;
+  name = 'Angular Developer';
+  user = { name: 'John', age: 30 };
+  users$ = this.userService.getUsers();
+
+  constructor(private userService: UserService) { }
+}
+```
+
+**Custom Pipe:**
+
+```typescript
+// filter.pipe.ts
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'filter'
+})
+export class FilterPipe implements PipeTransform {
+  transform(items: any[], searchText: string, field: string): any[] {
+    if (!items || !searchText) {
+      return items;
+    }
+
+    searchText = searchText.toLowerCase();
+
+    return items.filter(item => {
+      return item[field].toLowerCase().includes(searchText);
+    });
+  }
+}
+
+// Usage:
+// <li *ngFor="let user of users | filter:searchText:'name'">
+//   {{ user.name }}
+// </li>
+```
+
+**9. Lifecycle Hooks:**
+
+```typescript
+import { Component, OnInit, OnDestroy, OnChanges,
+         SimpleChanges, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-lifecycle',
+  template: `<p>Check console for lifecycle logs</p>`
+})
+export class LifecycleComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() data: any;
+
+  // 1. Constructor - called first
+  constructor() {
+    console.log('1. Constructor');
+  }
+
+  // 2. ngOnChanges - when input properties change
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('2. ngOnChanges', changes);
+  }
+
+  // 3. ngOnInit - after first ngOnChanges
+  ngOnInit(): void {
+    console.log('3. ngOnInit - initialization logic here');
+  }
+
+  // 4. ngDoCheck - custom change detection
+  ngDoCheck(): void {
+    console.log('4. ngDoCheck');
+  }
+
+  // 5. ngAfterContentInit - after content projection
+  ngAfterContentInit(): void {
+    console.log('5. ngAfterContentInit');
+  }
+
+  // 6. ngAfterContentChecked - after content checked
+  ngAfterContentChecked(): void {
+    console.log('6. ngAfterContentChecked');
+  }
+
+  // 7. ngAfterViewInit - after view initialized
+  ngAfterViewInit(): void {
+    console.log('7. ngAfterViewInit');
+  }
+
+  // 8. ngAfterViewChecked - after view checked
+  ngAfterViewChecked(): void {
+    console.log('8. ngAfterViewChecked');
+  }
+
+  // 9. ngOnDestroy - cleanup before component destruction
+  ngOnDestroy(): void {
+    console.log('9. ngOnDestroy - cleanup here');
+  }
+}
+```
+
+**Key Concepts Summary:**
+
+✅ **Components**: Building blocks with templates, styles, and logic
+✅ **Data Binding**: Interpolation, property, event, two-way binding
+✅ **Services**: Reusable business logic with dependency injection
+✅ **Directives**: Structural (*ngIf, *ngFor) and Attribute (ngClass, ngStyle)
+✅ **Routing**: Navigation between views with parameters
+✅ **Forms**: Template-driven and reactive forms with validation
+✅ **Pipes**: Transform data in templates
+✅ **Lifecycle Hooks**: Component lifecycle management
+

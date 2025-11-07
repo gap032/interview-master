@@ -614,3 +614,776 @@ try {
 3. **Async**: Map Task<T> to Promise<T> naturally
 4. **Tooling**: Source generators for zero-config setup
 5. **Debugging**: Source maps for cross-language debugging
+
+---
+
+## 5. Angular Enterprise Architecture and Scalability
+
+**Question**: Design a scalable Angular architecture for large enterprise applications. Discuss monorepo strategies, micro-frontends, module federation, performance optimization at scale, and testing strategies.
+
+**Answer**:
+
+**1. Monorepo Architecture with Nx:**
+
+```bash
+# Nx workspace structure
+my-enterprise-app/
+├── apps/
+│   ├── web-app/                 # Main application
+│   ├── admin-portal/            # Admin application
+│   ├── mobile-app/              # Mobile app (Ionic/Capacitor)
+│   └── web-app-e2e/            # E2E tests
+├── libs/
+│   ├── shared/
+│   │   ├── ui/                  # Shared UI components
+│   │   ├── data-access/         # API services
+│   │   ├── utils/               # Utilities
+│   │   └── models/              # TypeScript interfaces
+│   ├── feature-auth/            # Authentication feature
+│   ├── feature-users/           # Users feature
+│   ├── feature-products/        # Products feature
+│   └── feature-orders/          # Orders feature
+├── tools/                       # Custom build tools
+├── nx.json                      # Nx configuration
+├── angular.json                 # Angular CLI config
+└── tsconfig.base.json          # Base TypeScript config
+```
+
+**Nx Library Configuration:**
+
+```json
+// nx.json
+{
+  "affected": {
+    "defaultBase": "main"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/nx-cloud",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "accessToken": "YOUR_TOKEN"
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  }
+}
+```
+
+```typescript
+// libs/shared/data-access/src/lib/base-api.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map, retry, catchError } from 'rxjs/operators';
+
+@Injectable()
+export abstract class BaseApiService<T> {
+  protected abstract get resourcePath(): string;
+
+  constructor(
+    protected http: HttpClient,
+    protected baseUrl: string
+  ) { }
+
+  getAll(params?: any): Observable<T[]> {
+    const httpParams = this.buildParams(params);
+    return this.http.get<T[]>(`${this.baseUrl}/${this.resourcePath}`, { params: httpParams })
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  getById(id: string | number): Observable<T> {
+    return this.http.get<T>(`${this.baseUrl}/${this.resourcePath}/${id}`)
+      .pipe(
+        retry(2),
+        catchError(this.handleError)
+      );
+  }
+
+  create(item: T): Observable<T> {
+    return this.http.post<T>(`${this.baseUrl}/${this.resourcePath}`, item);
+  }
+
+  update(id: string | number, item: Partial<T>): Observable<T> {
+    return this.http.put<T>(`${this.baseUrl}/${this.resourcePath}/${id}`, item);
+  }
+
+  delete(id: string | number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${this.resourcePath}/${id}`);
+  }
+
+  protected buildParams(params?: any): HttpParams {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.keys(params).forEach(key => {
+        if (params[key] !== null && params[key] !== undefined) {
+          httpParams = httpParams.set(key, params[key]);
+        }
+      });
+    }
+    return httpParams;
+  }
+
+  protected abstract handleError(error: any): Observable<never>;
+}
+
+// Feature-specific service extends base
+@Injectable({ providedIn: 'root' })
+export class UserApiService extends BaseApiService<User> {
+  protected get resourcePath(): string {
+    return 'users';
+  }
+
+  constructor(http: HttpClient, @Inject('API_BASE_URL') baseUrl: string) {
+    super(http, baseUrl);
+  }
+
+  protected handleError(error: any): Observable<never> {
+    console.error('User API error:', error);
+    return throwError(() => error);
+  }
+
+  // Domain-specific methods
+  getUsersByRole(role: string): Observable<User[]> {
+    return this.getAll({ role });
+  }
+}
+```
+
+**2. Micro-Frontends with Module Federation:**
+
+```javascript
+// webpack.config.js for Host Application
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const mf = require('@angular-architects/module-federation/webpack');
+const path = require('path');
+
+module.exports = {
+  output: {
+    uniqueName: 'host',
+    publicPath: 'auto'
+  },
+  optimization: {
+    runtimeChunk: false
+  },
+  resolve: {
+    alias: {
+      ...sh areAll([
+        '@angular/core',
+        '@angular/common',
+        '@angular/router',
+        '@ngrx/store'
+      ])
+    }
+  },
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'host',
+      filename: 'remoteEntry.js',
+      remotes: {
+        'mfe1': 'mfe1@http://localhost:4201/remoteEntry.js',
+        'mfe2': 'mfe2@http://localhost:4202/remoteEntry.js',
+      },
+      shared: share({
+        '@angular/core': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+        '@angular/common': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+        '@angular/router': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+        '@ngrx/store': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+        'rxjs': { singleton: true, strictVersion: false, requiredVersion: 'auto' }
+      })
+    }),
+    new mf.ShareMappingsPlugin()
+  ]
+};
+```
+
+```typescript
+// Dynamic Module Loading
+// app-routing.module.ts (Host)
+import { loadRemoteModule } from '@angular-architects/module-federation';
+
+const routes: Routes = [
+  {
+    path: 'mfe1',
+    loadChildren: () =>
+      loadRemoteModule({
+        type: 'module',
+        remoteEntry: 'http://localhost:4201/remoteEntry.js',
+        exposedModule: './Module'
+      }).then(m => m.Mfe1Module)
+  },
+  {
+    path: 'mfe2',
+    loadChildren: () =>
+      loadRemoteModule({
+        type: 'module',
+        remoteEntry: 'http://localhost:4202/remoteEntry.js',
+        exposedModule: './Module'
+      }).then(m => m.Mfe2Module)
+  }
+];
+
+// Dynamic Remote Configuration
+@Injectable({ providedIn: 'root' })
+export class MicroFrontendService {
+  private remotes$ = new BehaviorSubject<RemoteConfig[]>([]);
+
+  constructor(private http: HttpClient) {
+    this.loadRemoteConfig();
+  }
+
+  private loadRemoteConfig(): void {
+    // Load remote configuration from API
+    this.http.get<RemoteConfig[]>('/api/mfe-config').pipe(
+      tap(remotes => {
+        // Dynamically set up Module Federation remotes
+        remotes.forEach(remote => {
+          this.registerRemote(remote);
+        });
+        this.remotes$.next(remotes);
+      })
+    ).subscribe();
+  }
+
+  private registerRemote(config: RemoteConfig): void {
+    const remoteEntry = `${config.url}/remoteEntry.js`;
+    // Dynamic registration logic
+  }
+
+  getRemotes(): Observable<RemoteConfig[]> {
+    return this.remotes$.asObservable();
+  }
+}
+```
+
+**3. Custom Schematics and Code Generation:**
+
+```typescript
+// tools/schematics/feature/index.ts
+import { Rule, SchematicContext, Tree, apply, template, url, mergeWith, move } from '@angular-devkit/schematics';
+import { strings } from '@angular-devkit/core';
+
+interface FeatureOptions {
+  name: string;
+  path: string;
+  project: string;
+}
+
+export function feature(options: FeatureOptions): Rule {
+  return (tree: Tree, context: SchematicContext) => {
+    const templateSource = apply(url('./files'), [
+      template({
+        ...strings,
+        ...options,
+        // Custom template variables
+        dasherize: strings.dasherize,
+        classify: strings.classify
+      }),
+      move(options.path)
+    ]);
+
+    return mergeWith(templateSource)(tree, context);
+  };
+}
+
+// Generated structure:
+// libs/feature-{{name}}/
+// ├── src/
+// │   ├── lib/
+// │   │   ├── {{name}}.module.ts
+// │   │   ├── state/
+// │   │   │   ├── {{name}}.actions.ts
+// │   │   │   ├── {{name}}.reducer.ts
+// │   │   │   ├── {{name}}.effects.ts
+// │   │   │   └── {{name}}.selectors.ts
+// │   │   ├── services/
+// │   │   │   └── {{name}}.service.ts
+// │   │   └── components/
+// │   │       └── {{name}}-list/
+// │   │           ├── {{name}}-list.component.ts
+// │   │           ├── {{name}}-list.component.html
+// │   │           └── {{name}}-list.component.spec.ts
+// │   └── index.ts
+// └── README.md
+```
+
+**4. Performance Optimization at Scale:**
+
+**Build Optimization:**
+
+```json
+// angular.json - Production Configuration
+{
+  "configurations": {
+    "production": {
+      "optimization": {
+        "scripts": true,
+        "styles": {
+          "minify": true,
+          "inlineCritical": true
+        },
+        "fonts": true
+      },
+      "outputHashing": "all",
+      "sourceMap": false,
+      "namedChunks": false,
+      "aot": true,
+      "extractLicenses": true,
+      "vendorChunk": false,
+      "buildOptimizer": true,
+      "budgets": [
+        {
+          "type": "initial",
+          "maximumWarning": "500kb",
+          "maximumError": "1mb"
+        },
+        {
+          "type": "anyComponentStyle",
+          "maximumWarning": "2kb",
+          "maximumError": "4kb"
+        }
+      ]
+    }
+  }
+}
+```
+
+**Runtime Performance Monitoring:**
+
+```typescript
+// performance.service.ts
+@Injectable({ providedIn: 'root' })
+export class PerformanceService {
+  private metrics = new Map<string, PerformanceMetric>();
+
+  measureComponentLoad(componentName: string): void {
+    const mark = `${componentName}-start`;
+    performance.mark(mark);
+  }
+
+  endComponentLoad(componentName: string): void {
+    const startMark = `${componentName}-start`;
+    const endMark = `${componentName}-end`;
+    const measureName = `${componentName}-load`;
+
+    performance.mark(endMark);
+    performance.measure(measureName, startMark, endMark);
+
+    const measure = performance.getEntriesByName(measureName)[0];
+    this.metrics.set(componentName, {
+      name: componentName,
+      duration: measure.duration,
+      timestamp: Date.now()
+    });
+
+    // Send to analytics
+    this.reportMetric(componentName, measure.duration);
+  }
+
+  private reportMetric(name: string, duration: number): void {
+    // Send to analytics service
+    if (duration > 1000) {
+      console.warn(`Slow component load: ${name} took ${duration}ms`);
+    }
+  }
+}
+
+// Usage in component
+@Component({
+  selector: 'app-heavy-component',
+  template: `...`
+})
+export class HeavyComponent implements OnInit, AfterViewInit {
+  constructor(private perf: PerformanceService) {
+    this.perf.measureComponentLoad('HeavyComponent');
+  }
+
+  ngAfterViewInit(): void {
+    this.perf.endComponentLoad('HeavyComponent');
+  }
+}
+```
+
+**Virtual Scrolling for Large Lists:**
+
+```typescript
+@Component({
+  selector: 'app-virtual-list',
+  template: `
+    <cdk-virtual-scroll-viewport
+      [itemSize]="50"
+      class="viewport"
+      [minBufferPx]="200"
+      [maxBufferPx]="400">
+
+      <div *cdkVirtualFor="let item of items$ | async; let i = index"
+           class="list-item">
+        <app-list-item [item]="item" [index]="i"></app-list-item>
+      </div>
+
+    </cdk-virtual-scroll-viewport>
+  `,
+  styles: [`
+    .viewport {
+      height: 600px;
+      overflow: auto;
+    }
+    .list-item {
+      height: 50px;
+    }
+  `]
+})
+export class VirtualListComponent {
+  items$ = this.store.select(selectLargeDataset); // 10,000+ items
+
+  constructor(private store: Store) { }
+}
+```
+
+**5. Comprehensive Testing Strategy:**
+
+**Unit Testing with Jest:**
+
+```typescript
+// user.service.spec.ts
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { UserService } from './user.service';
+
+describe('UserService', () => {
+  let service: UserService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [
+        UserService,
+        { provide: 'API_BASE_URL', useValue: 'http://api.test' }
+      ]
+    });
+
+    service = TestBed.inject(UserService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+
+  it('should fetch users', () => {
+    const mockUsers = [
+      { id: 1, name: 'User 1' },
+      { id: 2, name: 'User 2' }
+    ];
+
+    service.getAll().subscribe(users => {
+      expect(users).toEqual(mockUsers);
+    });
+
+    const req = httpMock.expectOne('http://api.test/users');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockUsers);
+  });
+
+  it('should handle errors', () => {
+    service.getById(1).subscribe({
+      next: () => fail('should have failed'),
+      error: (error) => {
+        expect(error.status).toBe(404);
+      }
+    });
+
+    const req = httpMock.expectOne('http://api.test/users/1');
+    req.flush('Not found', { status: 404, statusText: 'Not Found' });
+  });
+});
+```
+
+**Component Testing:**
+
+```typescript
+// user-list.component.spec.ts
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { UserListComponent } from './user-list.component';
+import * as UserActions from '../state/user.actions';
+
+describe('UserListComponent', () => {
+  let component: UserListComponent;
+  let fixture: ComponentFixture<UserListComponent>;
+  let store: MockStore;
+
+  const initialState = {
+    users: {
+      users: [],
+      loading: false,
+      error: null
+    }
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [UserListComponent],
+      providers: [
+        provideMockStore({ initialState })
+      ]
+    }).compileComponents();
+
+    store = TestBed.inject(MockStore);
+    fixture = TestBed.createComponent(UserListComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should dispatch loadUsers on init', () => {
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+    fixture.detectChanges();
+
+    expect(dispatchSpy).toHaveBeenCalledWith(UserActions.loadUsers());
+  });
+
+  it('should display users', () => {
+    store.setState({
+      users: {
+        users: [
+          { id: 1, name: 'User 1', email: 'user1@test.com' },
+          { id: 2, name: 'User 2', email: 'user2@test.com' }
+        ],
+        loading: false,
+        error: null
+      }
+    });
+
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement;
+    const userItems = compiled.querySelectorAll('.user-item');
+
+    expect(userItems.length).toBe(2);
+    expect(userItems[0].textContent).toContain('User 1');
+    expect(userItems[1].textContent).toContain('User 2');
+  });
+});
+```
+
+**E2E Testing with Cypress:**
+
+```typescript
+// cypress/e2e/user-management.cy.ts
+describe('User Management', () => {
+  beforeEach(() => {
+    cy.intercept('GET', '/api/users', {
+      fixture: 'users.json'
+    }).as('getUsers');
+
+    cy.visit('/users');
+    cy.wait('@getUsers');
+  });
+
+  it('should display user list', () => {
+    cy.get('[data-cy=user-list]').should('exist');
+    cy.get('[data-cy=user-item]').should('have.length', 3);
+  });
+
+  it('should create new user', () => {
+    cy.intercept('POST', '/api/users', {
+      statusCode: 201,
+      body: { id: 4, name: 'New User', email: 'new@test.com' }
+    }).as('createUser');
+
+    cy.get('[data-cy=add-user-btn]').click();
+    cy.get('[data-cy=name-input]').type('New User');
+    cy.get('[data-cy=email-input]').type('new@test.com');
+    cy.get('[data-cy=submit-btn]').click();
+
+    cy.wait('@createUser');
+    cy.get('[data-cy=success-message]').should('be.visible');
+  });
+
+  it('should handle errors gracefully', () => {
+    cy.intercept('POST', '/api/users', {
+      statusCode: 400,
+      body: { message: 'Email already exists' }
+    }).as('createUserError');
+
+    cy.get('[data-cy=add-user-btn]').click();
+    cy.get('[data-cy=name-input]').type('Duplicate User');
+    cy.get('[data-cy=email-input]').type('existing@test.com');
+    cy.get('[data-cy=submit-btn]').click();
+
+    cy.wait('@createUserError');
+    cy.get('[data-cy=error-message]')
+      .should('be.visible')
+      .and('contain', 'Email already exists');
+  });
+});
+```
+
+**6. State Management Architecture:**
+
+```typescript
+// Facade Pattern for State Management
+@Injectable({ providedIn: 'root' })
+export class UserFacade {
+  // Selectors
+  users$ = this.store.select(selectAllUsers);
+  loading$ = this.store.select(selectUsersLoading);
+  error$ = this.store.select(selectUsersError);
+  selectedUser$ = this.store.select(selectSelectedUser);
+
+  // Derived state
+  activeUsers$ = this.store.select(selectActiveUsers);
+  userCount$ = this.users$.pipe(map(users => users.length));
+
+  constructor(private store: Store) { }
+
+  // Actions
+  loadUsers(): void {
+    this.store.dispatch(UserActions.loadUsers());
+  }
+
+  selectUser(id: number): void {
+    this.store.dispatch(UserActions.selectUser({ id }));
+  }
+
+  createUser(user: User): void {
+    this.store.dispatch(UserActions.createUser({ user }));
+  }
+
+  updateUser(id: number, changes: Partial<User>): void {
+    this.store.dispatch(UserActions.updateUser({ id, changes }));
+  }
+
+  deleteUser(id: number): void {
+    this.store.dispatch(UserActions.deleteUser({ id }));
+  }
+
+  // Complex operations
+  bulkDeleteUsers(ids: number[]): void {
+    this.store.dispatch(UserActions.bulkDeleteUsers({ ids }));
+  }
+
+  exportUsers(format: 'csv' | 'json'): void {
+    this.users$.pipe(
+      take(1),
+      tap(users => this.performExport(users, format))
+    ).subscribe();
+  }
+
+  private performExport(users: User[], format: string): void {
+    // Export logic
+  }
+}
+
+// Component uses facade instead of direct store access
+@Component({
+  selector: 'app-user-management',
+  template: `
+    <div *ngIf="loading$ | async">Loading...</div>
+    <div *ngIf="error$ | async as error">{{ error }}</div>
+
+    <p>Total Users: {{ userCount$ | async }}</p>
+
+    <app-user-list
+      [users]="users$ | async"
+      (userSelected)="onUserSelected($event)"
+      (userDeleted)="onUserDeleted($event)">
+    </app-user-list>
+  `
+})
+export class UserManagementComponent implements OnInit {
+  users$ = this.userFacade.users$;
+  loading$ = this.userFacade.loading$;
+  error$ = this.userFacade.error$;
+  userCount$ = this.userFacade.userCount$;
+
+  constructor(private userFacade: UserFacade) { }
+
+  ngOnInit(): void {
+    this.userFacade.loadUsers();
+  }
+
+  onUserSelected(id: number): void {
+    this.userFacade.selectUser(id);
+  }
+
+  onUserDeleted(id: number): void {
+    this.userFacade.deleteUser(id);
+  }
+}
+```
+
+**7. CI/CD Pipeline Configuration:**
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  affected:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run affected tests
+        run: npx nx affected:test --base=origin/main --parallel=3
+
+      - name: Run affected lint
+        run: npx nx affected:lint --base=origin/main --parallel=3
+
+      - name: Build affected apps
+        run: npx nx affected:build --base=origin/main --parallel=3 --configuration=production
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+
+  e2e:
+    needs: affected
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - run: npm ci
+
+      - name: Run E2E tests
+        run: npx nx affected:e2e --base=origin/main
+```
+
+**Key Enterprise Architecture Principles:**
+
+✅ **Monorepo**: Nx workspace with shared libraries and consistent tooling
+✅ **Micro-Frontends**: Module Federation for independent deployment
+✅ **Code Generation**: Custom schematics for consistency
+✅ **Performance**: Virtual scrolling, lazy loading, build optimization
+✅ **Testing**: Comprehensive unit, integration, E2E testing
+✅ **State Management**: Facade pattern with NgRx
+✅ **CI/CD**: Automated testing and deployment with affected analysis
+
