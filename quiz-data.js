@@ -1869,6 +1869,235 @@ const quizQuestionsData = {
             ],
             correct: 3,
             explanation: "Optimized Union-Find:\n```csharp\npublic class UnionFind {\n    private int[] parent;\n    private int[] rank;\n    public UnionFind(int n) {\n        parent = new int[n];\n        rank = new int[n];\n        for (int i = 0; i < n; i++)\n            parent[i] = i;\n    }\n    public int Find(int x) {\n        if (parent[x] != x)\n            parent[x] = Find(parent[x]);\n        return parent[x];\n    }\n    public void Union(int x, int y) {\n        int rootX = Find(x);\n        int rootY = Find(y);\n        if (rootX == rootY) return;\n        if (rank[rootX] < rank[rootY])\n            parent[rootX] = rootY;\n        else if (rank[rootX] > rank[rootY])\n            parent[rootY] = rootX;\n        else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n    }\n}\n```\nBoth operations: O(α(n)) - inverse Ackermann function."
+        },
+
+        // Advanced Data Structures Questions
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "How does a Segment Tree solve range query problems efficiently?",
+            answers: [
+                "Stores all possible ranges - O(n²) space",
+                "Uses binary tree where each node represents a range - O(n) space, O(log n) query/update",
+                "Pre-computes all queries - impractical for updates",
+                "Uses hash table for ranges - inefficient"
+            ],
+            correct: 1,
+            explanation: "Segment Tree divides array into segments in a tree structure:\n- Build: O(n)\n- Query (sum/min/max in range): O(log n)\n- Update: O(log n)\n- Space: O(n)\nIdeal for problems with frequent range queries and updates. Each node stores aggregate info (sum, min, max) for its range."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "What problem does a Fenwick Tree (Binary Indexed Tree) solve best?",
+            answers: [
+                "String pattern matching",
+                "Prefix sums with point updates - O(log n) for both",
+                "Graph shortest paths",
+                "Hash collision resolution"
+            ],
+            correct: 1,
+            explanation: "Fenwick Tree excels at:\n- Prefix sum queries: O(log n)\n- Point updates: O(log n)\n- Space: O(n)\nMore memory efficient than Segment Tree for cumulative operations. Uses clever bit manipulation to navigate parent/child relationships."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "How to handle a stream of numbers and efficiently find the median?",
+            answers: [
+                "Sort array each time - O(n log n)",
+                "Use two heaps (max heap for lower half, min heap for upper half) - O(log n) insert, O(1) median",
+                "Maintain sorted list - O(n) insert",
+                "Use single priority queue - doesn't work"
+            ],
+            correct: 1,
+            explanation: "Two-heap approach:\n```csharp\nprivate PriorityQueue<int, int> maxHeap; // lower half (max on top)\nprivate PriorityQueue<int, int> minHeap; // upper half (min on top)\n\npublic void AddNum(int num) {\n    maxHeap.Enqueue(num, -num); // negate for max heap\n    minHeap.Enqueue(maxHeap.Dequeue(), maxHeap.Dequeue());\n    if (maxHeap.Count < minHeap.Count)\n        maxHeap.Enqueue(minHeap.Dequeue(), -minHeap.Dequeue());\n}\n\npublic double FindMedian() {\n    return maxHeap.Count > minHeap.Count \n        ? maxHeap.Peek() \n        : (maxHeap.Peek() + minHeap.Peek()) / 2.0;\n}\n```\nMaintains balance with sizes differing by at most 1."
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "What's the key challenge with implementing a thread-safe cache with LRU eviction?",
+            answers: [
+                "No challenge - just add locks everywhere",
+                "Maintaining O(1) operations while ensuring atomicity of get/put",
+                "LRU is impossible with multithreading",
+                "Cache invalidation only"
+            ],
+            correct: 1,
+            explanation: "Challenges:\n1. Lock granularity - coarse locks (entire cache) vs fine locks (per entry)\n2. Maintaining O(1) with atomic operations\n3. Preventing race conditions during eviction\n4. Avoiding deadlocks\n\nSolutions:\n- ConcurrentDictionary + custom linked list with locks\n- Read-write locks for get/put separation\n- Lock-free algorithms with CAS operations\n- Segment-level locking for reduced contention"
+        },
+
+        // String Operations Questions
+        {
+            category: "programming",
+            level: "mid",
+            question: "What's the most efficient way to check if one string is a rotation of another?",
+            answers: [
+                "Generate all rotations and compare - O(n²)",
+                "Check if s2 is substring of s1+s1 - O(n)",
+                "Character frequency comparison - incorrect",
+                "Two pointers - O(n²) worst case"
+            ],
+            correct: 1,
+            explanation: "Clever one-liner approach:\n```csharp\npublic bool IsRotation(string s1, string s2) {\n    return s1.Length == s2.Length && (s1 + s1).Contains(s2);\n}\n```\nExample: s1=\"waterbottle\", s2=\"erbottlewat\"\nwaterbottle + waterbottle = waterbottlewaterbottle (contains erbottlewat)\nTime: O(n), Space: O(n)"
+        },
+        {
+            category: "programming",
+            level: "mid",
+            question: "How to efficiently remove all adjacent duplicates from a string?",
+            answers: [
+                "Nested loops - O(n²)",
+                "Stack-based approach - O(n)",
+                "Recursion - O(n²) worst case",
+                "String replace in loop - O(n²)"
+            ],
+            correct: 1,
+            explanation: "Stack solution:\n```csharp\npublic string RemoveDuplicates(string s) {\n    var stack = new Stack<char>();\n    foreach (char c in s) {\n        if (stack.Count > 0 && stack.Peek() == c)\n            stack.Pop();\n        else\n            stack.Push(c);\n    }\n    return new string(stack.Reverse().ToArray());\n}\n```\nExample: \"abbaca\" → \"ca\" (remove bb, then aa)\nTime: O(n), Space: O(n)"
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "What's the Rabin-Karp algorithm advantage for pattern matching?",
+            answers: [
+                "Always faster than naive approach",
+                "Can find multiple patterns in single pass using hashing - O(n+m) average",
+                "Uses less memory",
+                "Better worst-case than KMP"
+            ],
+            correct: 1,
+            explanation: "Rabin-Karp uses rolling hash:\n```csharp\npublic int RabinKarp(string text, string pattern) {\n    int m = pattern.Length, n = text.Length;\n    int patternHash = pattern.GetHashCode();\n    \n    for (int i = 0; i <= n - m; i++) {\n        string window = text.Substring(i, m);\n        if (window.GetHashCode() == patternHash && window == pattern)\n            return i;\n    }\n    return -1;\n}\n```\nAdvantages:\n- Multiple patterns simultaneously\n- Rolling hash: O(1) per window\n- Good average case: O(n+m)\nWorst case: O(nm) with hash collisions"
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "How to find the longest palindromic substring efficiently?",
+            answers: [
+                "Check all substrings - O(n³)",
+                "Expand around centers - O(n²), or Manacher's algorithm - O(n)",
+                "Dynamic programming - O(n²) time and space",
+                "Recursion - exponential"
+            ],
+            correct: 1,
+            explanation: "Expand around centers (simpler than Manacher's):\n```csharp\npublic string LongestPalindrome(string s) {\n    if (string.IsNullOrEmpty(s)) return \"\";\n    int start = 0, maxLen = 0;\n    \n    for (int i = 0; i < s.Length; i++) {\n        // Odd length palindromes\n        int len1 = ExpandAroundCenter(s, i, i);\n        // Even length palindromes\n        int len2 = ExpandAroundCenter(s, i, i + 1);\n        int len = Math.Max(len1, len2);\n        \n        if (len > maxLen) {\n            maxLen = len;\n            start = i - (len - 1) / 2;\n        }\n    }\n    return s.Substring(start, maxLen);\n}\n\nint ExpandAroundCenter(string s, int left, int right) {\n    while (left >= 0 && right < s.Length && s[left] == s[right]) {\n        left--; right++;\n    }\n    return right - left - 1;\n}\n```\nTime: O(n²), Space: O(1)"
+        },
+
+        // Performance Optimization Questions
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What's the difference between lazy loading and eager loading?",
+            answers: [
+                "No difference",
+                "Lazy loads data on-demand, eager loads everything upfront",
+                "Lazy is always faster",
+                "Eager uses less memory"
+            ],
+            correct: 1,
+            explanation: "Lazy Loading:\n- Pros: Faster initial load, less memory if data not needed\n- Cons: N+1 query problem, unpredictable performance\n- Use: Large datasets, optional data\n\nEager Loading:\n- Pros: Predictable performance, fewer queries\n- Cons: Slower initial load, more memory\n- Use: Required data, avoiding N+1\n\nExample (EF Core):\n```csharp\n// Lazy: N+1 queries\nvar users = context.Users.ToList();\nforeach(var u in users) Console.WriteLine(u.Orders.Count); // Query per user!\n\n// Eager: 1 query with JOIN\nvar users = context.Users.Include(u => u.Orders).ToList();\n```"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "How does database connection pooling improve performance?",
+            answers: [
+                "Makes queries faster",
+                "Reuses connections instead of creating new ones - reduces overhead",
+                "Increases database capacity",
+                "Caches query results"
+            ],
+            correct: 1,
+            explanation: "Connection Pooling benefits:\n1. Eliminates connection creation overhead (TCP handshake, auth, etc.)\n2. Limits max connections to database\n3. Reuses existing connections\n\nWithout pooling: Each request creates new connection (~100ms overhead)\nWith pooling: Reuse from pool (~1ms)\n\n```csharp\n// Connection string with pooling\n\"Server=db;Database=app;Pooling=true;Min Pool Size=5;Max Pool Size=100;\"\n\n// Best practice: using statement ensures return to pool\nusing (var conn = new SqlConnection(connString)) {\n    conn.Open();\n    // Use connection\n} // Returns to pool, doesn't close\n```\nTypical pool size: 10-100 connections"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What is database query result caching and when should you avoid it?",
+            answers: [
+                "Always use caching",
+                "Cache frequently read, rarely changing data; avoid for real-time or rapidly changing data",
+                "Only cache small results",
+                "Never use caching"
+            ],
+            correct: 1,
+            explanation: "When to CACHE:\n- Read-heavy workloads (95%+ reads)\n- Expensive queries (complex joins, aggregations)\n- Infrequently changing data\n- Acceptable stale data\n\nWhen to AVOID:\n- Real-time requirements\n- Frequently updated data\n- User-specific data (low hit rate)\n- Large result sets (memory pressure)\n\nInvalidation strategies:\n1. Time-based (TTL): Expire after X seconds\n2. Event-based: Clear on updates\n3. Write-through: Update cache on write\n\n```csharp\npublic async Task<List<Product>> GetProducts() {\n    var cacheKey = \"products:all\";\n    var cached = await cache.GetAsync(cacheKey);\n    if (cached != null) return cached;\n    \n    var products = await db.Products.ToListAsync();\n    await cache.SetAsync(cacheKey, products, TimeSpan.FromMinutes(5));\n    return products;\n}\n```"
+        },
+        {
+            category: "programming",
+            level: "senior",
+            question: "How does StringBuilder improve string concatenation performance?",
+            answers: [
+                "Uses better algorithm",
+                "Mutable buffer avoids creating new strings each concat - O(n) vs O(n²)",
+                "Compresses strings",
+                "Uses parallel processing"
+            ],
+            correct: 1,
+            explanation: "String is immutable in C#:\n```csharp\n// BAD: O(n²) - creates n intermediate strings\nstring result = \"\";\nfor (int i = 0; i < 1000; i++)\n    result += i.ToString(); // Creates new string each time!\n\n// GOOD: O(n) - single mutable buffer\nvar sb = new StringBuilder();\nfor (int i = 0; i < 1000; i++)\n    sb.Append(i);\nstring result = sb.ToString();\n```\n\nPerformance:\n- 100 concats: String ~10x slower\n- 1000 concats: String ~100x slower\n- 10000 concats: String ~1000x slower\n\nRule: Use StringBuilder for 3+ concatenations in loops"
+        },
+
+        // Security Questions
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What is SQL injection and what's the BEST prevention?",
+            answers: [
+                "Input validation only",
+                "Parameterized queries/prepared statements - not string concatenation",
+                "Escape special characters",
+                "Use stored procedures only"
+            ],
+            correct: 1,
+            explanation: "SQL Injection: Malicious SQL code inserted via user input\n\n```csharp\n// VULNERABLE - DON'T DO THIS!\nstring query = \"SELECT * FROM Users WHERE Username='\" + username + \"'\";\n// Attack: username = \"' OR '1'='1\" → returns all users!\n\n// SAFE - Use parameters\nvar cmd = new SqlCommand(\n    \"SELECT * FROM Users WHERE Username=@username\", conn);\ncmd.Parameters.AddWithValue(\"@username\", username);\n\n// Or with EF/Dapper:\nvar user = context.Users.FirstOrDefault(u => u.Username == username);\nvar user = connection.QueryFirst<User>(\n    \"SELECT * FROM Users WHERE Username=@user\", \n    new { user = username });\n```\nParameterized queries treat input as data, not code."
+        },
+        {
+            category: "system-design",
+            level: "mid",
+            question: "What is XSS (Cross-Site Scripting) and how to prevent it?",
+            answers: [
+                "Server-side only issue",
+                "Injecting malicious scripts into web pages; prevent by encoding output and CSP",
+                "Only affects old browsers",
+                "Use HTTPS"
+            ],
+            correct: 1,
+            explanation: "XSS: Attacker injects malicious JavaScript executed in victim's browser\n\nTypes:\n1. Reflected: URL parameter → immediate execution\n2. Stored: Saved to DB → affects all users\n3. DOM-based: Client-side manipulation\n\nPrevention:\n```csharp\n// ASP.NET Core automatically encodes by default\n@Model.UserInput  // Encoded: <script> → &lt;script&gt;\n@Html.Raw(Model.UserInput)  // DANGEROUS - unencoded!\n\n// Manual encoding when needed:\nvar safe = System.Web.HttpUtility.HtmlEncode(userInput);\n\n// Content Security Policy header:\nresponse.Headers.Add(\"Content-Security-Policy\", \n    \"default-src 'self'; script-src 'self'\");\n```\n\nAlso:\n- Validate input (whitelist)\n- Use HttpOnly cookies\n- Implement CSP headers"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What's the difference between authentication and authorization?",
+            answers: [
+                "Same thing",
+                "Authentication verifies identity (who you are), authorization verifies permissions (what you can do)",
+                "Authentication is for APIs only",
+                "Authorization happens first"
+            ],
+            correct: 1,
+            explanation: "Authentication: WHO are you?\n- Login with username/password\n- JWT tokens\n- OAuth/OpenID Connect\n- Multi-factor authentication\n\nAuthorization: WHAT can you do?\n- Role-based (RBAC)\n- Claims-based\n- Policy-based\n- Resource-based\n\n```csharp\n// ASP.NET Core example\n[Authorize] // Authentication: must be logged in\npublic class SecureController : Controller {\n    \n    [Authorize(Roles = \"Admin\")] // Authorization: must have Admin role\n    public IActionResult DeleteUser(int id) { }\n    \n    [Authorize(Policy = \"CanEditDocument\")] // Authorization: custom policy\n    public IActionResult EditDocument(int id) { }\n}\n```\n\nFlow: Authentication → Authorization → Access"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What is CSRF (Cross-Site Request Forgery) and how to prevent it?",
+            answers: [
+                "Same as XSS",
+                "Tricks authenticated user into executing unwanted actions; prevent with anti-CSRF tokens",
+                "Only affects GET requests",
+                "Solved by HTTPS"
+            ],
+            correct: 1,
+            explanation: "CSRF: Attacker tricks victim's browser into making authenticated request\n\nAttack scenario:\n1. User logs into bank.com (gets session cookie)\n2. Visits evil.com (while still logged in)\n3. evil.com contains: <img src=\"bank.com/transfer?to=attacker&amount=1000\">\n4. Browser sends request WITH session cookie\n5. Bank processes it (thinks it's legitimate)\n\nPrevention:\n```csharp\n// ASP.NET Core - Anti-forgery token\n// In form:\n<form method=\"post\">\n    @Html.AntiForgeryToken()\n    <!-- form fields -->\n</form>\n\n// In controller:\n[HttpPost]\n[ValidateAntiForgeryToken]\npublic IActionResult Transfer(TransferModel model) { }\n\n// Or globally:\nservices.AddControllersWithViews(options => \n    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));\n```\n\nAlso:\n- SameSite cookie attribute\n- Check Referer header\n- Require re-authentication for sensitive actions"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "What are the key principles of secure password storage?",
+            answers: [
+                "Encrypt passwords",
+                "Hash with salt using bcrypt/Argon2 - never store plaintext or use MD5/SHA1",
+                "Store in secure database",
+                "Use strong encryption algorithm"
+            ],
+            correct: 1,
+            explanation: "NEVER:\n❌ Store plaintext\n❌ Use reversible encryption\n❌ Use fast hashes (MD5, SHA1, SHA256)\n❌ Hash without salt\n\nALWAYS:\n✅ Use slow hashing algorithms (bcrypt, Argon2, PBKDF2)\n✅ Use unique salt per password\n✅ Use high work factor/iterations\n\n```csharp\nusing BCrypt.Net;\n\n// Registration - hash password\npublic void CreateUser(string username, string password) {\n    string hashedPassword = BCrypt.HashPassword(password, \n        workFactor: 12); // Higher = slower = more secure\n    // Store hashedPassword in database\n}\n\n// Login - verify password\npublic bool ValidateUser(string username, string password) {\n    string hashedPassword = GetHashedPasswordFromDb(username);\n    return BCrypt.Verify(password, hashedPassword);\n}\n```\n\nWhy slow hashing?\n- Prevents brute force attacks\n- bcrypt with work factor 12: ~250ms per attempt\n- Attacker needs years to crack instead of seconds\n\nSalt prevents rainbow table attacks."
         }
     ],
     pl: [
@@ -3740,6 +3969,231 @@ const quizQuestionsData = {
             ],
             correct: 3,
             explanation: "Zoptymalizowany Union-Find:\n```csharp\npublic class UnionFind {\n    private int[] parent;\n    private int[] rank;\n    public UnionFind(int n) {\n        parent = new int[n];\n        rank = new int[n];\n        for (int i = 0; i < n; i++)\n            parent[i] = i;\n    }\n    public int Find(int x) {\n        if (parent[x] != x)\n            parent[x] = Find(parent[x]);\n        return parent[x];\n    }\n    public void Union(int x, int y) {\n        int rootX = Find(x);\n        int rootY = Find(y);\n        if (rootX == rootY) return;\n        if (rank[rootX] < rank[rootY])\n            parent[rootX] = rootY;\n        else if (rank[rootX] > rank[rootY])\n            parent[rootY] = rootX;\n        else {\n            parent[rootY] = rootX;\n            rank[rootX]++;\n        }\n    }\n}\n```\nObie operacje: O(α(n)) - odwrotna funkcja Ackermanna."
+        },
+        // Advanced Data Structures - Zaawansowane struktury danych
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Jak działa Drzewo Przedziałowe (Segment Tree) i do czego służy?",
+            answers: [
+                "Drzewo binarne do wyszukiwania w O(log n)",
+                "Struktura do zapytań o przedziały z budową O(n) i zapytaniem O(log n)",
+                "Drzewo AVL do zrównoważonego przechowywania",
+                "Graf do najkrótszych ścieżek"
+            ],
+            correct: 1,
+            explanation: "Drzewo Przedziałowe to struktura danych dla zapytań o przedziały:\n\nZastosowania:\n✅ Suma/minimum/maksimum w przedziale\n✅ Aktualizacje punktowe lub przedziałowe\n✅ Problemy z przedziałami\n\nZłożoność:\n- Budowa: O(n)\n- Zapytanie: O(log n)\n- Aktualizacja: O(log n)\n\n```csharp\npublic class SegmentTree {\n    private int[] tree;\n    private int n;\n    \n    public SegmentTree(int[] arr) {\n        n = arr.Length;\n        tree = new int[4 * n];\n        Build(arr, 0, 0, n - 1);\n    }\n    \n    private void Build(int[] arr, int node, int start, int end) {\n        if (start == end) {\n            tree[node] = arr[start];\n            return;\n        }\n        int mid = (start + end) / 2;\n        Build(arr, 2*node+1, start, mid);\n        Build(arr, 2*node+2, mid+1, end);\n        tree[node] = tree[2*node+1] + tree[2*node+2];\n    }\n    \n    public int Query(int L, int R) {\n        return QueryUtil(0, 0, n-1, L, R);\n    }\n    \n    private int QueryUtil(int node, int start, int end, int L, int R) {\n        if (R < start || end < L) return 0;\n        if (L <= start && end <= R) return tree[node];\n        int mid = (start + end) / 2;\n        return QueryUtil(2*node+1, start, mid, L, R) +\n               QueryUtil(2*node+2, mid+1, end, L, R);\n    }\n}\n```\n\nPrzykład: suma w przedziale [2, 5] w tablicy [1,3,5,7,9,11]\nSegmentTree st = new SegmentTree(arr);\nint sum = st.Query(2, 5); // = 5+7+9+11 = 32"
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Czym jest Drzewo Fenwicka (Binary Indexed Tree) i czym różni się od Drzewa Przedziałowego?",
+            answers: [
+                "To to samo co Drzewo Przedziałowe",
+                "Prostsze w implementacji, ale obsługuje tylko sumy prefiksowe - O(log n)",
+                "Wolniejsze niż Drzewo Przedziałowe - O(n log n)",
+                "Działa tylko dla liczb całkowitych"
+            ],
+            correct: 1,
+            explanation: "Drzewo Fenwicka (BIT):\n\nZalety nad Segment Tree:\n✅ Prostsza implementacja\n✅ Mniejsze zużycie pamięci\n✅ Szybsze stałe (cache-friendly)\n\nOgraniczenia:\n❌ Tylko dla operacji odwracalnych (suma, XOR)\n❌ Nie dla min/max (użyj Segment Tree)\n\n```csharp\npublic class FenwickTree {\n    private int[] tree;\n    private int n;\n    \n    public FenwickTree(int size) {\n        n = size;\n        tree = new int[n + 1];\n    }\n    \n    // Aktualizuj wartość na pozycji idx\n    public void Update(int idx, int delta) {\n        idx++; // 1-indexed\n        while (idx <= n) {\n            tree[idx] += delta;\n            idx += idx & (-idx); // Dodaj ostatni bit\n        }\n    }\n    \n    // Suma prefiksowa [0..idx]\n    public int Query(int idx) {\n        idx++; // 1-indexed\n        int sum = 0;\n        while (idx > 0) {\n            sum += tree[idx];\n            idx -= idx & (-idx); // Usuń ostatni bit\n        }\n        return sum;\n    }\n    \n    // Suma w przedziale [left, right]\n    public int RangeQuery(int left, int right) {\n        return Query(right) - (left > 0 ? Query(left - 1) : 0);\n    }\n}\n```\n\nKluczowa sztuczka: `idx & (-idx)` = ostatni ustawiony bit\nDla idx=6 (110): 6 & (-6) = 6 & (11111010) = 2 (010)"
+        },
+        {
+            category: "algorithms",
+            level: "principal",
+            question: "Jak efektywnie obliczyć medianę ze strumienia danych?",
+            answers: [
+                "Sortować tablicę za każdym razem - O(n log n)",
+                "Użyć dwóch kopców (max i min) - O(log n) wstawienie, O(1) mediana",
+                "Użyć drzewa BST - O(log n)",
+                "Użyć hashmapy - O(1)"
+            ],
+            correct: 1,
+            explanation: "Algorytm dwóch kopców dla mediany ze strumienia:\n\nStruktura:\n- Max heap: mniejsza połowa liczb\n- Min heap: większa połowa liczb\n- Mediana: górne elementy kopców\n\n```csharp\npublic class MedianFinder {\n    private PriorityQueue<int, int> maxHeap; // mniejsza połowa\n    private PriorityQueue<int, int> minHeap; // większa połowa\n    \n    public MedianFinder() {\n        // Max heap: odwróć porównanie\n        maxHeap = new PriorityQueue<int, int>(\n            Comparer<int>.Create((a, b) => b - a));\n        minHeap = new PriorityQueue<int, int>();\n    }\n    \n    public void AddNum(int num) {\n        // Dodaj do max heap (mniejsza połowa)\n        maxHeap.Enqueue(num, num);\n        \n        // Balansuj: przenieś największy z maxHeap do minHeap\n        minHeap.Enqueue(maxHeap.Peek(), maxHeap.Peek());\n        maxHeap.Dequeue();\n        \n        // Zachowaj rozmiar: maxHeap >= minHeap\n        if (maxHeap.Count < minHeap.Count) {\n            maxHeap.Enqueue(minHeap.Peek(), minHeap.Peek());\n            minHeap.Dequeue();\n        }\n    }\n    \n    public double FindMedian() {\n        if (maxHeap.Count > minHeap.Count)\n            return maxHeap.Peek();\n        return (maxHeap.Peek() + minHeap.Peek()) / 2.0;\n    }\n}\n```\n\nPrzykład: strumień [5, 15, 1, 3]\n- Dodaj 5: maxHeap=[5], mediana=5\n- Dodaj 15: maxHeap=[5], minHeap=[15], mediana=10\n- Dodaj 1: maxHeap=[5,1], minHeap=[15], mediana=5\n- Dodaj 3: maxHeap=[3,1], minHeap=[5,15], mediana=4"
+        },
+        {
+            category: "system-design",
+            level: "principal",
+            question: "Jak zaprojektować thread-safe LRU Cache z efektywnym O(1)?",
+            answers: [
+                "Użyć Dictionary z lockiem - O(1) ale wolne",
+                "LinkedList + Dictionary + ReaderWriterLockSlim - O(1) z współbieżnością",
+                "Tylko Dictionary - niethread-safe",
+                "ConcurrentDictionary - brak LRU eviction"
+            ],
+            correct: 1,
+            explanation: "Thread-safe LRU Cache wymaga:\n✅ O(1) get/put\n✅ Thread safety\n✅ LRU eviction\n\nImplementacja:\n```csharp\npublic class LRUCache<K, V> {\n    private class Node {\n        public K Key;\n        public V Value;\n        public Node Prev, Next;\n    }\n    \n    private int capacity;\n    private Dictionary<K, Node> cache;\n    private Node head, tail;\n    private ReaderWriterLockSlim rwLock;\n    \n    public LRUCache(int capacity) {\n        this.capacity = capacity;\n        cache = new Dictionary<K, Node>(capacity);\n        rwLock = new ReaderWriterLockSlim();\n        head = new Node(); tail = new Node();\n        head.Next = tail; tail.Prev = head;\n    }\n    \n    public V Get(K key) {\n        rwLock.EnterUpgradeableReadLock();\n        try {\n            if (!cache.TryGetValue(key, out Node node))\n                return default(V);\n            \n            rwLock.EnterWriteLock();\n            try {\n                MoveToHead(node);\n                return node.Value;\n            } finally {\n                rwLock.ExitWriteLock();\n            }\n        } finally {\n            rwLock.ExitUpgradeableReadLock();\n        }\n    }\n    \n    public void Put(K key, V value) {\n        rwLock.EnterWriteLock();\n        try {\n            if (cache.TryGetValue(key, out Node node)) {\n                node.Value = value;\n                MoveToHead(node);\n            } else {\n                Node newNode = new Node { Key = key, Value = value };\n                cache[key] = newNode;\n                AddToHead(newNode);\n                \n                if (cache.Count > capacity) {\n                    Node removed = RemoveTail();\n                    cache.Remove(removed.Key);\n                }\n            }\n        } finally {\n            rwLock.ExitWriteLock();\n        }\n    }\n    \n    private void MoveToHead(Node node) {\n        RemoveNode(node);\n        AddToHead(node);\n    }\n    \n    private void AddToHead(Node node) {\n        node.Next = head.Next;\n        node.Prev = head;\n        head.Next.Prev = node;\n        head.Next = node;\n    }\n    \n    private void RemoveNode(Node node) {\n        node.Prev.Next = node.Next;\n        node.Next.Prev = node.Prev;\n    }\n    \n    private Node RemoveTail() {\n        Node node = tail.Prev;\n        RemoveNode(node);\n        return node;\n    }\n}\n```\n\nZłożoność: Get/Put O(1)\nThread safety: ReaderWriterLockSlim pozwala na wielokrotne odczyty"
+        },
+        // String Operations - Operacje na stringach
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "Jak sprawdzić, czy jeden string jest rotacją drugiego?",
+            answers: [
+                "Porównać każdą możliwą rotację - O(n²)",
+                "Sprawdzić czy s1 jest podstringiem s2+s2 - O(n)",
+                "Użyć hashmapy - O(n log n)",
+                "Posortować oba stringi - niepoprawne"
+            ],
+            correct: 1,
+            explanation: "Sprytna sztuczka do sprawdzenia rotacji:\n\nPomysł:\n- Jeśli s1 jest rotacją s2, to s1 jest podstringiem s2+s2\n- Przykład: \"waterbottle\" i \"erbottlewat\"\n- \"erbottlewat\" + \"erbottlewat\" = \"erbottlewaterbottlewat\"\n- \"waterbottle\" jest podstringiem!\n\n```csharp\npublic bool IsRotation(string s1, string s2) {\n    // Sprawdź długości\n    if (s1.Length != s2.Length || s1.Length == 0)\n        return false;\n    \n    // s1 jest podstringiem s2+s2?\n    string doubled = s2 + s2;\n    return doubled.Contains(s1);\n}\n```\n\nPrzykłady:\n✅ IsRotation(\"waterbottle\", \"erbottlewat\") = true\n✅ IsRotation(\"abc\", \"cab\") = true\n❌ IsRotation(\"abc\", \"acb\") = false (nie rotacja)\n\nZłożoność: O(n) używając KMP dla Contains\nPamięć: O(n) dla podwojonego stringa"
+        },
+        {
+            category: "algorithms",
+            level: "mid",
+            question: "Jak usunąć wszystkie sąsiednie duplikaty ze stringa?",
+            answers: [
+                "Użyć zagnieżdżonych pętli - O(n²)",
+                "Użyć stosu - O(n) czas, O(n) pamięć",
+                "Sortować najpierw - O(n log n)",
+                "Użyć rekurencji - O(n) ale stack overflow"
+            ],
+            correct: 1,
+            explanation: "Algorytm ze stosem dla sąsiednich duplikatów:\n\n```csharp\npublic string RemoveAdjacentDuplicates(string s) {\n    Stack<char> stack = new Stack<char>();\n    \n    foreach (char c in s) {\n        if (stack.Count > 0 && stack.Peek() == c) {\n            stack.Pop(); // Usuń duplikat\n        } else {\n            stack.Push(c);\n        }\n    }\n    \n    // Zbuduj wynik od końca\n    char[] result = new char[stack.Count];\n    for (int i = result.Length - 1; i >= 0; i--) {\n        result[i] = stack.Pop();\n    }\n    \n    return new string(result);\n}\n```\n\nPrzykłady:\n- \"abbaca\" → \"ca\"\n  Krok po kroku: a,b,b(usuń),a,c,a\n  Stos: [a] → [a,b] → [a] → [] → [c] → [c,a]\n  \n- \"azxxzy\" → \"ay\"\n  [a] → [a,z] → [a,z,x] → [a,z] → [a] → [a,y]\n\nZłożoność:\n- Czas: O(n) - jedna iteracja\n- Pamięć: O(n) - stos w najgorszym przypadku"
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Jak działa algorytm Rabina-Karpa do wyszukiwania wzorca?",
+            answers: [
+                "Porównuje każdy znak - O(nm)",
+                "Używa haszowania kroczącego (rolling hash) - O(n+m) średnio",
+                "Buduje drzewo sufiksowe - O(m²)",
+                "Sortuje wzorzec - O(m log m)"
+            ],
+            correct: 1,
+            explanation: "Algorytm Rabina-Karpa używa rolling hash:\n\nPomysł:\n- Oblicz hash wzorca\n- Przesuń okno po tekście, aktualizując hash w O(1)\n- Sprawdź znaki tylko gdy hasze się zgadzają\n\n```csharp\npublic List<int> RabinKarp(string text, string pattern) {\n    List<int> matches = new List<int>();\n    int n = text.Length, m = pattern.Length;\n    if (m > n) return matches;\n    \n    const int d = 256; // rozmiar alfabetu\n    const int q = 101; // liczba pierwsza dla modulo\n    \n    int patternHash = 0, textHash = 0;\n    int h = 1; // d^(m-1) % q\n    \n    // Oblicz h = d^(m-1) % q\n    for (int i = 0; i < m - 1; i++)\n        h = (h * d) % q;\n    \n    // Oblicz początkowe hasze\n    for (int i = 0; i < m; i++) {\n        patternHash = (d * patternHash + pattern[i]) % q;\n        textHash = (d * textHash + text[i]) % q;\n    }\n    \n    // Przesuń okno po tekście\n    for (int i = 0; i <= n - m; i++) {\n        // Sprawdź hash\n        if (patternHash == textHash) {\n            // Potwierdź dopasowanie\n            bool match = true;\n            for (int j = 0; j < m; j++) {\n                if (text[i + j] != pattern[j]) {\n                    match = false;\n                    break;\n                }\n            }\n            if (match) matches.Add(i);\n        }\n        \n        // Oblicz hash następnego okna (rolling hash)\n        if (i < n - m) {\n            textHash = (d * (textHash - text[i] * h) + text[i + m]) % q;\n            if (textHash < 0) textHash += q;\n        }\n    }\n    \n    return matches;\n}\n```\n\nPrzykład: tekst=\"ABABCABABA\", pattern=\"ABA\"\nWystąpienia na pozycjach: [0, 5, 7]\n\nZłożoność:\n- Średnia: O(n + m)\n- Najgorsza: O(nm) gdy dużo kolizji hash"
+        },
+        {
+            category: "algorithms",
+            level: "senior",
+            question: "Jak znaleźć najdłuższy palindromiczny podstring?",
+            answers: [
+                "Sprawdzić każdy podstring - O(n³)",
+                "Rozszerzanie wokół środka - O(n²) czas, O(1) pamięć",
+                "Dynamiczne programowanie - O(n²) czas i pamięć",
+                "Algorytm Manachera - O(n) ale skomplikowany"
+            ],
+            correct: 1,
+            explanation: "Expand Around Center - najlepsza równowaga:\n\nPomysł:\n- Każdy palindrom ma środek\n- Środek może być znakiem (nieparzysty) lub szczeliną (parzysty)\n- Rozszerz wokół każdego możliwego środka\n\n```csharp\npublic string LongestPalindrome(string s) {\n    if (string.IsNullOrEmpty(s)) return \"\";\n    \n    int start = 0, maxLen = 0;\n    \n    for (int i = 0; i < s.Length; i++) {\n        // Nieparzysty palindrom (środek = i)\n        int len1 = ExpandAroundCenter(s, i, i);\n        // Parzysty palindrom (środek = i, i+1)\n        int len2 = ExpandAroundCenter(s, i, i + 1);\n        \n        int len = Math.Max(len1, len2);\n        if (len > maxLen) {\n            maxLen = len;\n            start = i - (len - 1) / 2;\n        }\n    }\n    \n    return s.Substring(start, maxLen);\n}\n\nprivate int ExpandAroundCenter(string s, int left, int right) {\n    while (left >= 0 && right < s.Length && s[left] == s[right]) {\n        left--;\n        right++;\n    }\n    return right - left - 1;\n}\n```\n\nPrzykłady:\n- \"babad\" → \"bab\" lub \"aba\"\n- \"cbbd\" → \"bb\"\n- \"racecar\" → \"racecar\"\n\nZłożoność:\n- Czas: O(n²) - n środków × O(n) rozszerzanie\n- Pamięć: O(1)\n\nAlternatywa: Algorytm Manachera O(n), ale rzadko używany na rozmowach"
+        },
+        // Performance - Wydajność
+        {
+            category: "programming",
+            level: "senior",
+            question: "Czym różni się lazy loading od eager loading w Entity Framework?",
+            answers: [
+                "Brak różnicy, to synonimy",
+                "Lazy: ładuje powiązane dane na żądanie (N+1), Eager: ładuje wszystko z Include",
+                "Lazy jest zawsze szybsze",
+                "Eager używa więcej pamięci więc unikaj"
+            ],
+            correct: 1,
+            explanation: "Lazy vs Eager Loading:\n\n**Lazy Loading** - ładuje powiązane dane gdy są użyte:\n```csharp\n// Problem N+1 queries!\nvar users = context.Users.ToList(); // 1 zapytanie\nforeach (var user in users) {\n    // Każde user.Orders tworzy osobne zapytanie!\n    Console.WriteLine(user.Orders.Count); // N zapytań\n}\n// Total: 1 + N zapytań = powolne!\n```\n\n**Eager Loading** - ładuje wszystko za jednym razem:\n```csharp\n// Jedno zapytanie z JOIN\nvar users = context.Users\n    .Include(u => u.Orders)\n    .ToList();\nforeach (var user in users) {\n    Console.WriteLine(user.Orders.Count); // Bez dodatkowych zapytań\n}\n// Total: 1 zapytanie = szybkie!\n```\n\n**Explicit Loading** - kontrolowane ładowanie:\n```csharp\nvar user = context.Users.Find(1);\n// Załaduj tylko gdy potrzebne\ncontext.Entry(user)\n    .Collection(u => u.Orders)\n    .Load();\n```\n\nKiedy użyć:\n✅ Eager (.Include): znasz potrzebne relacje\n✅ Explicit: warunkowe ładowanie\n❌ Lazy: unikaj - problem N+1!\n\nBest practice:\n```csharp\nvar users = context.Users\n    .Include(u => u.Orders)\n        .ThenInclude(o => o.Items)\n    .Where(u => u.IsActive)\n    .ToList();\n```"
+        },
+        {
+            category: "databases",
+            level: "senior",
+            question: "Czym jest connection pooling i dlaczego jest ważny?",
+            answers: [
+                "Współdzielenie jednego połączenia - niebezpieczne",
+                "Buforowanie połączeń do bazy - dramatycznie redukuje overhead tworzenia połączeń",
+                "Cache dla wyników zapytań",
+                "Kompresja danych połączenia"
+            ],
+            correct: 1,
+            explanation: "Connection Pooling = reużywanie połączeń do bazy:\n\nProblem bez poolingu:\n```csharp\n// ŹLE - tworzy nowe połączenie za każdym razem\nfor (int i = 0; i < 100; i++) {\n    using (var conn = new SqlConnection(connectionString)) {\n        conn.Open(); // Kosztowne: TCP handshake, autentykacja\n        // ... zapytanie ...\n    } // Zamyka i niszczy połączenie\n}\n// 100 × (connect + auth + disconnect) = POWOLNE!\n```\n\nZ poolingiem:\n```csharp\n// DOBRZE - używa connection pool\nstring connectionString = \n    \"Server=.;Database=MyDB;\" +\n    \"Min Pool Size=5;Max Pool Size=100;\" + // konfiguracja pool\n    \"Pooling=true;\"; // domyślnie true w ADO.NET\n\nfor (int i = 0; i < 100; i++) {\n    using (var conn = new SqlConnection(connectionString)) {\n        conn.Open(); // Reużywa połączenia z puli\n        // ... zapytanie ...\n    } // Zwraca do puli zamiast zamykać\n}\n// Tworzy ~5-20 fizycznych połączeń, reużywa 100 razy\n```\n\nJak działa:\n1. Pierwsze conn.Open(): tworzy fizyczne połączenie\n2. conn.Dispose(): zwraca do puli (nie zamyka!)\n3. Następne conn.Open(): reużywa z puli\n4. Pool zarządza lifetimem połączeń\n\nKonfiguracja:\n- **Min Pool Size**: utrzymywane zawsze (default: 0)\n- **Max Pool Size**: maksymalna liczba (default: 100)\n- **Connection Lifetime**: max czas życia (seconds)\n- **Connection Timeout**: timeout dla conn.Open()\n\nBest practices:\n```csharp\n// ASP.NET Core - Dependency Injection\nservices.AddDbContext<MyContext>(options =>\n    options.UseSqlServer(connectionString));\n\n// Używaj using - zawsze zwróć do puli!\nusing (var context = new MyContext()) {\n    var data = context.Users.ToList();\n}\n```\n\nWydajność:\n- Bez poolingu: ~100ms na połączenie\n- Z poolingiem: ~1ms reużycie\n- 100× szybciej dla aplikacji webowych!"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jakie strategie cache'owania wyników zapytań są najczęściej używane?",
+            answers: [
+                "Tylko in-memory cache - zawsze najszybszy",
+                "Cache-aside, Write-through, Write-behind z TTL i invalidation",
+                "Nigdy nie cache'ować zapytań",
+                "Cache tylko na froncie"
+            ],
+            correct: 1,
+            explanation: "Strategie cache'owania zapytań:\n\n**1. Cache-Aside (Lazy Loading)** - najpopularniejszy:\n```csharp\npublic async Task<User> GetUser(int id) {\n    string key = $\"user:{id}\";\n    \n    // Sprawdź cache\n    var cached = await cache.GetAsync(key);\n    if (cached != null)\n        return JsonSerializer.Deserialize<User>(cached);\n    \n    // Cache miss - pobierz z bazy\n    var user = await db.Users.FindAsync(id);\n    \n    // Zapisz do cache z TTL\n    await cache.SetAsync(key, \n        JsonSerializer.SerializeToUtf8Bytes(user),\n        new DistributedCacheEntryOptions {\n            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)\n        });\n    \n    return user;\n}\n```\n\n**2. Write-Through** - cache i DB jednocześnie:\n```csharp\npublic async Task UpdateUser(User user) {\n    string key = $\"user:{user.Id}\";\n    \n    // Zapisz do bazy\n    await db.SaveChangesAsync();\n    \n    // Aktualizuj cache\n    await cache.SetAsync(key, \n        JsonSerializer.SerializeToUtf8Bytes(user),\n        new DistributedCacheEntryOptions {\n            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)\n        });\n}\n```\n\n**3. Write-Behind (Write-Back)** - async zapis:\n```csharp\npublic async Task UpdateUserAsync(User user) {\n    string key = $\"user:{user.Id}\";\n    \n    // Aktualizuj cache natychmiast\n    await cache.SetAsync(key, \n        JsonSerializer.SerializeToUtf8Bytes(user));\n    \n    // Zakolejkuj zapis do DB (background job)\n    await queue.EnqueueAsync(new DbWriteJob {\n        Entity = user,\n        Timestamp = DateTime.UtcNow\n    });\n}\n```\n\n**Cache Invalidation** - najtrudniejszy problem:\n```csharp\npublic async Task InvalidateUserCache(int userId) {\n    // Usuń konkretny klucz\n    await cache.RemoveAsync($\"user:{userId}\");\n    \n    // Usuń powiązane (np. lista użytkowników)\n    await cache.RemoveAsync(\"users:list\");\n}\n\n// Pattern z tagami (Redis)\npublic async Task<List<User>> GetActiveUsers() {\n    var cached = await cache.GetAsync(\"users:active\");\n    if (cached != null) return Deserialize(cached);\n    \n    var users = await db.Users.Where(u => u.IsActive).ToListAsync();\n    \n    await cache.SetAsync(\"users:active\", Serialize(users), \n        new DistributedCacheEntryOptions {\n            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),\n            // Tag dla invalidation\n            Tags = new[] { \"users\" }\n        });\n    \n    return users;\n}\n\n// Invalidacja po tagu\nawait cache.RemoveByTagAsync(\"users\");\n```\n\nASP.NET Core - gotowe rozwiązanie:\n```csharp\n// Startup/Program.cs\nservices.AddStackExchangeRedisCache(options => {\n    options.Configuration = \"localhost:6379\";\n});\n\n// Controller\npublic class UserController : ControllerBase {\n    private readonly IDistributedCache _cache;\n    \n    [HttpGet(\"{id}\")]\n    [ResponseCache(Duration = 300)] // Output caching\n    public async Task<User> Get(int id) {\n        // Cache-aside pattern\n    }\n}\n```\n\nKiedy użyć:\n✅ Cache-Aside: większość przypadków\n✅ Write-Through: krytyczna spójność\n✅ Write-Behind: wysokie write throughput\n❌ Unikaj: często zmieniające się dane"
+        },
+        {
+            category: "programming",
+            level: "mid",
+            question: "Dlaczego StringBuilder jest szybszy niż konkatenacja stringów w pętli?",
+            answers: [
+                "Nie ma różnicy wydajności",
+                "String jest immutable, więc += tworzy nowe obiekty - O(n²), StringBuilder - O(n)",
+                "StringBuilder używa kompresji",
+                "String jest thread-safe więc wolniejszy"
+            ],
+            correct: 1,
+            explanation: "String vs StringBuilder wydajność:\n\n**Problem ze stringami** (immutable):\n```csharp\n// ŹLE - O(n²) złożoność!\nstring result = \"\";\nfor (int i = 0; i < 10000; i++) {\n    result += \"test\"; // Tworzy NOWY string za każdym razem!\n}\n// Iteracja 1: \"\" + \"test\" = nowy string (4 znaki)\n// Iteracja 2: \"test\" + \"test\" = nowy string (8 znaków)\n// Iteracja 3: \"testtest\" + \"test\" = nowy string (12 znaków)\n// ...\n// Total kopiowania: 4 + 8 + 12 + ... + 40000 = O(n²)\n```\n\n**StringBuilder** (mutable):\n```csharp\n// DOBRZE - O(n) złożoność!\nvar sb = new StringBuilder();\nfor (int i = 0; i < 10000; i++) {\n    sb.Append(\"test\"); // Dodaje do istniejącego bufora\n}\nstring result = sb.ToString();\n// Alokuje bufor (np. 16), podwaja gdy pełny: 16→32→64→128...\n// Total kopiowania: O(n) dzięki geometrycznemu wzrostowi\n```\n\nBenchmark:\n```csharp\nusing BenchmarkDotNet.Attributes;\n\n[MemoryDiagnoser]\npublic class StringBenchmark {\n    [Benchmark]\n    public string StringConcat() {\n        string s = \"\";\n        for (int i = 0; i < 10000; i++)\n            s += \"x\";\n        return s;\n    }\n    \n    [Benchmark]\n    public string StringBuilderAppend() {\n        var sb = new StringBuilder();\n        for (int i = 0; i < 10000; i++)\n            sb.Append(\"x\");\n        return sb.ToString();\n    }\n}\n\n// Wyniki:\n// StringConcat:        250ms, 400 MB allocated\n// StringBuilderAppend:   2ms,   0.5 MB allocated\n// StringBuilder 125× szybszy!\n```\n\nKiedy użyć:\n✅ StringBuilder: pętle, dużo konkatenacji\n✅ String interpolation: mało operacji\n```csharp\n// OK dla małej liczby\nstring name = $\"{firstName} {lastName}\";\n\n// ŹLE dla pętli\nstring html = \"\";\nfor (int i = 0; i < items.Count; i++)\n    html += $\"<li>{items[i]}</li>\"; // O(n²)!\n\n// DOBRZE\nvar sb = new StringBuilder();\nforeach (var item in items)\n    sb.Append($\"<li>{item}</li>\");\nstring html = sb.ToString();\n```\n\nOptymalizacja capacity:\n```csharp\n// Podaj początkową capacity jeśli znasz rozmiar\nvar sb = new StringBuilder(capacity: 10000);\n// Unikaj realokacji bufora!\n```"
+        },
+        // Security - Bezpieczeństwo
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jak zapobiec atakom SQL Injection?",
+            answers: [
+                "Walidować input po stronie klienta",
+                "Używać parametryzowanych zapytań / ORM - NIGDY nie konkatenować SQL",
+                "Escapować apostrofy",
+                "Ograniczyć długość inputu"
+            ],
+            correct: 1,
+            explanation: "SQL Injection Prevention:\n\n**NIGDY nie rób tego** ❌:\n```csharp\n// PODATNE NA SQL INJECTION!\nstring username = Request.Form[\"username\"];\nstring password = Request.Form[\"password\"];\n\nstring sql = $\"SELECT * FROM Users WHERE Username='{username}' AND Password='{password}'\";\n// Atakujący wpisuje: username = \"admin'--\"\n// Zapytanie: SELECT * FROM Users WHERE Username='admin'--' AND Password='...'\n// Komentarz -- ignoruje sprawdzenie hasła!\n\nusing (var cmd = new SqlCommand(sql, connection)) {\n    var reader = cmd.ExecuteReader();\n}\n```\n\n**ZAWSZE używaj parametrów** ✅:\n```csharp\n// BEZPIECZNE - parametryzowane zapytanie\nstring sql = \"SELECT * FROM Users WHERE Username=@username AND Password=@password\";\n\nusing (var cmd = new SqlCommand(sql, connection)) {\n    cmd.Parameters.AddWithValue(\"@username\", username);\n    cmd.Parameters.AddWithValue(\"@password\", password);\n    var reader = cmd.ExecuteReader();\n}\n// Parametry są automatycznie escapowane przez ADO.NET\n```\n\n**Entity Framework** - automatyczna ochrona:\n```csharp\n// BEZPIECZNE - EF używa parametrów\nvar user = context.Users\n    .FirstOrDefault(u => u.Username == username && u.Password == password);\n\n// BEZPIECZNE - nawet z interpolacją w FromSqlRaw\nvar users = context.Users\n    .FromSqlRaw(\"SELECT * FROM Users WHERE Username = {0}\", username)\n    .ToList();\n```\n\n**Dapper** - mikro-ORM:\n```csharp\n// BEZPIECZNE\nvar user = connection.QueryFirstOrDefault<User>(\n    \"SELECT * FROM Users WHERE Username = @username\",\n    new { username });\n```\n\n**Dodatkowa ochrona**:\n```csharp\n// 1. Least privilege - ogranicz uprawnienia DB\n// Użytkownik aplikacji nie powinien mieć:\n// - DROP TABLE\n// - ALTER\n// - Dostępu do systemowych tabel\n\n// 2. Walidacja inputu (defense in depth)\npublic bool IsValidUsername(string username) {\n    // Tylko alfanumeryczne, 3-20 znaków\n    return Regex.IsMatch(username, @\"^[a-zA-Z0-9]{3,20}$\");\n}\n\n// 3. Stored Procedures (opcjonalnie)\nusing (var cmd = new SqlCommand(\"sp_ValidateUser\", connection)) {\n    cmd.CommandType = CommandType.StoredProcedure;\n    cmd.Parameters.AddWithValue(\"@username\", username);\n    // ...\n}\n```\n\nZasady:\n✅ ZAWSZE parametryzowane zapytania\n✅ Używaj ORM (EF, Dapper)\n✅ Waliduj input\n✅ Least privilege dla DB user\n❌ NIGDY konkatenacja SQL\n❌ NIGDY escapowanie ręczne"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jak zapobiec atakom XSS (Cross-Site Scripting)?",
+            answers: [
+                "Wyłączyć JavaScript w przeglądarce",
+                "Enkodować output, używać Content Security Policy, walidować input",
+                "Tylko używać HTTPS",
+                "Blokować tagi <script>"
+            ],
+            correct: 1,
+            explanation: "XSS (Cross-Site Scripting) Prevention:\n\n**Problem - Reflected XSS**:\n```csharp\n// PODATNE! ❌\npublic IActionResult Search(string query) {\n    // Użytkownik wpisuje: <script>alert(document.cookie)</script>\n    return Content($\"<h1>Wyniki dla: {query}</h1>\", \"text/html\");\n    // Renderuje: <h1>Wyniki dla: <script>alert(document.cookie)</script></h1>\n    // Wykonuje złośliwy kod!\n}\n```\n\n**Rozwiązanie 1: Output Encoding** ✅:\n```csharp\n// ASP.NET Core Razor - automatyczne HTML encoding\n@model SearchViewModel\n<h1>Wyniki dla: @Model.Query</h1>\n// Input: <script>alert(1)</script>\n// Output: &lt;script&gt;alert(1)&lt;/script&gt; (bezpieczne)\n\n// Ręczne encoding gdy potrzebne\n@using System.Web\n<div>@Html.Raw(HttpUtility.HtmlEncode(userInput))</div>\n```\n\n**Rozwiązanie 2: Content Security Policy**:\n```csharp\n// Startup.cs / Program.cs\napp.Use(async (context, next) => {\n    context.Response.Headers.Add(\"Content-Security-Policy\",\n        \"default-src 'self'; \" +\n        \"script-src 'self' https://trusted.cdn.com; \" +\n        \"style-src 'self' 'unsafe-inline'; \" +\n        \"img-src 'self' data: https:;\");\n    await next();\n});\n// Blokuje inline scripts i niewiarygodne źródła\n```\n\n**Rozwiązanie 3: Sanityzacja HTML**:\n```csharp\nusing Ganss.XSS;\n\npublic string SanitizeHtml(string input) {\n    var sanitizer = new HtmlSanitizer();\n    \n    // Dozwolone tagi\n    sanitizer.AllowedTags.Add(\"b\");\n    sanitizer.AllowedTags.Add(\"i\");\n    sanitizer.AllowedTags.Add(\"p\");\n    \n    // Usuń niebezpieczne atrybuty\n    sanitizer.AllowedAttributes.Remove(\"onclick\");\n    sanitizer.AllowedAttributes.Remove(\"onerror\");\n    \n    return sanitizer.Sanitize(input);\n}\n\n// Użycie\nstring userHtml = \"<p onclick='alert(1)'>Test</p><script>alert(2)</script>\";\nstring safe = SanitizeHtml(userHtml);\n// Wynik: \"<p>Test</p>\" (bezpieczne)\n```\n\n**Typy XSS**:\n\n1. **Stored XSS** - najgroźniejszy:\n```csharp\n// Zapisz komentarz do DB\npublic async Task<IActionResult> PostComment(string comment) {\n    // ❌ PODATNE - zapisuje <script>...\n    await db.Comments.AddAsync(new Comment { Text = comment });\n    \n    // ✅ BEZPIECZNE\n    await db.Comments.AddAsync(new Comment { \n        Text = SanitizeHtml(comment) \n    });\n}\n```\n\n2. **DOM-based XSS** - po stronie klienta:\n```javascript\n// ❌ PODATNE\nconst name = new URLSearchParams(window.location.search).get('name');\ndocument.getElementById('welcome').innerHTML = `Witaj ${name}`;\n\n// ✅ BEZPIECZNE\ndocument.getElementById('welcome').textContent = `Witaj ${name}`;\n// lub\nconst div = document.createElement('div');\ndiv.textContent = `Witaj ${name}`;\n```\n\n**Best Practices**:\n```csharp\n// ASP.NET Core - domyślnie bezpieczny\n@Model.UserInput  // Auto HTML-encoded ✅\n@Html.Raw(Model.UserInput)  // NIE encoduje - niebezpieczne! ❌\n\n// JavaScript context\n<script>\n    var userName = \"@Html.JavaScriptStringEncode(Model.Name)\";\n</script>\n\n// URL context\n<a href=\"@Url.Encode(Model.RedirectUrl)\">Link</a>\n\n// Attribute context\n<div data-user=\"@Html.AttributeEncode(Model.Name)\"></div>\n```\n\nZasady obrony:\n✅ Zawsze enkoduj output w kontekście (HTML/JS/URL/CSS)\n✅ Użyj Content Security Policy\n✅ Sanityzuj HTML jeśli musisz przyjąć rich text\n✅ Używaj bibliotek jak Razor (auto-encoding)\n❌ NIGDY @Html.Raw() na user input\n❌ NIGDY innerHTML z user input"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Czym różni się Authentication od Authorization?",
+            answers: [
+                "To samo, synonimy",
+                "Authentication = kim jesteś (tożsamość), Authorization = co możesz robić (uprawnienia)",
+                "Authentication dla API, Authorization dla UI",
+                "Authorization jest szybsza"
+            ],
+            correct: 1,
+            explanation: "Authentication vs Authorization:\n\n**Authentication (AuthN)** = \"Kim jesteś?\"\n- Potwierdzenie tożsamości\n- Login + password, OAuth, certificates\n- Odpowiada: czy użytkownik jest tym za kogo się podaje?\n\n**Authorization (AuthZ)** = \"Co możesz robić?\"\n- Kontrola dostępu do zasobów\n- Role, claims, policies\n- Odpowiada: czy użytkownik ma uprawnienia?\n\n**ASP.NET Core - Authentication**:\n```csharp\n// Startup/Program.cs\nservices.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)\n    .AddCookie(options => {\n        options.LoginPath = \"/Account/Login\";\n        options.ExpireTimeSpan = TimeSpan.FromHours(1);\n    });\n\n// Login Controller\npublic async Task<IActionResult> Login(LoginViewModel model) {\n    var user = await ValidateUser(model.Username, model.Password);\n    if (user == null)\n        return Unauthorized();\n    \n    // Utwórz claims (tożsamość)\n    var claims = new List<Claim> {\n        new Claim(ClaimTypes.Name, user.Username),\n        new Claim(ClaimTypes.Email, user.Email),\n        new Claim(ClaimTypes.Role, user.Role)\n    };\n    \n    var identity = new ClaimsIdentity(claims, \n        CookieAuthenticationDefaults.AuthenticationScheme);\n    var principal = new ClaimsPrincipal(identity);\n    \n    // Zaloguj użytkownika (AUTHENTICATION)\n    await HttpContext.SignInAsync(\n        CookieAuthenticationDefaults.AuthenticationScheme,\n        principal);\n    \n    return RedirectToAction(\"Index\", \"Home\");\n}\n```\n\n**ASP.NET Core - Authorization**:\n```csharp\n// 1. Role-based\n[Authorize(Roles = \"Admin\")] // Tylko admin\npublic IActionResult DeleteUser(int id) {\n    // ...\n}\n\n// 2. Policy-based (bardziej elastyczne)\nservices.AddAuthorization(options => {\n    options.AddPolicy(\"RequireAdmin\", policy =>\n        policy.RequireRole(\"Admin\"));\n    \n    options.AddPolicy(\"AtLeast18\", policy =>\n        policy.RequireClaim(\"Age\", \"18\", \"19\", \"20\", /* ... */));\n    \n    options.AddPolicy(\"SeniorEmployee\", policy =>\n        policy.RequireAssertion(context =>\n            context.User.HasClaim(c => c.Type == \"EmploymentDate\" &&\n                DateTime.Parse(c.Value) < DateTime.Now.AddYears(-5))));\n});\n\n// Użycie policy\n[Authorize(Policy = \"RequireAdmin\")]\npublic IActionResult AdminPanel() { }\n\n// 3. Custom Authorization Handler\npublic class MinimumAgeRequirement : IAuthorizationRequirement {\n    public int MinimumAge { get; }\n    public MinimumAgeRequirement(int age) => MinimumAge = age;\n}\n\npublic class MinimumAgeHandler : AuthorizationHandler<MinimumAgeRequirement> {\n    protected override Task HandleRequirementAsync(\n        AuthorizationHandlerContext context,\n        MinimumAgeRequirement requirement) {\n        \n        var ageClaim = context.User.FindFirst(c => c.Type == \"Age\");\n        if (ageClaim != null && \n            int.Parse(ageClaim.Value) >= requirement.MinimumAge) {\n            context.Succeed(requirement);\n        }\n        \n        return Task.CompletedTask;\n    }\n}\n\n// Rejestracja\nservices.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();\nservices.AddAuthorization(options => {\n    options.AddPolicy(\"AtLeast21\", policy =>\n        policy.Requirements.Add(new MinimumAgeRequirement(21)));\n});\n```\n\n**Resource-based Authorization**:\n```csharp\npublic class DocumentAuthorizationHandler : \n    AuthorizationHandler<OperationAuthorizationRequirement, Document> {\n    \n    protected override Task HandleRequirementAsync(\n        AuthorizationHandlerContext context,\n        OperationAuthorizationRequirement requirement,\n        Document resource) {\n        \n        // Tylko właściciel lub admin może edytować\n        if (requirement.Name == \"Edit\") {\n            if (resource.OwnerId == context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ||\n                context.User.IsInRole(\"Admin\")) {\n                context.Succeed(requirement);\n            }\n        }\n        \n        return Task.CompletedTask;\n    }\n}\n\n// Controller\npublic async Task<IActionResult> Edit(int id) {\n    var document = await db.Documents.FindAsync(id);\n    \n    var authResult = await _authorizationService.AuthorizeAsync(\n        User, document, \"Edit\");\n    \n    if (!authResult.Succeeded)\n        return Forbid();\n    \n    return View(document);\n}\n```\n\n**Podsumowanie**:\n\n| Aspekt | Authentication | Authorization |\n|--------|----------------|---------------|\n| Pytanie | Kim jesteś? | Co możesz robić? |\n| Proces | Login, OAuth, certyfikaty | Role, claims, policies |\n| HTTP Status | 401 Unauthorized | 403 Forbidden |\n| Kolejność | Zawsze pierwszy | Po authentication |\n\nZasada: **Authentication → Authorization → Access**"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jak zapobiec atakom CSRF (Cross-Site Request Forgery)?",
+            answers: [
+                "Używać silnych haseł",
+                "Anti-forgery tokens, SameSite cookies, weryfikacja Origin/Referer",
+                "Tylko HTTPS wystarczy",
+                "Disable cookies całkowicie"
+            ],
+            correct: 1,
+            explanation: "CSRF (Cross-Site Request Forgery) Prevention:\n\n**Problem**:\n```html\n<!-- Złośliwa strona attacker.com -->\n<img src=\"https://bank.com/transfer?to=attacker&amount=10000\" />\n<!-- Jeśli użytkownik jest zalogowany na bank.com,\n     przeglądarka wyśle cookies automatycznie! -->\n\n<form action=\"https://bank.com/transfer\" method=\"POST\">\n    <input type=\"hidden\" name=\"to\" value=\"attacker\" />\n    <input type=\"hidden\" name=\"amount\" value=\"10000\" />\n</form>\n<script>document.forms[0].submit();</script>\n```\n\n**Rozwiązanie 1: Anti-Forgery Tokens** ✅:\n```csharp\n// ASP.NET Core - automatyczne w Razor\n<form asp-action=\"Transfer\" method=\"post\">\n    @Html.AntiForgeryToken()  // Generuje ukryty token\n    <input name=\"to\" />\n    <input name=\"amount\" />\n    <button type=\"submit\">Transfer</button>\n</form>\n// Renderuje:\n// <input name=\"__RequestVerificationToken\" type=\"hidden\" \n//        value=\"CfDJ8...\" />\n\n// Controller - walidacja tokenu\n[HttpPost]\n[ValidateAntiForgeryToken]  // Sprawdza token!\npublic async Task<IActionResult> Transfer(TransferModel model) {\n    // Token musi się zgadzać\n    await ProcessTransfer(model);\n    return RedirectToAction(\"Success\");\n}\n\n// Globalnie dla wszystkich POST\nservices.AddControllersWithViews(options => {\n    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());\n});\n```\n\n**Rozwiązanie 2: SameSite Cookies** ✅:\n```csharp\n// Program.cs / Startup.cs\nservices.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)\n    .AddCookie(options => {\n        options.Cookie.SameSite = SameSiteMode.Strict;\n        // Strict: cookie tylko na tej samej domenie\n        // Lax: cookie wysyłane dla top-level navigation (domyślne w Chrome)\n        // None: cookie zawsze wysyłane (wymaga Secure)\n        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Tylko HTTPS\n    });\n\n// Lub globalnie dla wszystkich cookies\nservices.Configure<CookiePolicyOptions>(options => {\n    options.MinimumSameSitePolicy = SameSiteMode.Strict;\n    options.Secure = CookieSecurePolicy.Always;\n});\n```\n\n**Rozwiązanie 3: Weryfikacja Origin/Referer**:\n```csharp\npublic class ValidateOriginAttribute : ActionFilterAttribute {\n    public override void OnActionExecuting(ActionExecutingContext context) {\n        var request = context.HttpContext.Request;\n        \n        // Sprawdź Origin header\n        if (request.Headers.TryGetValue(\"Origin\", out var origin)) {\n            var allowedOrigin = \"https://myapp.com\";\n            if (!origin.Equals(allowedOrigin, StringComparison.OrdinalIgnoreCase)) {\n                context.Result = new StatusCodeResult(403);\n                return;\n            }\n        }\n        \n        // Sprawdź Referer jako backup\n        if (request.Headers.TryGetValue(\"Referer\", out var referer)) {\n            if (!referer.ToString().StartsWith(\"https://myapp.com\")) {\n                context.Result = new StatusCodeResult(403);\n                return;\n            }\n        }\n        \n        base.OnActionExecuting(context);\n    }\n}\n\n[HttpPost]\n[ValidateOrigin]\npublic IActionResult Transfer(TransferModel model) { }\n```\n\n**API - Custom Header**:\n```csharp\n// Frontend - dodaj custom header\nfetch('/api/transfer', {\n    method: 'POST',\n    headers: {\n        'Content-Type': 'application/json',\n        'X-Requested-With': 'XMLHttpRequest'  // Custom header\n    },\n    body: JSON.stringify(data)\n});\n\n// Backend - weryfikuj header\npublic class ValidateAjaxAttribute : ActionFilterAttribute {\n    public override void OnActionExecuting(ActionExecutingContext context) {\n        if (!context.HttpContext.Request.Headers\n                .ContainsKey(\"X-Requested-With\")) {\n            context.Result = new StatusCodeResult(403);\n        }\n    }\n}\n```\n\n**Double Submit Cookie Pattern**:\n```csharp\npublic IActionResult Login() {\n    // Ustaw CSRF token w cookie I w formularzu\n    var token = Guid.NewGuid().ToString();\n    \n    Response.Cookies.Append(\"CSRF-TOKEN\", token, new CookieOptions {\n        HttpOnly = false,  // JavaScript musi móc czytać\n        Secure = true,\n        SameSite = SameSiteMode.Strict\n    });\n    \n    ViewBag.CsrfToken = token;\n    return View();\n}\n\n[HttpPost]\npublic IActionResult ProcessLogin(LoginModel model, \n    [FromHeader(Name = \"X-CSRF-TOKEN\")] string headerToken) {\n    \n    var cookieToken = Request.Cookies[\"CSRF-TOKEN\"];\n    \n    if (string.IsNullOrEmpty(cookieToken) || \n        cookieToken != headerToken) {\n        return StatusCode(403);\n    }\n    \n    // Process login\n}\n```\n\n**Best Practices**:\n✅ Zawsze używaj `[ValidateAntiForgeryToken]` dla POST/PUT/DELETE\n✅ SameSite=Strict dla cookies\n✅ HTTPS only\n✅ Weryfikuj Origin/Referer\n❌ Nigdy nie używaj GET do modyfikacji danych\n❌ Nie polegaj tylko na cookies do autentykacji akcji"
+        },
+        {
+            category: "system-design",
+            level: "senior",
+            question: "Jakie są kluczowe zasady bezpiecznego przechowywania haseł?",
+            answers: [
+                "Zaszyfrować hasła",
+                "Haszować z solą używając bcrypt/Argon2 - NIGDY plaintext ani MD5/SHA1",
+                "Przechowywać w bezpiecznej bazie danych",
+                "Używać silnego algorytmu szyfrowania"
+            ],
+            correct: 1,
+            explanation: "NIGDY:\n❌ Przechowywać w plaintext\n❌ Używać odwracalnego szyfrowania\n❌ Używać szybkich haszy (MD5, SHA1, SHA256)\n❌ Haszować bez soli\n\nZAWSZE:\n✅ Używać wolnych algorytmów haszowania (bcrypt, Argon2, PBKDF2)\n✅ Używać unikalnej soli na hasło\n✅ Używać wysokiego work factor/iterations\n\n```csharp\nusing BCrypt.Net;\n\n// Rejestracja - haszowanie hasła\npublic void CreateUser(string username, string password) {\n    string hashedPassword = BCrypt.HashPassword(password, \n        workFactor: 12); // Wyższe = wolniejsze = bezpieczniejsze\n    // Zapisz hashedPassword w bazie danych\n}\n\n// Login - weryfikacja hasła\npublic bool ValidateUser(string username, string password) {\n    string hashedPassword = GetHashedPasswordFromDb(username);\n    return BCrypt.Verify(password, hashedPassword);\n}\n```\n\nDlaczego wolne haszowanie?\n- Zapobiega atakom brute force\n- bcrypt z work factor 12: ~250ms na próbę\n- Atakujący potrzebuje lat zamiast sekund na złamanie\n\nSól zapobiega atakom rainbow table."
         }
     ]
 };
