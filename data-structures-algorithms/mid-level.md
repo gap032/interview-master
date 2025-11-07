@@ -1488,3 +1488,1334 @@ class Program
 - OrderedDict maintains insertion order for optimization
 - C# array-based solution is fastest for known character sets
 
+---
+
+## 7. String Algorithms
+
+**Difficulty**: Medium
+
+**Question**: Implement common string manipulation algorithms including palindrome checking, anagram detection, and substring search.
+
+**Answer**:
+
+String algorithms are fundamental in solving many programming problems. Here are the most important patterns:
+
+### 7.1 Palindrome Checking
+
+A palindrome reads the same forwards and backwards.
+
+**Python:**
+```python
+def is_palindrome(s: str) -> bool:
+    """Check if string is palindrome (ignoring case and non-alphanumeric)"""
+    # Clean string: lowercase and keep only alphanumeric
+    cleaned = ''.join(c.lower() for c in s if c.isalnum())
+
+    # Two-pointer approach
+    left, right = 0, len(cleaned) - 1
+
+    while left < right:
+        if cleaned[left] != cleaned[right]:
+            return False
+        left += 1
+        right -= 1
+
+    return True
+
+# Alternative: simple approach
+def is_palindrome_simple(s: str) -> bool:
+    """Simple palindrome check"""
+    cleaned = ''.join(c.lower() for c in s if c.isalnum())
+    return cleaned == cleaned[::-1]
+
+# Examples
+print(is_palindrome("A man, a plan, a canal: Panama"))  # True
+print(is_palindrome("race a car"))  # False
+print(is_palindrome(""))  # True (empty string)
+```
+
+**C#:**
+```csharp
+using System;
+using System.Linq;
+using System.Text;
+
+public class PalindromeChecker
+{
+    // Two-pointer approach - O(n) time, O(1) space
+    public static bool IsPalindrome(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return true;
+
+        int left = 0;
+        int right = s.Length - 1;
+
+        while (left < right)
+        {
+            // Skip non-alphanumeric characters
+            while (left < right && !char.IsLetterOrDigit(s[left]))
+                left++;
+
+            while (left < right && !char.IsLetterOrDigit(s[right]))
+                right--;
+
+            // Compare characters (case-insensitive)
+            if (char.ToLower(s[left]) != char.ToLower(s[right]))
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+
+    // Alternative: using LINQ - O(n) time, O(n) space
+    public static bool IsPalindromeLinq(string s)
+    {
+        var cleaned = new string(s.Where(char.IsLetterOrDigit)
+                                   .Select(char.ToLower)
+                                   .ToArray());
+
+        return cleaned.SequenceEqual(cleaned.Reverse());
+    }
+}
+
+// Test cases
+Console.WriteLine(PalindromeChecker.IsPalindrome("A man, a plan, a canal: Panama"));  // True
+Console.WriteLine(PalindromeChecker.IsPalindrome("race a car"));  // False
+Console.WriteLine(PalindromeChecker.IsPalindrome(""));  // True
+```
+
+**JavaScript:**
+```javascript
+function isPalindrome(s) {
+    // Clean and normalize string
+    const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Two-pointer approach
+    let left = 0;
+    let right = cleaned.length - 1;
+
+    while (left < right) {
+        if (cleaned[left] !== cleaned[right]) {
+            return false;
+        }
+        left++;
+        right--;
+    }
+
+    return true;
+}
+
+// Alternative: simple approach
+function isPalindromeSimple(s) {
+    const cleaned = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return cleaned === cleaned.split('').reverse().join('');
+}
+
+console.log(isPalindrome("A man, a plan, a canal: Panama"));  // true
+console.log(isPalindrome("race a car"));  // false
+```
+
+### 7.2 Anagram Detection
+
+Two strings are anagrams if they contain the same characters with the same frequencies.
+
+**Python:**
+```python
+from collections import Counter
+
+def is_anagram(s1: str, s2: str) -> bool:
+    """Check if two strings are anagrams"""
+    # Quick length check
+    if len(s1) != len(s2):
+        return False
+
+    # Using Counter (hash map)
+    return Counter(s1) == Counter(s2)
+
+def is_anagram_sort(s1: str, s2: str) -> bool:
+    """Alternative: using sorting"""
+    return sorted(s1) == sorted(s2)
+
+def is_anagram_manual(s1: str, s2: str) -> bool:
+    """Manual hash map approach"""
+    if len(s1) != len(s2):
+        return False
+
+    char_count = {}
+
+    # Count characters in s1
+    for char in s1:
+        char_count[char] = char_count.get(char, 0) + 1
+
+    # Decrement for characters in s2
+    for char in s2:
+        if char not in char_count:
+            return False
+        char_count[char] -= 1
+        if char_count[char] < 0:
+            return False
+
+    return True
+
+# Examples
+print(is_anagram("listen", "silent"))  # True
+print(is_anagram("hello", "world"))  # False
+print(is_anagram("anagram", "nagaram"))  # True
+```
+
+**C#:**
+```csharp
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+public class AnagramDetector
+{
+    // Using Dictionary - O(n) time, O(n) space
+    public static bool IsAnagram(string s1, string s2)
+    {
+        if (s1.Length != s2.Length) return false;
+
+        var charCount = new Dictionary<char, int>();
+
+        // Count characters in s1
+        foreach (char c in s1)
+        {
+            if (!charCount.ContainsKey(c))
+                charCount[c] = 0;
+            charCount[c]++;
+        }
+
+        // Decrement for characters in s2
+        foreach (char c in s2)
+        {
+            if (!charCount.ContainsKey(c))
+                return false;
+
+            charCount[c]--;
+            if (charCount[c] < 0)
+                return false;
+        }
+
+        return true;
+    }
+
+    // Using sorting - O(n log n) time, O(n) space
+    public static bool IsAnagramSort(string s1, string s2)
+    {
+        if (s1.Length != s2.Length) return false;
+
+        var sorted1 = new string(s1.OrderBy(c => c).ToArray());
+        var sorted2 = new string(s2.OrderBy(c => c).ToArray());
+
+        return sorted1 == sorted2;
+    }
+
+    // Using LINQ GroupBy - O(n) time, O(n) space
+    public static bool IsAnagramLinq(string s1, string s2)
+    {
+        if (s1.Length != s2.Length) return false;
+
+        return s1.GroupBy(c => c).OrderBy(g => g.Key)
+                 .SequenceEqual(s2.GroupBy(c => c).OrderBy(g => g.Key),
+                               new GroupingComparer());
+    }
+
+    private class GroupingComparer : IEqualityComparer<IGrouping<char, char>>
+    {
+        public bool Equals(IGrouping<char, char> x, IGrouping<char, char> y)
+        {
+            return x.Key == y.Key && x.Count() == y.Count();
+        }
+
+        public int GetHashCode(IGrouping<char, char> obj)
+        {
+            return obj.Key.GetHashCode() ^ obj.Count().GetHashCode();
+        }
+    }
+}
+
+// Test cases
+Console.WriteLine(AnagramDetector.IsAnagram("listen", "silent"));  // True
+Console.WriteLine(AnagramDetector.IsAnagram("hello", "world"));  // False
+Console.WriteLine(AnagramDetector.IsAnagramSort("anagram", "nagaram"));  // True
+```
+
+### 7.3 Substring Search (Pattern Matching)
+
+Find if a pattern exists in a text string.
+
+**Python:**
+```python
+def substring_search_naive(text: str, pattern: str) -> int:
+    """Naive substring search - O(n*m) time"""
+    n, m = len(text), len(pattern)
+
+    if m == 0:
+        return 0
+    if m > n:
+        return -1
+
+    for i in range(n - m + 1):
+        j = 0
+        while j < m and text[i + j] == pattern[j]:
+            j += 1
+
+        if j == m:
+            return i  # Pattern found at index i
+
+    return -1  # Pattern not found
+
+def find_all_occurrences(text: str, pattern: str) -> list:
+    """Find all occurrences of pattern in text"""
+    result = []
+    n, m = len(text), len(pattern)
+
+    for i in range(n - m + 1):
+        if text[i:i+m] == pattern:
+            result.append(i)
+
+    return result
+
+# KMP (Knuth-Morris-Pratt) algorithm - O(n+m) time
+def kmp_search(text: str, pattern: str) -> int:
+    """Efficient pattern matching using KMP algorithm"""
+    if not pattern:
+        return 0
+
+    # Build LPS (Longest Prefix Suffix) array
+    def build_lps(pattern):
+        lps = [0] * len(pattern)
+        length = 0
+        i = 1
+
+        while i < len(pattern):
+            if pattern[i] == pattern[length]:
+                length += 1
+                lps[i] = length
+                i += 1
+            else:
+                if length != 0:
+                    length = lps[length - 1]
+                else:
+                    lps[i] = 0
+                    i += 1
+
+        return lps
+
+    lps = build_lps(pattern)
+    i = j = 0
+
+    while i < len(text):
+        if text[i] == pattern[j]:
+            i += 1
+            j += 1
+
+            if j == len(pattern):
+                return i - j  # Pattern found
+        else:
+            if j != 0:
+                j = lps[j - 1]
+            else:
+                i += 1
+
+    return -1  # Pattern not found
+
+# Examples
+text = "hello world, hello universe"
+pattern = "hello"
+
+print(substring_search_naive(text, pattern))  # 0
+print(find_all_occurrences(text, pattern))  # [0, 13]
+print(kmp_search(text, pattern))  # 0
+```
+
+**C#:**
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class SubstringSearch
+{
+    // Naive approach - O(n*m) time
+    public static int NaiveSearch(string text, string pattern)
+    {
+        int n = text.Length;
+        int m = pattern.Length;
+
+        if (m == 0) return 0;
+        if (m > n) return -1;
+
+        for (int i = 0; i <= n - m; i++)
+        {
+            int j;
+            for (j = 0; j < m; j++)
+            {
+                if (text[i + j] != pattern[j])
+                    break;
+            }
+
+            if (j == m)
+                return i;  // Pattern found
+        }
+
+        return -1;  // Pattern not found
+    }
+
+    // Find all occurrences
+    public static List<int> FindAllOccurrences(string text, string pattern)
+    {
+        var result = new List<int>();
+        int n = text.Length;
+        int m = pattern.Length;
+
+        for (int i = 0; i <= n - m; i++)
+        {
+            bool found = true;
+            for (int j = 0; j < m; j++)
+            {
+                if (text[i + j] != pattern[j])
+                {
+                    found = false;
+                    break;
+                }
+            }
+
+            if (found)
+                result.Add(i);
+        }
+
+        return result;
+    }
+
+    // KMP Algorithm - O(n+m) time
+    public static int KMPSearch(string text, string pattern)
+    {
+        if (string.IsNullOrEmpty(pattern)) return 0;
+
+        int[] lps = BuildLPS(pattern);
+        int i = 0, j = 0;
+
+        while (i < text.Length)
+        {
+            if (text[i] == pattern[j])
+            {
+                i++;
+                j++;
+
+                if (j == pattern.Length)
+                    return i - j;  // Pattern found
+            }
+            else
+            {
+                if (j != 0)
+                    j = lps[j - 1];
+                else
+                    i++;
+            }
+        }
+
+        return -1;  // Pattern not found
+    }
+
+    // Build LPS (Longest Prefix Suffix) array
+    private static int[] BuildLPS(string pattern)
+    {
+        int[] lps = new int[pattern.Length];
+        int length = 0;
+        int i = 1;
+
+        while (i < pattern.Length)
+        {
+            if (pattern[i] == pattern[length])
+            {
+                length++;
+                lps[i] = length;
+                i++;
+            }
+            else
+            {
+                if (length != 0)
+                {
+                    length = lps[length - 1];
+                }
+                else
+                {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+
+        return lps;
+    }
+}
+
+// Test cases
+string text = "hello world, hello universe";
+string pattern = "hello";
+
+Console.WriteLine(SubstringSearch.NaiveSearch(text, pattern));  // 0
+Console.WriteLine(string.Join(", ", SubstringSearch.FindAllOccurrences(text, pattern)));  // 0, 13
+Console.WriteLine(SubstringSearch.KMPSearch(text, pattern));  // 0
+```
+
+### 7.4 Longest Common Prefix
+
+Find the longest common prefix among an array of strings.
+
+**Python:**
+```python
+def longest_common_prefix(strs: list) -> str:
+    """Find longest common prefix using vertical scanning"""
+    if not strs:
+        return ""
+
+    # Use first string as reference
+    for i in range(len(strs[0])):
+        char = strs[0][i]
+
+        # Check if this character matches in all strings
+        for s in strs[1:]:
+            if i >= len(s) or s[i] != char:
+                return strs[0][:i]
+
+    return strs[0]
+
+def longest_common_prefix_sort(strs: list) -> str:
+    """Alternative: sort and compare first and last"""
+    if not strs:
+        return ""
+
+    strs.sort()
+    first = strs[0]
+    last = strs[-1]
+
+    i = 0
+    while i < len(first) and i < len(last) and first[i] == last[i]:
+        i += 1
+
+    return first[:i]
+
+# Examples
+print(longest_common_prefix(["flower", "flow", "flight"]))  # "fl"
+print(longest_common_prefix(["dog", "racecar", "car"]))  # ""
+print(longest_common_prefix(["interspecies", "interstellar", "interstate"]))  # "inters"
+```
+
+**C#:**
+```csharp
+using System;
+using System.Linq;
+
+public class LongestCommonPrefix
+{
+    // Vertical scanning - O(S) where S is sum of all characters
+    public static string FindLCP(string[] strs)
+    {
+        if (strs == null || strs.Length == 0)
+            return "";
+
+        // Check each character position
+        for (int i = 0; i < strs[0].Length; i++)
+        {
+            char c = strs[0][i];
+
+            // Compare with all other strings
+            for (int j = 1; j < strs.Length; j++)
+            {
+                if (i >= strs[j].Length || strs[j][i] != c)
+                    return strs[0].Substring(0, i);
+            }
+        }
+
+        return strs[0];
+    }
+
+    // Using LINQ and sorting
+    public static string FindLCPSort(string[] strs)
+    {
+        if (strs == null || strs.Length == 0)
+            return "";
+
+        Array.Sort(strs);
+        string first = strs[0];
+        string last = strs[strs.Length - 1];
+
+        int i = 0;
+        while (i < first.Length && i < last.Length && first[i] == last[i])
+            i++;
+
+        return first.Substring(0, i);
+    }
+}
+
+// Test cases
+string[] test1 = { "flower", "flow", "flight" };
+string[] test2 = { "dog", "racecar", "car" };
+string[] test3 = { "interspecies", "interstellar", "interstate" };
+
+Console.WriteLine(LongestCommonPrefix.FindLCP(test1));  // "fl"
+Console.WriteLine(LongestCommonPrefix.FindLCP(test2));  // ""
+Console.WriteLine(LongestCommonPrefix.FindLCPSort(test3));  // "inters"
+```
+
+### 7.5 String Reversal Techniques
+
+**Python:**
+```python
+# Word reversal
+def reverse_words(s: str) -> str:
+    """Reverse words in a string"""
+    # Split, reverse, join
+    return ' '.join(s.split()[::-1])
+
+def reverse_words_manual(s: str) -> str:
+    """Manual word reversal without built-in reverse"""
+    words = s.split()
+    left, right = 0, len(words) - 1
+
+    while left < right:
+        words[left], words[right] = words[right], words[left]
+        left += 1
+        right -= 1
+
+    return ' '.join(words)
+
+# Character reversal
+def reverse_string(s: list) -> None:
+    """Reverse string in-place (list of characters)"""
+    left, right = 0, len(s) - 1
+
+    while left < right:
+        s[left], s[right] = s[right], s[left]
+        left += 1
+        right -= 1
+
+# Examples
+print(reverse_words("the sky is blue"))  # "blue is sky the"
+print(reverse_words("  hello world  "))  # "world hello"
+
+chars = ['h', 'e', 'l', 'l', 'o']
+reverse_string(chars)
+print(''.join(chars))  # "olleh"
+```
+
+**C#:**
+```csharp
+using System;
+using System.Linq;
+using System.Text;
+
+public class StringReversal
+{
+    // Reverse words in a string
+    public static string ReverseWords(string s)
+    {
+        // Split, reverse, join
+        return string.Join(" ", s.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                 .Reverse());
+    }
+
+    // Reverse words manually
+    public static string ReverseWordsManual(string s)
+    {
+        var words = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        int left = 0, right = words.Length - 1;
+
+        while (left < right)
+        {
+            var temp = words[left];
+            words[left] = words[right];
+            words[right] = temp;
+            left++;
+            right--;
+        }
+
+        return string.Join(" ", words);
+    }
+
+    // Reverse character array in-place
+    public static void ReverseString(char[] s)
+    {
+        int left = 0, right = s.Length - 1;
+
+        while (left < right)
+        {
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    // Reverse each word in string
+    public static string ReverseEachWord(string s)
+    {
+        return string.Join(" ", s.Split(' ')
+                                 .Select(word => new string(word.Reverse().ToArray())));
+    }
+}
+
+// Test cases
+Console.WriteLine(StringReversal.ReverseWords("the sky is blue"));  // "blue is sky the"
+Console.WriteLine(StringReversal.ReverseWords("  hello world  "));  // "world hello"
+
+char[] chars = { 'h', 'e', 'l', 'l', 'o' };
+StringReversal.ReverseString(chars);
+Console.WriteLine(new string(chars));  // "olleh"
+
+Console.WriteLine(StringReversal.ReverseEachWord("Let's reverse each word"));  // "s'teL esrever hcae drow"
+```
+
+**Key Points:**
+- **Palindrome**: Two-pointer technique is most efficient (O(n) time, O(1) space)
+- **Anagram**: Hash map approach is O(n) time; sorting is O(n log n)
+- **Substring Search**: Naive is O(n*m); KMP algorithm is O(n+m)
+- **String manipulation**: Understanding pointers, slicing, and built-in methods
+- **Time-Space tradeoffs**: Some algorithms trade memory for speed
+- **Edge cases**: Always consider empty strings, single characters, and special characters
+- **C# strings are immutable**: Use StringBuilder or char arrays for in-place modifications
+
+---
+
+## 8. Bitwise Operations
+
+**Difficulty**: Medium
+
+**Question**: Explain and demonstrate common bitwise operations and their applications in solving programming problems efficiently.
+
+**Answer**:
+
+Bitwise operations work directly on binary representations of numbers. They are extremely fast and useful for optimization, flags, and specific problem-solving patterns.
+
+### 8.1 Basic Bitwise Operators
+
+**Python:**
+```python
+# AND (&) - Sets each bit to 1 if both bits are 1
+print(12 & 10)  # 1100 & 1010 = 1000 = 8
+
+# OR (|) - Sets each bit to 1 if at least one bit is 1
+print(12 | 10)  # 1100 | 1010 = 1110 = 14
+
+# XOR (^) - Sets each bit to 1 if only one bit is 1
+print(12 ^ 10)  # 1100 ^ 1010 = 0110 = 6
+
+# NOT (~) - Inverts all bits
+print(~12)  # ~1100 = ...11110011 = -13 (two's complement)
+
+# Left Shift (<<) - Shifts bits left, fills with 0
+print(5 << 2)  # 0101 << 2 = 10100 = 20 (multiply by 2^2)
+
+# Right Shift (>>) - Shifts bits right
+print(20 >> 2)  # 10100 >> 2 = 101 = 5 (divide by 2^2)
+
+# Useful bit manipulation functions
+def get_bit(num, i):
+    """Get bit at position i"""
+    return (num >> i) & 1
+
+def set_bit(num, i):
+    """Set bit at position i to 1"""
+    return num | (1 << i)
+
+def clear_bit(num, i):
+    """Clear bit at position i (set to 0)"""
+    mask = ~(1 << i)
+    return num & mask
+
+def toggle_bit(num, i):
+    """Toggle bit at position i"""
+    return num ^ (1 << i)
+
+def update_bit(num, i, bit_value):
+    """Update bit at position i to bit_value (0 or 1)"""
+    mask = ~(1 << i)
+    return (num & mask) | (bit_value << i)
+
+# Examples
+num = 10  # Binary: 1010
+print(f"Original: {num} = {bin(num)}")
+print(f"Get bit 1: {get_bit(num, 1)}")  # 1
+print(f"Set bit 0: {set_bit(num, 0)} = {bin(set_bit(num, 0))}")  # 11 = 1011
+print(f"Clear bit 1: {clear_bit(num, 1)} = {bin(clear_bit(num, 1))}")  # 8 = 1000
+print(f"Toggle bit 2: {toggle_bit(num, 2)} = {bin(toggle_bit(num, 2))}")  # 14 = 1110
+```
+
+**C#:**
+```csharp
+using System;
+
+public class BitwiseOperations
+{
+    public static void DemonstrateBasicOperations()
+    {
+        // AND (&) - Sets each bit to 1 if both bits are 1
+        Console.WriteLine(12 & 10);  // 1100 & 1010 = 1000 = 8
+
+        // OR (|) - Sets each bit to 1 if at least one bit is 1
+        Console.WriteLine(12 | 10);  // 1100 | 1010 = 1110 = 14
+
+        // XOR (^) - Sets each bit to 1 if only one bit is 1
+        Console.WriteLine(12 ^ 10);  // 1100 ^ 1010 = 0110 = 6
+
+        // NOT (~) - Inverts all bits
+        Console.WriteLine(~12);  // ~1100 = ...11110011 = -13
+
+        // Left Shift (<<) - Shifts bits left
+        Console.WriteLine(5 << 2);  // 0101 << 2 = 10100 = 20
+
+        // Right Shift (>>) - Shifts bits right
+        Console.WriteLine(20 >> 2);  // 10100 >> 2 = 101 = 5
+    }
+
+    // Get bit at position i
+    public static int GetBit(int num, int i)
+    {
+        return (num >> i) & 1;
+    }
+
+    // Set bit at position i to 1
+    public static int SetBit(int num, int i)
+    {
+        return num | (1 << i);
+    }
+
+    // Clear bit at position i (set to 0)
+    public static int ClearBit(int num, int i)
+    {
+        int mask = ~(1 << i);
+        return num & mask;
+    }
+
+    // Toggle bit at position i
+    public static int ToggleBit(int num, int i)
+    {
+        return num ^ (1 << i);
+    }
+
+    // Update bit at position i to bitValue (0 or 1)
+    public static int UpdateBit(int num, int i, int bitValue)
+    {
+        int mask = ~(1 << i);
+        return (num & mask) | (bitValue << i);
+    }
+
+    // Check if number is power of 2
+    public static bool IsPowerOfTwo(int n)
+    {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+}
+
+// Test
+int num = 10;  // Binary: 1010
+Console.WriteLine($"Original: {num} = {Convert.ToString(num, 2)}");
+Console.WriteLine($"Get bit 1: {BitwiseOperations.GetBit(num, 1)}");  // 1
+Console.WriteLine($"Set bit 0: {BitwiseOperations.SetBit(num, 0)}");  // 11
+Console.WriteLine($"Clear bit 1: {BitwiseOperations.ClearBit(num, 1)}");  // 8
+Console.WriteLine($"Toggle bit 2: {BitwiseOperations.ToggleBit(num, 2)}");  // 14
+```
+
+**JavaScript:**
+```javascript
+// Basic operations
+console.log(12 & 10);  // 8
+console.log(12 | 10);  // 14
+console.log(12 ^ 10);  // 6
+console.log(~12);      // -13
+console.log(5 << 2);   // 20
+console.log(20 >> 2);  // 5
+
+// Utility functions
+function getBit(num, i) {
+    return (num >> i) & 1;
+}
+
+function setBit(num, i) {
+    return num | (1 << i);
+}
+
+function clearBit(num, i) {
+    const mask = ~(1 << i);
+    return num & mask;
+}
+
+function toggleBit(num, i) {
+    return num ^ (1 << i);
+}
+
+const num = 10;  // Binary: 1010
+console.log(`Original: ${num} = ${num.toString(2)}`);
+console.log(`Get bit 1: ${getBit(num, 1)}`);  // 1
+console.log(`Set bit 0: ${setBit(num, 0)}`);  // 11
+```
+
+### 8.2 Common Bit Manipulation Problems
+
+**Problem 1: Count Number of 1 Bits (Hamming Weight)**
+
+**Python:**
+```python
+def count_set_bits(n: int) -> int:
+    """Count number of 1 bits in binary representation"""
+    count = 0
+    while n:
+        count += n & 1  # Check if last bit is 1
+        n >>= 1  # Right shift by 1
+    return count
+
+def count_set_bits_optimized(n: int) -> int:
+    """Brian Kernighan's algorithm - O(number of set bits)"""
+    count = 0
+    while n:
+        n &= n - 1  # Removes rightmost set bit
+        count += 1
+    return count
+
+# Built-in method
+def count_set_bits_builtin(n: int) -> int:
+    return bin(n).count('1')
+
+# Examples
+print(count_set_bits(11))  # 1011 has 3 ones
+print(count_set_bits_optimized(11))  # 3
+print(count_set_bits_builtin(128))  # 10000000 has 1 one
+```
+
+**C#:**
+```csharp
+using System;
+
+public class BitCounting
+{
+    // Count 1 bits - Basic approach
+    public static int CountSetBits(int n)
+    {
+        int count = 0;
+        while (n != 0)
+        {
+            count += n & 1;
+            n >>= 1;
+        }
+        return count;
+    }
+
+    // Brian Kernighan's algorithm - more efficient
+    public static int CountSetBitsOptimized(int n)
+    {
+        int count = 0;
+        while (n != 0)
+        {
+            n &= n - 1;  // Removes rightmost set bit
+            count++;
+        }
+        return count;
+    }
+
+    // Using built-in .NET method
+    public static int CountSetBitsBuiltin(int n)
+    {
+        return System.Numerics.BitOperations.PopCount((uint)n);
+    }
+}
+
+// Test
+Console.WriteLine(BitCounting.CountSetBits(11));  // 3
+Console.WriteLine(BitCounting.CountSetBitsOptimized(11));  // 3
+Console.WriteLine(BitCounting.CountSetBitsBuiltin(128));  // 1
+```
+
+**Problem 2: Check if Number is Power of 2**
+
+**Python:**
+```python
+def is_power_of_two(n: int) -> bool:
+    """Check if n is power of 2"""
+    # Power of 2 has only one bit set
+    # n = 8 (1000), n-1 = 7 (0111), n & (n-1) = 0
+    return n > 0 and (n & (n - 1)) == 0
+
+def is_power_of_two_alternative(n: int) -> bool:
+    """Alternative: count set bits"""
+    return n > 0 and bin(n).count('1') == 1
+
+# Examples
+print(is_power_of_two(16))  # True (10000)
+print(is_power_of_two(18))  # False (10010)
+print(is_power_of_two(1))   # True (1)
+```
+
+**C#:**
+```csharp
+public class PowerOfTwo
+{
+    public static bool IsPowerOfTwo(int n)
+    {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+
+    public static bool IsPowerOfTwoAlternative(int n)
+    {
+        if (n <= 0) return false;
+        return CountSetBits(n) == 1;
+    }
+
+    private static int CountSetBits(int n)
+    {
+        int count = 0;
+        while (n != 0)
+        {
+            count += n & 1;
+            n >>= 1;
+        }
+        return count;
+    }
+}
+
+Console.WriteLine(PowerOfTwo.IsPowerOfTwo(16));  // True
+Console.WriteLine(PowerOfTwo.IsPowerOfTwo(18));  // False
+```
+
+**Problem 3: Find Single Number (XOR trick)**
+
+Given an array where every element appears twice except one, find that single element.
+
+**Python:**
+```python
+def single_number(nums: list) -> int:
+    """Find number that appears once using XOR
+
+    XOR properties:
+    - a ^ a = 0
+    - a ^ 0 = a
+    - XOR is commutative and associative
+    """
+    result = 0
+    for num in nums:
+        result ^= num
+    return result
+
+# Example
+print(single_number([4, 1, 2, 1, 2]))  # 4
+print(single_number([2, 2, 1]))  # 1
+
+# Explanation:
+# 4 ^ 1 ^ 2 ^ 1 ^ 2
+# = 4 ^ (1 ^ 1) ^ (2 ^ 2)
+# = 4 ^ 0 ^ 0
+# = 4
+```
+
+**C#:**
+```csharp
+using System;
+
+public class SingleNumber
+{
+    public static int FindSingleNumber(int[] nums)
+    {
+        int result = 0;
+        foreach (int num in nums)
+        {
+            result ^= num;
+        }
+        return result;
+    }
+
+    // LINQ version
+    public static int FindSingleNumberLinq(int[] nums)
+    {
+        return nums.Aggregate(0, (acc, num) => acc ^ num);
+    }
+}
+
+// Test
+int[] test1 = { 4, 1, 2, 1, 2 };
+int[] test2 = { 2, 2, 1 };
+
+Console.WriteLine(SingleNumber.FindSingleNumber(test1));  // 4
+Console.WriteLine(SingleNumber.FindSingleNumberLinq(test2));  // 1
+```
+
+**Problem 4: Swap Two Numbers Without Temp Variable**
+
+**Python:**
+```python
+def swap_xor(a: int, b: int) -> tuple:
+    """Swap using XOR"""
+    print(f"Before: a = {a}, b = {b}")
+
+    a = a ^ b  # a now contains XOR of both
+    b = a ^ b  # b = (a^b) ^ b = a
+    a = a ^ b  # a = (a^b) ^ a = b
+
+    print(f"After: a = {a}, b = {b}")
+    return a, b
+
+swap_xor(5, 10)
+
+# Modern Python way (more readable)
+def swap_pythonic(a: int, b: int) -> tuple:
+    a, b = b, a
+    return a, b
+```
+
+**C#:**
+```csharp
+public class Swap
+{
+    public static void SwapXOR(ref int a, ref int b)
+    {
+        Console.WriteLine($"Before: a = {a}, b = {b}");
+
+        a = a ^ b;
+        b = a ^ b;  // b = (a^b) ^ b = a
+        a = a ^ b;  // a = (a^b) ^ a = b
+
+        Console.WriteLine($"After: a = {a}, b = {b}");
+    }
+
+    // Using tuple (C# 7.0+)
+    public static (int, int) SwapTuple(int a, int b)
+    {
+        return (b, a);
+    }
+}
+
+// Test
+int x = 5, y = 10;
+Swap.SwapXOR(ref x, ref y);
+Console.WriteLine($"x = {x}, y = {y}");  // x = 10, y = 5
+```
+
+**Problem 5: Reverse Bits**
+
+**Python:**
+```python
+def reverse_bits(n: int) -> int:
+    """Reverse bits of a 32-bit unsigned integer"""
+    result = 0
+    for i in range(32):
+        # Get rightmost bit and shift result left
+        result = (result << 1) | (n & 1)
+        # Shift n right for next iteration
+        n >>= 1
+    return result
+
+# Example
+n = 43261596  # 00000010100101000001111010011100
+result = reverse_bits(n)
+print(f"{n} reversed = {result}")  # 964176192
+print(f"Binary: {bin(n)} -> {bin(result)}")
+```
+
+**C#:**
+```csharp
+using System;
+
+public class BitReversal
+{
+    public static uint ReverseBits(uint n)
+    {
+        uint result = 0;
+        for (int i = 0; i < 32; i++)
+        {
+            result = (result << 1) | (n & 1);
+            n >>= 1;
+        }
+        return result;
+    }
+
+    // Optimized using lookup table (for repeated calls)
+    private static readonly byte[] ReverseLookup = new byte[256];
+
+    static BitReversal()
+    {
+        // Pre-compute reverse of all 8-bit values
+        for (int i = 0; i < 256; i++)
+        {
+            byte reversed = 0;
+            byte val = (byte)i;
+            for (int j = 0; j < 8; j++)
+            {
+                reversed = (byte)((reversed << 1) | (val & 1));
+                val >>= 1;
+            }
+            ReverseLookup[i] = reversed;
+        }
+    }
+
+    public static uint ReverseBitsOptimized(uint n)
+    {
+        return ((uint)ReverseLookup[n & 0xff] << 24) |
+               ((uint)ReverseLookup[(n >> 8) & 0xff] << 16) |
+               ((uint)ReverseLookup[(n >> 16) & 0xff] << 8) |
+               ((uint)ReverseLookup[(n >> 24) & 0xff]);
+    }
+}
+
+// Test
+uint n = 43261596;
+uint result = BitReversal.ReverseBits(n);
+Console.WriteLine($"{n} reversed = {result}");
+Console.WriteLine($"Binary: {Convert.ToString(n, 2)} -> {Convert.ToString(result, 2)}");
+```
+
+### 8.3 Bitwise Tricks and Patterns
+
+**Python:**
+```python
+# 1. Multiply/Divide by powers of 2
+def multiply_by_power_of_2(n: int, power: int) -> int:
+    """Multiply n by 2^power"""
+    return n << power
+
+def divide_by_power_of_2(n: int, power: int) -> int:
+    """Divide n by 2^power"""
+    return n >> power
+
+print(multiply_by_power_of_2(5, 3))  # 5 * 8 = 40
+print(divide_by_power_of_2(40, 3))   # 40 / 8 = 5
+
+# 2. Check if number is odd/even
+def is_odd(n: int) -> bool:
+    return (n & 1) == 1
+
+def is_even(n: int) -> bool:
+    return (n & 1) == 0
+
+print(is_odd(7))   # True
+print(is_even(8))  # True
+
+# 3. Toggle case of letters
+def toggle_case(char: str) -> str:
+    """Toggle case using XOR with space (32 in ASCII)"""
+    return chr(ord(char) ^ 32)
+
+print(toggle_case('A'))  # 'a'
+print(toggle_case('a'))  # 'A'
+
+# 4. Get absolute value (for two's complement)
+def abs_value(n: int) -> int:
+    """Get absolute value using bitwise operations"""
+    mask = n >> 31  # All 1s if negative, all 0s if positive
+    return (n + mask) ^ mask
+
+print(abs_value(-5))   # 5
+print(abs_value(10))   # 10
+
+# 5. Check if two numbers have opposite signs
+def opposite_signs(x: int, y: int) -> bool:
+    return (x ^ y) < 0
+
+print(opposite_signs(-5, 10))  # True
+print(opposite_signs(5, 10))   # False
+
+# 6. Find minimum/maximum without branching
+def min_bitwise(x: int, y: int) -> int:
+    return y ^ ((x ^ y) & -(x < y))
+
+def max_bitwise(x: int, y: int) -> int:
+    return x ^ ((x ^ y) & -(x < y))
+
+print(min_bitwise(5, 10))  # 5
+print(max_bitwise(5, 10))  # 10
+
+# 7. Set rightmost 0 bit
+def set_rightmost_zero_bit(n: int) -> int:
+    return n | (n + 1)
+
+print(bin(0b1011))  # 0b1011
+print(bin(set_rightmost_zero_bit(0b1011)))  # 0b1111
+
+# 8. Isolate rightmost 1 bit
+def isolate_rightmost_one_bit(n: int) -> int:
+    return n & -n
+
+print(bin(0b1100))  # 0b1100
+print(bin(isolate_rightmost_one_bit(0b1100)))  # 0b100
+```
+
+**C#:**
+```csharp
+using System;
+
+public class BitwiseTricks
+{
+    // Multiply/Divide by powers of 2
+    public static int MultiplyByPowerOf2(int n, int power)
+    {
+        return n << power;
+    }
+
+    public static int DivideByPowerOf2(int n, int power)
+    {
+        return n >> power;
+    }
+
+    // Check odd/even
+    public static bool IsOdd(int n)
+    {
+        return (n & 1) == 1;
+    }
+
+    public static bool IsEven(int n)
+    {
+        return (n & 1) == 0;
+    }
+
+    // Toggle case
+    public static char ToggleCase(char c)
+    {
+        return (char)(c ^ 32);
+    }
+
+    // Check opposite signs
+    public static bool OppositeSigns(int x, int y)
+    {
+        return (x ^ y) < 0;
+    }
+
+    // Set rightmost 0 bit
+    public static int SetRightmostZeroBit(int n)
+    {
+        return n | (n + 1);
+    }
+
+    // Isolate rightmost 1 bit
+    public static int IsolateRightmostOneBit(int n)
+    {
+        return n & -n;
+    }
+
+    // Clear rightmost 1 bit
+    public static int ClearRightmostOneBit(int n)
+    {
+        return n & (n - 1);
+    }
+}
+
+// Tests
+Console.WriteLine(BitwiseTricks.MultiplyByPowerOf2(5, 3));  // 40
+Console.WriteLine(BitwiseTricks.IsOdd(7));  // True
+Console.WriteLine(BitwiseTricks.ToggleCase('A'));  // 'a'
+Console.WriteLine(BitwiseTricks.OppositeSigns(-5, 10));  // True
+Console.WriteLine(Convert.ToString(BitwiseTricks.IsolateRightmostOneBit(0b1100), 2));  // 100
+```
+
+**Key Points:**
+- **XOR properties**: `a ^ a = 0`, `a ^ 0 = a`, commutative and associative
+- **Power of 2 check**: `n & (n-1) == 0` for n > 0
+- **Isolate rightmost bit**: `n & -n` (useful for Fenwick trees)
+- **Clear rightmost bit**: `n & (n-1)` (Brian Kernighan's algorithm)
+- **Performance**: Bitwise operations are extremely fast (single CPU cycle)
+- **Use cases**: Flags, masks, permissions, optimization, competitive programming
+- **Bit masks for flags**: Can store 32/64 boolean values in single int/long
+- **Common patterns**: Learn to recognize when bit manipulation can optimize solutions
+- **Debugging**: Use `bin()` (Python) or `Convert.ToString(n, 2)` (C#) to visualize bits

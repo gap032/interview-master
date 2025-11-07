@@ -2066,8 +2066,23 @@ const quizQuestionsData = {
     ]
 };
 
+// Helper function to shuffle array using Fisher-Yates algorithm
+function shuffleArray(array) {
+    const shuffled = [...array]; // Create a copy to avoid mutating original
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 // Helper function to get filtered questions based on current language
-function getFilteredQuestions(category = 'all', level = 'all', count = 10, language = 'en') {
+function getFilteredQuestions(category = 'all', level = 'all', count = 10, language = null) {
+    // Auto-detect language from i18n if available, fallback to 'en'
+    if (!language) {
+        language = (typeof currentLanguage !== 'undefined') ? currentLanguage : 'en';
+    }
+
     // Get questions for the current language
     let filtered = quizQuestionsData[language] || quizQuestionsData['en'];
 
@@ -2079,8 +2094,8 @@ function getFilteredQuestions(category = 'all', level = 'all', count = 10, langu
         filtered = filtered.filter(q => q.level === level);
     }
 
-    // Shuffle and take 'count' questions
-    const shuffled = filtered.sort(() => 0.5 - Math.random());
+    // Shuffle using Fisher-Yates algorithm and take 'count' questions
+    const shuffled = shuffleArray(filtered);
     return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 

@@ -12,7 +12,7 @@ const translations = {
         welcomeSubtitle: "Select a category and level from the left menu to start learning.",
         statFiles: "Material Files",
         statQuestions: "Quiz Questions",
-        statCategories: "Technical Categories",
+        statCategories: "Categories",
 
         // Categories
         catCategories: "Categories",
@@ -23,11 +23,17 @@ const translations = {
         catDatabases: "Databases",
         catDevOps: "DevOps & Cloud",
         catBehavioral: "Behavioral",
+        catInterviewCategories: "Interview Categories & Questions",
+        catProblemSolving: "Problem-Solving Framework",
+        catResumeTips: "Resume & Interview Tips",
 
         // Levels
         levelMid: "Mid",
         levelSenior: "Senior",
         levelPrincipal: "Principal",
+
+        // Buttons
+        btnViewGuide: "View Guide",
 
         // Quiz Section
         quizTitle: "Test Your Knowledge!",
@@ -113,7 +119,7 @@ const translations = {
         welcomeSubtitle: "Wybierz kategorię i poziom z menu po lewej, aby rozpocząć naukę.",
         statFiles: "Plików z materiałami",
         statQuestions: "Pytań quizowych",
-        statCategories: "Kategorii technicznych",
+        statCategories: "Kategorii",
 
         // Categories
         catCategories: "Kategorie",
@@ -124,11 +130,17 @@ const translations = {
         catDatabases: "Bazy Danych",
         catDevOps: "DevOps i Cloud",
         catBehavioral: "Pytania Behawioralne",
+        catInterviewCategories: "Kategorie i Pytania Rekrutacyjne",
+        catProblemSolving: "Framework Rozwiązywania Problemów",
+        catResumeTips: "CV i Porady Rekrutacyjne",
 
         // Levels
         levelMid: "Mid",
         levelSenior: "Senior",
         levelPrincipal: "Principal",
+
+        // Buttons
+        btnViewGuide: "Zobacz przewodnik",
 
         // Quiz Section
         quizTitle: "Sprawdź swoją wiedzę!",

@@ -689,3 +689,895 @@ public double Evaluate(Expression expr, Dictionary<string, double> vars)
 | Pattern matching | switch expr | match | match | switch |
 | Discriminated unions | Via records | Native | enum | union types |
 | Exhaustiveness check | Partial | Full | Full | Full |
+
+---
+
+## 7. Advanced Angular Concepts
+
+**Question**: Explain RxJS operators, state management strategies, change detection, lazy loading, and advanced routing patterns in Angular.
+
+**Answer**:
+
+**1. RxJS Operators and Reactive Programming:**
+
+**Common RxJS Operators:**
+
+```typescript
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, Subject, BehaviorSubject, combineLatest, merge, forkJoin } from 'rxjs';
+import { map, filter, debounceTime, distinctUntilChanged, switchMap,
+         catchError, retry, tap, takeUntil, shareReplay } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-rxjs-demo',
+  template: `
+    <input [formControl]="searchControl" placeholder="Search...">
+    <div *ngFor="let result of searchResults$ | async">
+      {{ result.name }}
+    </div>
+  `
+})
+export class RxjsDemoComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  searchControl = new FormControl('');
+  searchResults$!: Observable<any[]>;
+
+  constructor(private http: HttpClient) { }
+
+  ngOnInit(): void {
+    // Search with debounce and distinctUntilChanged
+    this.searchResults$ = this.searchControl.valueChanges.pipe(
+      debounceTime(300),              // Wait 300ms after user stops typing
+      distinctUntilChanged(),         // Only if value changed
+      filter(term => term.length >= 3), // Min 3 characters
+      switchMap(term => this.search(term)), // Cancel previous, switch to new
+      catchError(err => {
+        console.error('Search error:', err);
+        return of([]);
+      }),
+      takeUntil(this.destroy$)        // Cleanup on destroy
+    );
+  }
+
+  search(term: string): Observable<any[]> {
+    return this.http.get<any[]>(`/api/search?q=${term}`);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}
+```
+
+**Advanced RxJS Patterns:**
+
+```typescript
+// 1. CombineLatest - combine multiple observables
+@Component({
+  selector: 'app-dashboard',
+  template: `
+    <div *ngIf="dashboardData$ | async as data">
+      <p>Users: {{ data.users.length }}</p>
+      <p>Orders: {{ data.orders.length }}</p>
+      <p>Settings: {{ data.settings.theme }}</p>
+    </div>
+  `
+})
+export class DashboardComponent implements OnInit {
+  dashboardData$!: Observable<any>;
+
+  constructor(
+    private userService: UserService,
+    private orderService: OrderService,
+    private settingsService: SettingsService
+  ) { }
+
+  ngOnInit(): void {
+    // Combine three observables into one
+    this.dashboardData$ = combineLatest([
+      this.userService.getUsers(),
+      this.orderService.getOrders(),
+      this.settingsService.getSettings()
+    ]).pipe(
+      map(([users, orders, settings]) => ({
+        users,
+        orders,
+        settings
+      })),
+      shareReplay(1)  // Cache and share result
+    );
+  }
+}
+
+// 2. ForkJoin - wait for all to complete (like Promise.all)
+loadInitialData(): Observable<InitialData> {
+  return forkJoin({
+    users: this.http.get<User[]>('/api/users'),
+    products: this.http.get<Product[]>('/api/products'),
+    categories: this.http.get<Category[]>('/api/categories')
+  }).pipe(
+    catchError(error => {
+      console.error('Failed to load initial data', error);
+      throw error;
+    })
+  );
+}
+
+// 3. Merge - merge multiple observables
+const clicks$ = fromEvent(button, 'click');
+const touches$ = fromEvent(button, 'touchstart');
+const interactions$ = merge(clicks$, touches$);
+
+// 4. Higher-order observables
+@Component({
+  selector: 'app-autocomplete',
+  template: `
+    <input (input)="search$.next($event.target.value)">
+    <ul>
+      <li *ngFor="let item of results$ | async">{{ item }}</li>
+    </ul>
+  `
+})
+export class AutocompleteComponent implements OnInit {
+  search$ = new Subject<string>();
+  results$!: Observable<any[]>;
+
+  constructor(private searchService: SearchService) { }
+
+  ngOnInit(): void {
+    this.results$ = this.search$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term =>
+        term.length >= 2
+          ? this.searchService.search(term).pipe(
+              retry(3),  // Retry failed requests
+              catchError(() => of([]))
+            )
+          : of([])
+      )
+    );
+  }
+}
+
+// 5. BehaviorSubject for state management
+export class DataService {
+  private usersSubject = new BehaviorSubject<User[]>([]);
+  users$ = this.usersSubject.asObservable();
+
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+
+  constructor(private http: HttpClient) { }
+
+  loadUsers(): void {
+    this.loadingSubject.next(true);
+
+    this.http.get<User[]>('/api/users').pipe(
+      tap(users => this.usersSubject.next(users)),
+      catchError(error => {
+        console.error('Error loading users:', error);
+        return of([]);
+      }),
+      finalize(() => this.loadingSubject.next(false))
+    ).subscribe();
+  }
+
+  addUser(user: User): void {
+    const currentUsers = this.usersSubject.value;
+    this.usersSubject.next([...currentUsers, user]);
+  }
+
+  getUserById(id: number): Observable<User | undefined> {
+    return this.users$.pipe(
+      map(users => users.find(u => u.id === id))
+    );
+  }
+}
+```
+
+**2. State Management with NgRx:**
+
+```typescript
+// actions/user.actions.ts
+import { createAction, props } from '@ngrx/store';
+import { User } from '../models/user.model';
+
+export const loadUsers = createAction('[User List] Load Users');
+
+export const loadUsersSuccess = createAction(
+  '[User API] Load Users Success',
+  props<{ users: User[] }>()
+);
+
+export const loadUsersFailure = createAction(
+  '[User API] Load Users Failure',
+  props<{ error: string }>()
+);
+
+export const addUser = createAction(
+  '[User Form] Add User',
+  props<{ user: User }>()
+);
+
+export const updateUser = createAction(
+  '[User Form] Update User',
+  props<{ user: User }>()
+);
+
+export const deleteUser = createAction(
+  '[User List] Delete User',
+  props<{ id: number }>()
+);
+```
+
+```typescript
+// reducers/user.reducer.ts
+import { createReducer, on } from '@ngrx/store';
+import * as UserActions from '../actions/user.actions';
+import { User } from '../models/user.model';
+
+export interface UserState {
+  users: User[];
+  loading: boolean;
+  error: string | null;
+  selectedUserId: number | null;
+}
+
+export const initialState: UserState = {
+  users: [],
+  loading: false,
+  error: null,
+  selectedUserId: null
+};
+
+export const userReducer = createReducer(
+  initialState,
+
+  on(UserActions.loadUsers, (state) => ({
+    ...state,
+    loading: true,
+    error: null
+  })),
+
+  on(UserActions.loadUsersSuccess, (state, { users }) => ({
+    ...state,
+    users,
+    loading: false
+  })),
+
+  on(UserActions.loadUsersFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+
+  on(UserActions.addUser, (state, { user }) => ({
+    ...state,
+    users: [...state.users, user]
+  })),
+
+  on(UserActions.updateUser, (state, { user }) => ({
+    ...state,
+    users: state.users.map(u => u.id === user.id ? user : u)
+  })),
+
+  on(UserActions.deleteUser, (state, { id }) => ({
+    ...state,
+    users: state.users.filter(u => u.id !== id)
+  }))
+);
+```
+
+```typescript
+// selectors/user.selectors.ts
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { UserState } from '../reducers/user.reducer';
+
+export const selectUserState = createFeatureSelector<UserState>('users');
+
+export const selectAllUsers = createSelector(
+  selectUserState,
+  (state) => state.users
+);
+
+export const selectUsersLoading = createSelector(
+  selectUserState,
+  (state) => state.loading
+);
+
+export const selectUsersError = createSelector(
+  selectUserState,
+  (state) => state.error
+);
+
+export const selectUserById = (id: number) => createSelector(
+  selectAllUsers,
+  (users) => users.find(u => u.id === id)
+);
+
+export const selectActiveUsers = createSelector(
+  selectAllUsers,
+  (users) => users.filter(u => u.isActive)
+);
+```
+
+```typescript
+// effects/user.effects.ts
+import { Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
+import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { UserService } from '../services/user.service';
+import * as UserActions from '../actions/user.actions';
+
+@Injectable()
+export class UserEffects {
+
+  loadUsers$ = createEffect(() => this.actions$.pipe(
+    ofType(UserActions.loadUsers),
+    switchMap(() =>
+      this.userService.getUsers().pipe(
+        map(users => UserActions.loadUsersSuccess({ users })),
+        catchError(error => of(UserActions.loadUsersFailure({
+          error: error.message
+        })))
+      )
+    )
+  ));
+
+  addUser$ = createEffect(() => this.actions$.pipe(
+    ofType(UserActions.addUser),
+    switchMap(({ user }) =>
+      this.userService.createUser(user).pipe(
+        map(createdUser => UserActions.addUser({ user: createdUser })),
+        catchError(error => of(UserActions.loadUsersFailure({
+          error: error.message
+        })))
+      )
+    )
+  ));
+
+  constructor(
+    private actions$: Actions,
+    private userService: UserService
+  ) { }
+}
+```
+
+```typescript
+// Component using NgRx
+@Component({
+  selector: 'app-user-list',
+  template: `
+    <div *ngIf="loading$ | async">Loading...</div>
+    <div *ngIf="error$ | async as error" class="error">{{ error }}</div>
+
+    <ul>
+      <li *ngFor="let user of users$ | async">
+        {{ user.name }} - {{ user.email }}
+        <button (click)="deleteUser(user.id)">Delete</button>
+      </li>
+    </ul>
+
+    <button (click)="loadUsers()">Refresh</button>
+  `
+})
+export class UserListComponent implements OnInit {
+  users$ = this.store.select(selectAllUsers);
+  loading$ = this.store.select(selectUsersLoading);
+  error$ = this.store.select(selectUsersError);
+
+  constructor(private store: Store) { }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.store.dispatch(UserActions.loadUsers());
+  }
+
+  deleteUser(id: number): void {
+    this.store.dispatch(UserActions.deleteUser({ id }));
+  }
+}
+```
+
+**3. Change Detection Strategies:**
+
+```typescript
+// Default change detection (runs on every change)
+@Component({
+  selector: 'app-default',
+  template: `
+    <h2>{{ title }}</h2>
+    <p>Count: {{ count }}</p>
+  `,
+  changeDetection: ChangeDetectionStrategy.Default  // Default
+})
+export class DefaultComponent {
+  title = 'Default Change Detection';
+  count = 0;
+}
+
+// OnPush change detection (optimized)
+@Component({
+  selector: 'app-optimized',
+  template: `
+    <h2>{{ title }}</h2>
+    <p>Count: {{ data.count }}</p>
+    <p>Items: {{ items.length }}</p>
+
+    <!-- Change detection triggered by: -->
+    <!-- 1. Input reference change -->
+    <!-- 2. Event from template -->
+    <!-- 3. Async pipe emission -->
+    <button (click)="increment()">Increment</button>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush  // Optimized!
+})
+export class OptimizedComponent {
+  @Input() data!: { count: number };  // Must change reference
+  @Input() items!: any[];
+
+  title = 'OnPush Change Detection';
+
+  constructor(private cdr: ChangeDetectorRef) { }
+
+  increment(): void {
+    // This triggers change detection (event from template)
+    this.data = { ...this.data, count: this.data.count + 1 };
+  }
+
+  // Manually trigger change detection if needed
+  manualUpdate(): void {
+    this.cdr.markForCheck();
+  }
+}
+
+// Parent component must pass new references
+@Component({
+  selector: 'app-parent',
+  template: `
+    <app-optimized
+      [data]="userData"
+      [items]="userItems">
+    </app-optimized>
+
+    <button (click)="updateData()">Update</button>
+  `
+})
+export class ParentComponent {
+  userData = { count: 0 };
+  userItems = ['A', 'B', 'C'];
+
+  updateData(): void {
+    // Create new reference (OnPush will detect)
+    this.userData = { count: this.userData.count + 1 };
+
+    // Create new array reference
+    this.userItems = [...this.userItems, 'D'];
+  }
+}
+```
+
+**4. Lazy Loading and Code Splitting:**
+
+```typescript
+// app-routing.module.ts
+const routes: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+
+  // Lazy load feature module
+  {
+    path: 'users',
+    loadChildren: () => import('./users/users.module')
+      .then(m => m.UsersModule)
+  },
+
+  // Lazy load with preloading strategy
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module')
+      .then(m => m.AdminModule),
+    canLoad: [AuthGuard],  // Guard before loading
+    data: { preload: true }
+  },
+
+  // Lazy load standalone component (Angular 14+)
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component')
+      .then(m => m.DashboardComponent)
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes, {
+    preloadingStrategy: CustomPreloadingStrategy  // Custom preloading
+  })],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+**Custom Preloading Strategy:**
+
+```typescript
+import { Injectable } from '@angular/core';
+import { PreloadingStrategy, Route } from '@angular/router';
+import { Observable, of, timer } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+
+@Injectable({ providedIn: 'root' })
+export class CustomPreloadingStrategy implements PreloadingStrategy {
+
+  preload(route: Route, load: () => Observable<any>): Observable<any> {
+    // Preload if route data says so
+    if (route.data && route.data['preload']) {
+      console.log('Preloading:', route.path);
+
+      // Delay preloading by 2 seconds
+      return timer(2000).pipe(
+        mergeMap(() => load())
+      );
+    }
+
+    return of(null);
+  }
+}
+```
+
+**5. Route Guards and Resolvers:**
+
+```typescript
+// Auth Guard - prevent unauthorized access
+@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate, CanActivateChild {
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> {
+    return this.authService.isLoggedIn$.pipe(
+      map(isLoggedIn => {
+        if (isLoggedIn) {
+          return true;
+        }
+
+        // Redirect to login
+        return this.router.createUrlTree(['/login'], {
+          queryParams: { returnUrl: state.url }
+        });
+      })
+    );
+  }
+
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> {
+    return this.canActivate(childRoute, state);
+  }
+}
+
+// Role Guard - check user permissions
+@Injectable({ providedIn: 'root' })
+export class RoleGuard implements CanActivate {
+
+  constructor(private authService: AuthService) { }
+
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const requiredRoles = route.data['roles'] as string[];
+
+    return this.authService.currentUser$.pipe(
+      map(user => {
+        if (!user) return false;
+
+        return requiredRoles.some(role => user.roles.includes(role));
+      })
+    );
+  }
+}
+
+// CanDeactivate Guard - warn before leaving unsaved changes
+export interface CanComponentDeactivate {
+  canDeactivate: () => boolean | Observable<boolean>;
+}
+
+@Injectable({ providedIn: 'root' })
+export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
+
+  canDeactivate(
+    component: CanComponentDeactivate
+  ): boolean | Observable<boolean> {
+    return component.canDeactivate ? component.canDeactivate() : true;
+  }
+}
+
+// Component implementing CanComponentDeactivate
+@Component({
+  selector: 'app-edit-form',
+  template: `
+    <form [formGroup]="form">
+      <!-- form fields -->
+    </form>
+  `
+})
+export class EditFormComponent implements CanComponentDeactivate {
+  form!: FormGroup;
+
+  canDeactivate(): boolean {
+    if (this.form.dirty) {
+      return confirm('You have unsaved changes. Do you want to leave?');
+    }
+    return true;
+  }
+}
+
+// Resolver - preload data before route activation
+@Injectable({ providedIn: 'root' })
+export class UserResolver implements Resolve<User> {
+
+  constructor(
+    private userService: UserService,
+    private router: Router
+  ) { }
+
+  resolve(route: ActivatedRouteSnapshot): Observable<User> {
+    const id = Number(route.paramMap.get('id'));
+
+    return this.userService.getUserById(id).pipe(
+      catchError(error => {
+        console.error('Error loading user:', error);
+        this.router.navigate(['/users']);
+        return EMPTY;
+      })
+    );
+  }
+}
+
+// Using guards and resolvers in routes
+const routes: Routes = [
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin'] }
+  },
+  {
+    path: 'edit/:id',
+    component: EditFormComponent,
+    canDeactivate: [UnsavedChangesGuard]
+  },
+  {
+    path: 'user/:id',
+    component: UserDetailComponent,
+    resolve: { user: UserResolver }  // Preload data
+  }
+];
+
+// Access resolved data in component
+@Component({
+  selector: 'app-user-detail',
+  template: `<h2>{{ user.name }}</h2>`
+})
+export class UserDetailComponent implements OnInit {
+  user!: User;
+
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    // Get resolved data
+    this.user = this.route.snapshot.data['user'];
+
+    // Or subscribe to changes
+    this.route.data.subscribe(data => {
+      this.user = data['user'];
+    });
+  }
+}
+```
+
+**6. HTTP Interceptors:**
+
+```typescript
+// auth.interceptor.ts - add auth token
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+
+  constructor(private authService: AuthService) { }
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+
+    // Clone request and add authorization header
+    const authToken = this.authService.getToken();
+
+    if (authToken) {
+      const authReq = req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${authToken}`)
+      });
+      return next.handle(authReq);
+    }
+
+    return next.handle(req);
+  }
+}
+
+// error.interceptor.ts - handle errors globally
+@Injectable()
+export class ErrorInterceptor implements HttpInterceptor {
+
+  constructor(
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        let errorMessage = 'An error occurred';
+
+        if (error.error instanceof ErrorEvent) {
+          // Client-side error
+          errorMessage = error.error.message;
+        } else {
+          // Server-side error
+          switch (error.status) {
+            case 401:
+              this.router.navigate(['/login']);
+              errorMessage = 'Unauthorized';
+              break;
+            case 403:
+              errorMessage = 'Access denied';
+              break;
+            case 404:
+              errorMessage = 'Resource not found';
+              break;
+            case 500:
+              errorMessage = 'Server error';
+              break;
+            default:
+              errorMessage = `Error: ${error.message}`;
+          }
+        }
+
+        this.notificationService.showError(errorMessage);
+        return throwError(() => error);
+      })
+    );
+  }
+}
+
+// loading.interceptor.ts - show loading indicator
+@Injectable()
+export class LoadingInterceptor implements HttpInterceptor {
+
+  constructor(private loadingService: LoadingService) { }
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+
+    this.loadingService.show();
+
+    return next.handle(req).pipe(
+      finalize(() => this.loadingService.hide())
+    );
+  }
+}
+
+// cache.interceptor.ts - cache GET requests
+@Injectable()
+export class CacheInterceptor implements HttpInterceptor {
+  private cache = new Map<string, HttpResponse<any>>();
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+
+    // Only cache GET requests
+    if (req.method !== 'GET') {
+      return next.handle(req);
+    }
+
+    // Check cache
+    const cachedResponse = this.cache.get(req.url);
+    if (cachedResponse) {
+      return of(cachedResponse);
+    }
+
+    // Make request and cache response
+    return next.handle(req).pipe(
+      tap(event => {
+        if (event instanceof HttpResponse) {
+          this.cache.set(req.url, event);
+        }
+      })
+    );
+  }
+}
+
+// Register interceptors in app.module.ts
+@NgModule({
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true }
+  ]
+})
+export class AppModule { }
+```
+
+**7. Content Projection and ng-content:**
+
+```typescript
+// card.component.ts
+@Component({
+  selector: 'app-card',
+  template: `
+    <div class="card">
+      <div class="card-header">
+        <ng-content select="[header]"></ng-content>
+      </div>
+      <div class="card-body">
+        <ng-content></ng-content>
+      </div>
+      <div class="card-footer">
+        <ng-content select="[footer]"></ng-content>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .card { border: 1px solid #ccc; border-radius: 4px; }
+    .card-header { background: #f5f5f5; padding: 10px; }
+    .card-body { padding: 15px; }
+    .card-footer { background: #f5f5f5; padding: 10px; }
+  `]
+})
+export class CardComponent { }
+
+// Usage:
+@Component({
+  selector: 'app-demo',
+  template: `
+    <app-card>
+      <h2 header>Card Title</h2>
+      <p>This is the card content</p>
+      <button footer>Action</button>
+    </app-card>
+  `
+})
+export class DemoComponent { }
+```
+
+**Key Advanced Concepts:**
+
+✅ **RxJS Mastery**: Operators, higher-order observables, state management
+✅ **NgRx**: Actions, reducers, selectors, effects for complex state
+✅ **Change Detection**: OnPush strategy for performance
+✅ **Lazy Loading**: Code splitting and preloading strategies
+✅ **Guards**: CanActivate, CanDeactivate, CanLoad, route protection
+✅ **Resolvers**: Preload data before route activation
+✅ **Interceptors**: Global HTTP request/response handling
+✅ **Content Projection**: Reusable component templates
+
