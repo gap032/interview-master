@@ -75,18 +75,47 @@ async function loadMarkdownFile(filepath) {
     try {
         let markdown;
 
+        // Get current language (default to 'en')
+        const language = (typeof currentLanguage !== 'undefined') ? currentLanguage : 'en';
+
         // Try to get from embedded data first (offline support)
-        if (typeof MATERIALS_DATA !== 'undefined' && MATERIALS_DATA[filepath]) {
-            markdown = MATERIALS_DATA[filepath];
-            console.log(`Loaded from embedded data: ${filepath}`);
+        if (typeof MATERIALS_DATA !== 'undefined') {
+            // Try language-specific version first, fallback to English
+            const langData = MATERIALS_DATA[language] || MATERIALS_DATA['en'];
+            if (langData && langData[filepath]) {
+                markdown = langData[filepath];
+                console.log(`Loaded from embedded data (${language}): ${filepath}`);
+            } else {
+                throw new Error(`Material not found in embedded data: ${filepath}`);
+            }
         } else {
             // Fallback to fetch if available (when hosted on server)
-            const response = await fetch(filepath);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Try language-specific file first
+            let fetchPath = filepath;
+            if (language === 'pl' && filepath.endsWith('.md')) {
+                fetchPath = filepath.replace('.md', '.pl.md');
             }
-            markdown = await response.text();
-            console.log(`Loaded via fetch: ${filepath}`);
+
+            try {
+                const response = await fetch(fetchPath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                markdown = await response.text();
+                console.log(`Loaded via fetch (${language}): ${fetchPath}`);
+            } catch (fetchError) {
+                // Fallback to English version
+                if (language === 'pl') {
+                    const response = await fetch(filepath);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    markdown = await response.text();
+                    console.log(`Loaded via fetch (en fallback): ${filepath}`);
+                } else {
+                    throw fetchError;
+                }
+            }
         }
 
         // Convert markdown to HTML

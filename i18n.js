@@ -235,6 +235,28 @@ function changeLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);
     updateUI();
+
+    // Reload current material if one is displayed
+    reloadCurrentMaterial();
+}
+
+// Reload currently displayed material in new language
+function reloadCurrentMaterial() {
+    // Check if we're on materials section and a file is loaded
+    const materialsSection = document.getElementById('materials-section');
+    const contentDiv = document.getElementById('content');
+
+    if (materialsSection && materialsSection.classList.contains('active') && contentDiv.style.display !== 'none') {
+        // Find the active material button
+        const activeBtn = document.querySelector('.level-btn.active');
+        if (activeBtn && activeBtn.dataset.file) {
+            const filepath = activeBtn.dataset.file;
+            console.log('[i18n] Reloading material in new language:', filepath);
+            if (typeof loadMarkdownFile === 'function') {
+                loadMarkdownFile(filepath);
+            }
+        }
+    }
 }
 
 // Update all UI text
