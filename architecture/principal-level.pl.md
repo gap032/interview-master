@@ -1,10 +1,10 @@
-# Software Architecture - Principal-Level Questions
+# Architektura Oprogramowania - Pytania Poziom Principal
 
 ## 1. Design Multi-Tenant SaaS Architecture
 
-**Question**: Design a multi-tenant SaaS platform. Discuss isolation strategies and trade-offs.
+**Pytanie**: Design a multi-tenant SaaS platform. Discuss isolation strategies and trade-offs.
 
-**Answer**:
+**Odpowiedź**:
 
 **Isolation Strategies:**
 

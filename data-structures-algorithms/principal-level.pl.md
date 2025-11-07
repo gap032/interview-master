@@ -1,12 +1,12 @@
-# Data Structures & Algorithms - Principal-Level Questions
+# Struktury Danych i Algorytmy - Pytania Poziom Principal
 
 ## 1. Design a Distributed Rate Limiter
 
-**Difficulty**: Hard
+**Trudność**: Hard
 
-**Question**: Design a distributed rate limiter that can handle millions of requests per second across multiple servers. Discuss trade-offs between different algorithms (token bucket, leaky bucket, sliding window) and how to handle distributed synchronization.
+**Pytanie**: Design a distributed rate limiter that can handle millions of requests per second across multiple servers. Discuss trade-offs between different algorithms (token bucket, leaky bucket, sliding window) and how to handle distributed synchronization.
 
-**Answer**:
+**Odpowiedź**:
 
 A distributed rate limiter must coordinate across multiple servers while maintaining high performance and accuracy.
 
@@ -898,11 +898,11 @@ class CompleteExample
 
 ## 2. B+ Tree Implementation and Analysis
 
-**Difficulty**: Hard
+**Trudność**: Hard
 
-**Question**: Implement a B+ tree and explain why it's used in database systems instead of binary search trees or hash tables. Discuss the trade-offs and performance characteristics.
+**Pytanie**: Implement a B+ tree and explain why it's used in database systems instead of binary search trees or hash tables. Discuss the trade-offs and performance characteristics.
 
-**Answer**:
+**Odpowiedź**:
 
 B+ trees are self-balancing tree structures optimized for disk-based storage systems, used extensively in databases and file systems.
 
@@ -1719,11 +1719,11 @@ class DatabaseComparison
 
 ## 3. Advanced Dynamic Programming: Optimal Binary Search Tree
 
-**Difficulty**: Hard
+**Trudność**: Hard
 
-**Question**: Given a sorted array of keys and their access frequencies, construct an Optimal Binary Search Tree that minimizes the expected search cost. Explain the dynamic programming approach and analyze complexity.
+**Pytanie**: Given a sorted array of keys and their access frequencies, construct an Optimal Binary Search Tree that minimizes the expected search cost. Explain the dynamic programming approach and analyze complexity.
 
-**Answer**:
+**Odpowiedź**:
 
 An Optimal BST minimizes weighted path length considering access frequencies, unlike balanced trees which minimize height.
 

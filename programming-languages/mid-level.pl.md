@@ -1,10 +1,10 @@
-# Programming Languages - Mid-Level Questions
+# Języki Programowania - Pytania Poziom Mid
 
 ## 1. JavaScript Closures and Scope
 
-**Question**: Explain closures in JavaScript with examples. What are common pitfalls?
+**Pytanie**: Explain closures in JavaScript with examples. What are common pitfalls?
 
-**Answer**:
+**Odpowiedź**:
 
 A closure is a function that has access to variables in its outer (enclosing) scope, even after the outer function has returned.
 
@@ -109,9 +109,9 @@ foreach (var action in actions)
 
 ## 2. Python Decorators
 
-**Question**: Implement a caching decorator and explain how decorators work.
+**Pytanie**: Implement a caching decorator and explain how decorators work.
 
-**Answer**:
+**Odpowiedź**:
 
 ```python
 from functools import wraps
@@ -245,9 +245,9 @@ public class CachingProxy<T> : DispatchProxy where T : class
 
 ## 3. Java Generics and Type Erasure
 
-**Question**: Explain Java generics, type erasure, and wildcards.
+**Pytanie**: Explain Java generics, type erasure, and wildcards.
 
-**Answer**:
+**Odpowiedź**:
 
 ```java
 // Generic class
@@ -347,9 +347,9 @@ string maxStr = Max("abc", "xyz"); // T inferred as string
 
 ## 4. C# LINQ and Query Expressions
 
-**Question**: Explain LINQ, query syntax vs method syntax, and deferred execution.
+**Pytanie**: Explain LINQ, query syntax vs method syntax, and deferred execution.
 
-**Answer**:
+**Odpowiedź**:
 
 LINQ (Language Integrated Query) provides a unified syntax for querying data from different sources (collections, databases, XML, etc.).
 
@@ -439,9 +439,9 @@ var query = from n in numbers
 
 ## 5. C# Value Types vs Reference Types
 
-**Question**: Explain the difference between value types and reference types in C#. What are boxing/unboxing?
+**Pytanie**: Explain the difference between value types and reference types in C#. What are boxing/unboxing?
 
-**Answer**:
+**Odpowiedź**:
 
 **Value Types** (stack allocated):
 - Structs, enums, primitives (int, bool, double, etc.)
@@ -535,9 +535,9 @@ public readonly struct Color
 
 ## 6. C# Async/Await and Task-based Asynchronous Pattern
 
-**Question**: Explain async/await in C#. How does it differ from JavaScript promises?
+**Pytanie**: Explain async/await in C#. How does it differ from JavaScript promises?
 
-**Answer**:
+**Odpowiedź**:
 
 ```csharp
 using System;
@@ -667,9 +667,9 @@ public async Task<T> RetryAsync<T>(Func<Task<T>> operation, int maxAttempts = 3)
 
 ## 7. SOLID Principles
 
-**Question**: Explain the SOLID principles with practical examples. How do they improve code quality?
+**Pytanie**: Explain the SOLID principles with practical examples. How do they improve code quality?
 
-**Answer**:
+**Odpowiedź**:
 
 SOLID is an acronym for five design principles that make software designs more understandable, flexible, and maintainable:
 
@@ -1131,9 +1131,9 @@ user_service.save_user("John Doe")
 
 ## 8. Object-Oriented Programming Basics
 
-**Question**: Explain the four pillars of OOP with practical examples.
+**Pytanie**: Explain the four pillars of OOP with practical examples.
 
-**Answer**:
+**Odpowiedź**:
 
 The four fundamental principles of Object-Oriented Programming are:
 
@@ -1614,9 +1614,9 @@ gateway.ProcessPayment(100.50m, "1234-5678-9012-3456");
 ---
 ## 9. React Fundamentals
 
-**Question**: Explain React core concepts: components, state, props, and hooks. When would you use React?
+**Pytanie**: Explain React core concepts: components, state, props, and hooks. When would you use React?
 
-**Answer**:
+**Odpowiedź**:
 
 React is a JavaScript library for building user interfaces, particularly single-page applications with complex, interactive UIs.
 
@@ -1952,9 +1952,9 @@ function LoginForm() {
 
 ## 10. jQuery Fundamentals
 
-**Question**: Explain jQuery basics and DOM manipulation. When would you still use jQuery in modern development?
+**Pytanie**: Explain jQuery basics and DOM manipulation. When would you still use jQuery in modern development?
 
-**Answer**:
+**Odpowiedź**:
 
 jQuery is a fast, small JavaScript library that simplifies DOM manipulation, event handling, AJAX, and animations.
 
@@ -2277,9 +2277,9 @@ fetch('/api/users')
 
 ## 11. Code Performance Optimization
 
-**Question**: How do you identify and fix performance bottlenecks in code? What techniques improve performance?
+**Pytanie**: How do you identify and fix performance bottlenecks in code? What techniques improve performance?
 
-**Answer**:
+**Odpowiedź**:
 
 **1. Time and Space Complexity:**
 
@@ -2923,9 +2923,9 @@ p.sort_stats('cumulative').print_stats(10)
 
 ## 12. Angular Fundamentals
 
-**Question**: What are the core concepts of Angular? Explain components, services, dependency injection, and directives.
+**Pytanie**: What are the core concepts of Angular? Explain components, services, dependency injection, and directives.
 
-**Answer**:
+**Odpowiedź**:
 
 **Angular Overview:**
 Angular is a TypeScript-based web application framework maintained by Google. It provides a complete solution for building SPAs with routing, forms, HTTP, and more.

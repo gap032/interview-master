@@ -1,12 +1,12 @@
-# System Design - Mid-Level Questions
+# System Design - Pytania Poziom Mid
 
 ## 1. Design a URL Shortener
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Design a URL shortening service like bit.ly. Include API design, data storage, and how to generate short URLs.
+**Pytanie**: Design a URL shortening service like bit.ly. Include API design, data storage, and how to generate short URLs.
 
-**Answer**:
+**Odpowiedź**:
 
 **Requirements:**
 - Convert long URLs to short unique codes
@@ -216,11 +216,11 @@ Cache:
 
 ## 2. Design a Rate Limiter
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Design an API rate limiter to prevent abuse. Support different rate limits per user/tier.
+**Pytanie**: Design an API rate limiter to prevent abuse. Support different rate limits per user/tier.
 
-**Answer**:
+**Odpowiedź**:
 
 **Requirements:**
 - Limit requests per time window (e.g., 100 req/min)
@@ -405,11 +405,11 @@ X-RateLimit-Reset: 1640995200
 
 ## 3. Design a Cache System
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Design a distributed caching system. Cover eviction policies, consistency, and scaling strategies.
+**Pytanie**: Design a distributed caching system. Cover eviction policies, consistency, and scaling strategies.
 
-**Answer**:
+**Odpowiedź**:
 
 **Requirements:**
 - Fast read/write (< 1ms)

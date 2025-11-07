@@ -1,12 +1,12 @@
-# Data Structures & Algorithms - Mid-Level Questions
+# Struktury Danych i Algorytmy - Pytania Poziom Mid
 
 ## 1. Explain the difference between an Array and a Linked List
 
-**Difficulty**: Easy
+**Trudność**: Easy
 
-**Question**: What are the key differences between arrays and linked lists? When would you use one over the other?
+**Pytanie**: What are the key differences between arrays and linked lists? When would you use one over the other?
 
-**Answer**:
+**Odpowiedź**:
 
 Arrays and linked lists are both linear data structures, but they differ in memory allocation and performance characteristics:
 
@@ -127,11 +127,11 @@ linkedList.AddLast(6);   // O(1)
 
 ## 2. Implement a Hash Table with Collision Resolution
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Implement a hash table from scratch with collision resolution using chaining. Explain how hash collisions occur and how chaining resolves them.
+**Pytanie**: Implement a hash table from scratch with collision resolution using chaining. Explain how hash collisions occur and how chaining resolves them.
 
-**Answer**:
+**Odpowiedź**:
 
 Hash collisions occur when two different keys hash to the same index. Chaining resolves this by storing multiple key-value pairs at each index using a linked list or array.
 
@@ -353,11 +353,11 @@ Console.WriteLine(dict["name"]);  // O(1) average
 
 ## 3. Binary Search Tree Operations
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Implement a Binary Search Tree with insert, search, and delete operations. Explain the time complexity of each operation.
+**Pytanie**: Implement a Binary Search Tree with insert, search, and delete operations. Explain the time complexity of each operation.
 
-**Answer**:
+**Odpowiedź**:
 
 A Binary Search Tree (BST) is a tree where each node has at most two children, and for each node:
 - All values in left subtree < node value
@@ -639,11 +639,11 @@ Console.WriteLine(sortedSet.Contains(30));  // True, O(log n)
 
 ## 4. Detect Cycle in a Linked List
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Write an algorithm to detect if a linked list contains a cycle. Explain Floyd's Cycle Detection Algorithm.
+**Pytanie**: Write an algorithm to detect if a linked list contains a cycle. Explain Floyd's Cycle Detection Algorithm.
 
-**Answer**:
+**Odpowiedź**:
 
 Floyd's Cycle Detection Algorithm (also called "tortoise and hare") uses two pointers moving at different speeds to detect cycles.
 
@@ -939,11 +939,11 @@ class Program
 
 ## 5. Implement a Stack with Min Operation
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Design a stack that supports push, pop, top, and retrieving the minimum element in constant time O(1).
+**Pytanie**: Design a stack that supports push, pop, top, and retrieving the minimum element in constant time O(1).
 
-**Answer**:
+**Odpowiedź**:
 
 The challenge is maintaining the minimum element as elements are pushed and popped. We can solve this using an auxiliary stack to track minimums.
 
@@ -1238,11 +1238,11 @@ class Program
 
 ## 6. Find First Non-Repeating Character
 
-**Difficulty**: Easy
+**Trudność**: Easy
 
-**Question**: Given a string, find the first non-repeating character. Return its index, or -1 if it doesn't exist.
+**Pytanie**: Given a string, find the first non-repeating character. Return its index, or -1 if it doesn't exist.
 
-**Answer**:
+**Odpowiedź**:
 
 This problem tests understanding of hash tables and string processing.
 
@@ -1492,11 +1492,11 @@ class Program
 
 ## 7. String Algorithms
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Implement common string manipulation algorithms including palindrome checking, anagram detection, and substring search.
+**Pytanie**: Implement common string manipulation algorithms including palindrome checking, anagram detection, and substring search.
 
-**Answer**:
+**Odpowiedź**:
 
 String algorithms are fundamental in solving many programming problems. Here are the most important patterns:
 
@@ -2185,11 +2185,11 @@ Console.WriteLine(StringReversal.ReverseEachWord("Let's reverse each word"));  /
 
 ## 8. Bitwise Operations
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Explain and demonstrate common bitwise operations and their applications in solving programming problems efficiently.
+**Pytanie**: Explain and demonstrate common bitwise operations and their applications in solving programming problems efficiently.
 
-**Answer**:
+**Odpowiedź**:
 
 Bitwise operations work directly on binary representations of numbers. They are extremely fast and useful for optimization, flags, and specific problem-solving patterns.
 

@@ -1,10 +1,10 @@
-# System Design - Principal-Level Questions
+# System Design - Pytania Poziom Principal
 
 ## 1. Design Global Content Delivery Network (CDN)
 
-**Question**: Design a CDN serving petabytes of content to billions of users globally with 99.99% availability.
+**Pytanie**: Design a CDN serving petabytes of content to billions of users globally with 99.99% availability.
 
-**Answer**:
+**Odpowiedź**:
 
 **Architecture Layers:**
 ```
@@ -46,9 +46,9 @@
 
 ## 2. Design Distributed Database (Spanner-like)
 
-**Question**: Design a globally distributed database with ACID transactions and external consistency.
+**Pytanie**: Design a globally distributed database with ACID transactions and external consistency.
 
-**Answer**:
+**Odpowiedź**:
 
 **Consensus & Replication:**
 - Paxos/Raft for consensus

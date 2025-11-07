@@ -1,10 +1,10 @@
-# Programming Languages - Principal-Level Questions
+# Języki Programowania - Pytania Poziom Principal
 
 ## 1. Design a Programming Language Feature
 
-**Question**: Design a new concurrency primitive for a programming language. Justify design decisions.
+**Pytanie**: Design a new concurrency primitive for a programming language. Justify design decisions.
 
-**Answer**:
+**Odpowiedź**:
 
 **Proposal: Structured Concurrency in "FutureScript"**
 
@@ -103,9 +103,9 @@ public async Task ParentTask()
 
 ## 2. C# Compiler Design and Roslyn APIs
 
-**Question**: How would you design a code analyzer or refactoring tool? Explain the Roslyn compiler pipeline.
+**Pytanie**: How would you design a code analyzer or refactoring tool? Explain the Roslyn compiler pipeline.
 
-**Answer**:
+**Odpowiedź**:
 
 **Roslyn Compiler Pipeline:**
 
@@ -248,9 +248,9 @@ public class AutoNotifyGenerator : ISourceGenerator
 
 ## 3. Advanced C# Performance Optimization
 
-**Question**: Design a high-performance serialization library in C#. What techniques would you use?
+**Pytanie**: Design a high-performance serialization library in C#. What techniques would you use?
 
-**Answer**:
+**Odpowiedź**:
 
 **Performance Techniques:**
 
@@ -418,9 +418,9 @@ public void SerializeWithSourceGen() { /* faster */ }
 
 ## 4. Language Evolution and Breaking Changes
 
-**Question**: You're designing C# 13. Propose a new feature. How would you ensure backward compatibility?
+**Pytanie**: You're designing C# 13. Propose a new feature. How would you ensure backward compatibility?
 
-**Answer**:
+**Odpowiedź**:
 
 **Proposed Feature: First-class Discriminated Unions**
 
@@ -499,9 +499,9 @@ Phase 3: Runtime Optimization
 
 ## 5. Cross-Language Interop Architecture
 
-**Question**: Design a system for seamless C#/JavaScript interop. How would you handle type safety and performance?
+**Pytanie**: Design a system for seamless C#/JavaScript interop. How would you handle type safety and performance?
 
-**Answer**:
+**Odpowiedź**:
 
 **Architecture:**
 
@@ -619,9 +619,9 @@ try {
 
 ## 5. Angular Enterprise Architecture and Scalability
 
-**Question**: Design a scalable Angular architecture for large enterprise applications. Discuss monorepo strategies, micro-frontends, module federation, performance optimization at scale, and testing strategies.
+**Pytanie**: Design a scalable Angular architecture for large enterprise applications. Discuss monorepo strategies, micro-frontends, module federation, performance optimization at scale, and testing strategies.
 
-**Answer**:
+**Odpowiedź**:
 
 **1. Monorepo Architecture with Nx:**
 

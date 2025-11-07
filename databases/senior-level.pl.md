@@ -1,10 +1,10 @@
-# Databases - Senior-Level Questions
+# Bazy Danych - Pytania Poziom Senior
 
 ## 1. Database Sharding Strategies
 
-**Question**: Design a sharding strategy for a database with billions of rows.
+**Pytanie**: Design a sharding strategy for a database with billions of rows.
 
-**Answer**:
+**Odpowiedź**:
 
 **Sharding Approaches:**
 

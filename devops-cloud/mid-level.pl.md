@@ -1,10 +1,10 @@
-# DevOps & Cloud - Mid-Level Questions
+# DevOps # DevOps & Cloud - Mid-Level Questions Cloud - Pytania Poziom Mid
 
 ## 1. Docker Containerization
 
-**Question**: Explain Docker and write a Dockerfile for a web application.
+**Pytanie**: Explain Docker and write a Dockerfile for a web application.
 
-**Answer**:
+**Odpowiedź**:
 
 **Dockerfile Example:**
 ```dockerfile
@@ -69,9 +69,9 @@ volumes:
 
 ## 2. CI/CD Pipeline
 
-**Question**: Design a CI/CD pipeline for a web application.
+**Pytanie**: Design a CI/CD pipeline for a web application.
 
-**Answer**:
+**Odpowiedź**:
 
 **Pipeline Stages:**
 ```
@@ -135,9 +135,9 @@ jobs:
 
 ## 3. Kubernetes Basics
 
-**Question**: Explain Kubernetes core concepts and write a deployment manifest.
+**Pytanie**: Explain Kubernetes core concepts and write a deployment manifest.
 
-**Answer**:
+**Odpowiedź**:
 
 **Core Concepts:**
 - **Pod**: Smallest deployable unit (1+ containers)

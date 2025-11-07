@@ -1,12 +1,12 @@
-# Data Structures & Algorithms - Senior-Level Questions
+# Struktury Danych i Algorytmy - Pytania Poziom Senior
 
 ## 1. Design and Implement an LRU Cache
 
-**Difficulty**: Medium-Hard
+**Trudność**: Medium-Hard
 
-**Question**: Design and implement a Least Recently Used (LRU) cache with O(1) time complexity for both get and put operations. Explain your design choices.
+**Pytanie**: Design and implement a Least Recently Used (LRU) cache with O(1) time complexity for both get and put operations. Explain your design choices.
 
-**Answer**:
+**Odpowiedź**:
 
 An LRU cache evicts the least recently used item when capacity is reached. To achieve O(1) for both operations, we combine a hash map with a doubly linked list.
 
@@ -386,11 +386,11 @@ class Program
 
 ## 2. Implement a Trie (Prefix Tree)
 
-**Difficulty**: Medium
+**Trudność**: Medium
 
-**Question**: Implement a trie data structure with insert, search, and startsWith operations. Discuss time and space complexity and real-world applications.
+**Pytanie**: Implement a trie data structure with insert, search, and startsWith operations. Discuss time and space complexity and real-world applications.
 
-**Answer**:
+**Odpowiedź**:
 
 A Trie (prefix tree) is a tree-like data structure for efficient string storage and retrieval, especially useful for prefix-based operations.
 
@@ -882,11 +882,11 @@ class Program
 
 ## 3. Serialize and Deserialize Binary Tree
 
-**Difficulty**: Hard
+**Trudność**: Hard
 
-**Question**: Design an algorithm to serialize and deserialize a binary tree. The serialization format should be compact and the deserialization should reconstruct the exact tree structure.
+**Pytanie**: Design an algorithm to serialize and deserialize a binary tree. The serialization format should be compact and the deserialization should reconstruct the exact tree structure.
 
-**Answer**:
+**Odpowiedź**:
 
 Serialization converts a tree to a string representation; deserialization reconstructs it. We need to handle null nodes to preserve structure.
 
@@ -1363,11 +1363,11 @@ class Program
 
 ## 4. Find Median from Data Stream
 
-**Difficulty**: Hard
+**Trudność**: Hard
 
-**Question**: Design a data structure that supports adding numbers from a stream and finding the median efficiently. Optimize for the case where findMedian is called frequently.
+**Pytanie**: Design a data structure that supports adding numbers from a stream and finding the median efficiently. Optimize for the case where findMedian is called frequently.
 
-**Answer**:
+**Odpowiedź**:
 
 The median is the middle value in a sorted list. For a stream, we need to efficiently maintain order without fully sorting on each insertion.
 
@@ -1926,11 +1926,11 @@ public class PercentileFinder
 
 ## 5. Graph Algorithms: Detect Cycles in Directed Graph
 
-**Difficulty**: Medium-Hard
+**Trudność**: Medium-Hard
 
-**Question**: Implement algorithms to detect cycles in both directed and undirected graphs. Explain the differences in approach and provide examples of real-world applications.
+**Pytanie**: Implement algorithms to detect cycles in both directed and undirected graphs. Explain the differences in approach and provide examples of real-world applications.
 
-**Answer**:
+**Odpowiedź**:
 
 Cycle detection is fundamental for dependency resolution, deadlock detection, and topological sorting.
 

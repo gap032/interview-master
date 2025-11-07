@@ -1,10 +1,10 @@
-# Databases - Mid-Level Questions
+# Bazy Danych - Pytania Poziom Mid
 
 ## 1. SQL Indexing and Query Optimization
 
-**Question**: Explain database indexes. How to optimize slow queries?
+**Pytanie**: Explain database indexes. How to optimize slow queries?
 
-**Answer**:
+**Odpowiedź**:
 
 **Index Types:**
 
@@ -66,9 +66,9 @@ CREATE INDEX idx_orders_user_id ON orders(user_id);
 
 ## 2. Transactions and ACID
 
-**Question**: Explain database transactions and isolation levels.
+**Pytanie**: Explain database transactions and isolation levels.
 
-**Answer**:
+**Odpowiedź**:
 
 **ACID Properties:**
 - **Atomicity**: All or nothing
@@ -120,9 +120,9 @@ ROLLBACK;  -- Transaction 2 saw data that never existed
 
 ## 3. SQL vs NoSQL
 
-**Question**: When to use SQL vs NoSQL databases?
+**Pytanie**: When to use SQL vs NoSQL databases?
 
-**Answer**:
+**Odpowiedź**:
 
 **SQL (PostgreSQL, MySQL):**
 ```sql
@@ -664,9 +664,9 @@ public class DatabaseStrategy
 
 ## 4. T-SQL (Transact-SQL) Fundamentals
 
-**Question**: What are the key features of T-SQL? Explain stored procedures, functions, and CTEs.
+**Pytanie**: What are the key features of T-SQL? Explain stored procedures, functions, and CTEs.
 
-**Answer**:
+**Odpowiedź**:
 
 **T-SQL Overview:**
 T-SQL is Microsoft's proprietary extension to SQL, adding procedural programming, local variables, error handling, and more.

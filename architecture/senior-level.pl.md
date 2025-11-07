@@ -1,10 +1,10 @@
-# Software Architecture - Senior-Level Questions
+# Architektura Oprogramowania - Pytania Poziom Senior
 
 ## 1. CQRS and Event Sourcing
 
-**Question**: Explain CQRS and Event Sourcing. When to use them?
+**Pytanie**: Explain CQRS and Event Sourcing. When to use them?
 
-**Answer**:
+**Odpowiedź**:
 
 **CQRS (Command Query Responsibility Segregation):**
 

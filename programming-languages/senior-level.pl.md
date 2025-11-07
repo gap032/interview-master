@@ -1,10 +1,10 @@
-# Programming Languages - Senior-Level Questions
+# Języki Programowania - Pytania Poziom Senior
 
 ## 1. Compare Memory Management: Java vs C++ vs Go
 
-**Question**: Compare memory management strategies across languages. Discuss GC algorithms and trade-offs.
+**Pytanie**: Compare memory management strategies across languages. Discuss GC algorithms and trade-offs.
 
-**Answer**:
+**Odpowiedź**:
 
 **C++ Manual Memory Management:**
 ```cpp
@@ -156,9 +156,9 @@ byte[] largeArray = new byte[100_000]; // Goes to LOH
 
 ## 2. Async/Await vs Promises vs Callbacks
 
-**Question**: Compare asynchronous programming models. When to use each?
+**Pytanie**: Compare asynchronous programming models. When to use each?
 
-**Answer**:
+**Odpowiedź**:
 
 **1. Callbacks (oldest):**
 ```javascript
@@ -353,9 +353,9 @@ public async Task<T> WithCancellationAsync<T>(
 
 ## 3. C# Reflection and Metadata Programming
 
-**Question**: Explain reflection in C#, its use cases, and performance implications. Compare with compile-time alternatives.
+**Pytanie**: Explain reflection in C#, its use cases, and performance implications. Compare with compile-time alternatives.
 
-**Answer**:
+**Odpowiedź**:
 
 **Reflection** allows inspecting and manipulating types at runtime.
 
@@ -449,9 +449,9 @@ public class User
 
 ## 4. C# Expression Trees and Dynamic Code Generation
 
-**Question**: What are expression trees? When would you use them over delegates?
+**Pytanie**: What are expression trees? When would you use them over delegates?
 
-**Answer**:
+**Odpowiedź**:
 
 **Expression Trees** represent code as data that can be analyzed and modified at runtime.
 
@@ -544,9 +544,9 @@ var results = dbContext.Products.Where(combined);
 
 ## 5. C# Advanced Type System Features
 
-**Question**: Explain C# records, pattern matching, and discriminated unions. How do they compare to other languages?
+**Pytanie**: Explain C# records, pattern matching, and discriminated unions. How do they compare to other languages?
 
-**Answer**:
+**Odpowiedź**:
 
 **Records (C# 9.0+)** - Value-based equality:
 
@@ -694,9 +694,9 @@ public double Evaluate(Expression expr, Dictionary<string, double> vars)
 
 ## 7. Advanced Angular Concepts
 
-**Question**: Explain RxJS operators, state management strategies, change detection, lazy loading, and advanced routing patterns in Angular.
+**Pytanie**: Explain RxJS operators, state management strategies, change detection, lazy loading, and advanced routing patterns in Angular.
 
-**Answer**:
+**Odpowiedź**:
 
 **1. RxJS Operators and Reactive Programming:**
 

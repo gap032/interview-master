@@ -1,10 +1,10 @@
-# DevOps & Cloud - Senior-Level Questions
+# DevOps # DevOps & Cloud - Senior-Level Questions Cloud - Pytania Poziom Senior
 
 ## 1. Design High-Availability Infrastructure
 
-**Question**: Design a highly available, fault-tolerant infrastructure on AWS.
+**Pytanie**: Design a highly available, fault-tolerant infrastructure on AWS.
 
-**Answer**:
+**Odpowiedź**:
 
 **Architecture:**
 ```

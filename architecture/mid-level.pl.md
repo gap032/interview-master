@@ -1,10 +1,10 @@
-# Software Architecture - Mid-Level Questions
+# Architektura Oprogramowania - Pytania Poziom Mid
 
 ## 1. Microservices vs Monolith
 
-**Question**: When should you use microservices vs monolithic architecture?
+**Pytanie**: When should you use microservices vs monolithic architecture?
 
-**Answer**:
+**Odpowiedź**:
 
 **Monolithic Architecture:**
 ```
@@ -65,9 +65,9 @@
 
 ## 2. Event-Driven Architecture
 
-**Question**: Design an event-driven system. Explain benefits and challenges.
+**Pytanie**: Design an event-driven system. Explain benefits and challenges.
 
-**Answer**:
+**Odpowiedź**:
 
 **Architecture:**
 ```
@@ -125,9 +125,9 @@ def on_order_placed(event):
 
 ## 3. Design Patterns: Factory vs Builder vs Prototype
 
-**Question**: Compare creational design patterns with code examples.
+**Pytanie**: Compare creational design patterns with code examples.
 
-**Answer**:
+**Odpowiedź**:
 
 **Factory Pattern:**
 ```java

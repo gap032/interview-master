@@ -1,10 +1,10 @@
-# System Design - Senior-Level Questions
+# System Design - Pytania Poziom Senior
 
 ## 1. Design Instagram/Twitter Feed
 
-**Question**: Design a social media feed system that shows posts from users you follow, sorted by time.
+**Pytanie**: Design a social media feed system that shows posts from users you follow, sorted by time.
 
-**Answer**:
+**Odpowiedź**:
 
 **Architecture:**
 ```
@@ -51,9 +51,9 @@ def generate_feed(user_id):
 
 ## 2. Design Netflix/YouTube
 
-**Question**: Design a video streaming platform supporting millions of concurrent users.
+**Pytanie**: Design a video streaming platform supporting millions of concurrent users.
 
-**Answer**:
+**Odpowiedź**:
 
 **Components:**
 - CDN for video delivery
@@ -77,9 +77,9 @@ Upload → Transcode to multiple formats → Store in blob storage → CDN
 
 ## 3. Design Uber/Lyft
 
-**Question**: Design a ride-sharing platform matching drivers and riders.
+**Pytanie**: Design a ride-sharing platform matching drivers and riders.
 
-**Answer**:
+**Odpowiedź**:
 
 **Core Problems:**
 - Real-time location tracking

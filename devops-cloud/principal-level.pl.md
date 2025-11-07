@@ -1,10 +1,10 @@
-# DevOps & Cloud - Principal-Level Questions
+# DevOps # DevOps & Cloud - Principal-Level Questions Cloud - Pytania Poziom Principal
 
 ## 1. Design Multi-Region Active-Active Architecture
 
-**Question**: Design a globally distributed, active-active system with disaster recovery.
+**Pytanie**: Design a globally distributed, active-active system with disaster recovery.
 
-**Answer**:
+**Odpowiedź**:
 
 **Architecture:**
 ```

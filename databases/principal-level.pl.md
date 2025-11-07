@@ -1,10 +1,10 @@
-# Databases - Principal-Level Questions
+# Bazy Danych - Pytania Poziom Principal
 
 ## 1. Design Distributed Database with Consensus
 
-**Question**: Design a distributed database ensuring consistency across nodes using consensus algorithms.
+**Pytanie**: Design a distributed database ensuring consistency across nodes using consensus algorithms.
 
-**Answer**:
+**Odpowiedź**:
 
 **Consensus Algorithms:**
 
