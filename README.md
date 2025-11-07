@@ -227,7 +227,7 @@ This repository is provided as-is for educational purposes.
   - Behavioral interview strategies
   - Salary negotiation tactics and email templates
   - Post-interview follow-up and offer evaluation
-- 📦 Materials database regenerated: **509 KB** (was 461 KB)
+- 📦 Materials database: **583 KB** (includes all 24 files: 21 category files + 3 new guides)
 
 **2025-11-07 (Morning)**: Major content expansion - **2,460+ lines** of new material:
 - 🚀 **Angular Complete Coverage** (Mid/Senior/Principal levels):
