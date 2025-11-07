@@ -16,6 +16,7 @@ const translations = {
 
         // Categories
         catCategories: "Categories",
+        catAll: "All",
         catAlgorithms: "Data Structures & Algorithms",
         catSystemDesign: "System Design",
         catProgramming: "Programming Languages",
@@ -110,6 +111,7 @@ const translations = {
 
         // Categories
         catCategories: "Kategorie",
+        catAll: "Wszystkie",
         catAlgorithms: "Struktury Danych i Algorytmy",
         catSystemDesign: "Projektowanie Systemów",
         catProgramming: "Języki Programowania",
@@ -257,6 +259,11 @@ function updateUI() {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === currentLanguage);
     });
+
+    // Update statistics display if the function exists
+    if (typeof updateStatsDisplay === 'function') {
+        updateStatsDisplay();
+    }
 }
 
 // Initialize language on page load
