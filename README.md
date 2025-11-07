@@ -84,6 +84,25 @@ Leadership, communication, and soft skills.
 - **Practical Challenges**: Coding and design exercises for both positions
 - **260+ questions total** covering all aspects of senior-level technical interviews
 
+### 9. [Problem-Solving Framework](./problem-solving-framework.md)
+**NEW:** Systematic approach to solving coding interview problems.
+- **UMPIRE Method**: Understand, Match, Plan, Implement, Review, Evaluate
+- **Pattern Recognition**: Common patterns (Two Pointers, Sliding Window, DP, Backtracking, etc.)
+- **Communication Tips**: Think out loud, ask questions, handle being stuck
+- **Complexity Analysis**: Time and space complexity examples
+- **Sample Walkthrough**: Complete problem solution with step-by-step framework application
+- **Best practices** for technical interview communication and time management
+
+### 10. [Resume and Interview Tips](./resume-and-interview-tips.md)
+**NEW:** Complete guide to resume writing and interview preparation.
+- **Resume Writing**: Action verbs, quantifying impact, STAR format, common mistakes
+- **Resume Sections**: Header, skills, experience, education, projects, certifications
+- **Resume Examples**: Entry-level, mid-level, and senior engineer templates
+- **Interview Timeline**: 3-month preparation schedule with weekly breakdown
+- **Interview Best Practices**: Technical and behavioral interview strategies
+- **Negotiation Tips**: Salary research, negotiation tactics, offer evaluation
+- **Resources**: Practice platforms, books, communities for interview preparation
+
 ## 🌐 Interactive Web Application
 
 **[🚀 Launch Interview Prep App](https://gap032.github.io/interview-master/)**
@@ -175,7 +194,42 @@ This repository is provided as-is for educational purposes.
 
 ### Recent Updates
 
-**2025-11-07**: Major content expansion - **2,460+ lines** of new material:
+**2025-11-07 (Evening)**: Added comprehensive interview preparation resources - **~2,500+ lines** of new material:
+- 📚 **Behavioral Questions Enhancement**:
+  - STAR Method framework with comprehensive explanation
+  - Interview Preparation Grid template
+  - 15+ general interview tips
+  - 7 behavioral question categories (Leadership, Conflict, Failure, Pressure, Problem-Solving, Feedback, Continuous Development)
+  - Enhanced mid-level behavioral questions from 44 to 493 lines
+- 🔤 **String Algorithms** (690+ lines):
+  - Palindrome checking (two-pointer technique)
+  - Anagram detection (hash map approach)
+  - Substring search (naive and KMP algorithm)
+  - Longest common prefix
+  - String reversal techniques
+  - Multi-language examples (Python, C#, JavaScript)
+- 💻 **Bitwise Operations** (630+ lines):
+  - Basic bitwise operators (AND, OR, XOR, NOT, shifts)
+  - Bit manipulation problems (count set bits, power of 2, single number, swap, reverse bits)
+  - Bitwise tricks and patterns
+  - Real-world applications
+- 🎯 **Problem-Solving Framework** (complete guide):
+  - UMPIRE Method (Understand, Match, Plan, Implement, Review, Evaluate)
+  - Pattern recognition for 20+ common algorithm patterns
+  - Interview communication strategies
+  - Time/space complexity analysis
+  - Complete sample problem walkthrough
+- 📝 **Resume and Interview Tips** (comprehensive guide):
+  - Resume writing principles and best practices
+  - Resume sections with examples (Header, Skills, Experience, Education, Projects)
+  - 3 complete resume templates (Entry-level, Mid-level, Senior)
+  - 3-month interview preparation timeline
+  - Behavioral interview strategies
+  - Salary negotiation tactics and email templates
+  - Post-interview follow-up and offer evaluation
+- 📦 Materials database: **583 KB** (includes all 24 files: 21 category files + 3 new guides)
+
+**2025-11-07 (Morning)**: Major content expansion - **2,460+ lines** of new material:
 - 🚀 **Angular Complete Coverage** (Mid/Senior/Principal levels):
   - Mid-Level: Components, Services, DI, Directives, Routing, Forms, Pipes, Lifecycle Hooks (800 lines)
   - Senior-Level: RxJS Operators, NgRx State Management, Change Detection, Lazy Loading, Guards, Resolvers, HTTP Interceptors (890 lines)

@@ -24,7 +24,10 @@ files = [
     'devops-cloud/principal-level.md',
     'behavioral/mid-level.md',
     'behavioral/senior-level.md',
-    'behavioral/principal-level.md'
+    'behavioral/principal-level.md',
+    'interview-categories-and-questions.md',
+    'problem-solving-framework.md',
+    'resume-and-interview-tips.md'
 ]
 
 materials = {}
