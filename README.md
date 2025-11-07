@@ -2,14 +2,24 @@
 
 A comprehensive collection of interview questions and detailed answers for Software Engineering, Computer Engineering, Programming, and IT Architecture positions. Questions are organized by technical domain and experience level.
 
-## 🎯 Featured: C# / .NET Code Examples
+## 🎯 Featured: Comprehensive Full-Stack Content
 
-**NEW:** All major topics now include comprehensive **C# implementations** alongside Python, Java, and JavaScript examples:
+**NEW:** Massively expanded content with **7,000+ lines** of production-ready code examples:
+
+### 🔥 Latest Additions (November 2025)
+- ✅ **Angular** - Complete coverage across all levels (fundamentals, RxJS, NgRx, micro-frontends, enterprise architecture)
+- ✅ **SOLID Principles** - All 5 principles with bad/good examples in multiple languages
+- ✅ **React Fundamentals** - Components, Hooks, State Management, Custom Hooks
+- ✅ **Performance Optimization** - Algorithm complexity, caching, profiling, memory optimization
+- ✅ **T-SQL** - Stored procedures, functions, CTEs, window functions, transactions
+- ✅ **OOP Fundamentals** - Encapsulation, Inheritance, Polymorphism, Abstraction
+
+### 💎 C# / .NET Excellence
 - ✅ **Data Structures & Algorithms** - 14 sections with production-ready C# code (3,100+ lines)
-- ✅ **Databases** - Entity Framework Core, Dapper, MongoDB C# Driver examples (1,150+ lines)
+- ✅ **Databases** - Entity Framework Core, Dapper, MongoDB C# Driver, T-SQL examples (1,150+ lines)
 - ✅ **Programming Languages** - C# language features, LINQ, async/await, modern .NET patterns
 
-Perfect for **.NET developers** preparing for technical interviews at Microsoft, Amazon, Google, and other top tech companies.
+Perfect for **Full-Stack, .NET, and Angular developers** preparing for technical interviews at FAANG and top tech companies.
 
 ## 📚 Repository Structure
 
@@ -35,10 +45,11 @@ Designing scalable, reliable, and maintainable systems.
 
 ### 3. [Programming Languages](./programming-languages/)
 Language-specific concepts, paradigms, and best practices.
-**Languages:** Python, JavaScript, **C#** (LINQ, async/await, generics, reflection)
-- [Mid-Level Questions](./programming-languages/mid-level.md) - Closures, Decorators, Type Systems
-- [Senior-Level Questions](./programming-languages/senior-level.md) - Memory Management, Async Patterns
-- [Principal-Level Questions](./programming-languages/principal-level.md) - Roslyn APIs, Performance Optimization
+**Languages:** Python, JavaScript, TypeScript, **C#** (LINQ, async/await, generics, reflection)
+**Frameworks:** **Angular** (all levels), **React**, jQuery
+- [Mid-Level Questions](./programming-languages/mid-level.md) - Closures, Decorators, Type Systems, **SOLID**, **OOP Fundamentals**, **React**, **jQuery**, **Angular Basics**, **Performance Optimization**
+- [Senior-Level Questions](./programming-languages/senior-level.md) - Memory Management, Async Patterns, **Advanced Angular** (RxJS, NgRx, Change Detection, Lazy Loading, Guards, Interceptors)
+- [Principal-Level Questions](./programming-languages/principal-level.md) - Roslyn APIs, Performance Optimization, **Angular Enterprise Architecture** (Monorepo, Micro-Frontends, Module Federation, Nx)
 
 ### 4. [Software Architecture](./architecture/)
 Architectural patterns, microservices, and enterprise design.
@@ -48,8 +59,8 @@ Architectural patterns, microservices, and enterprise design.
 
 ### 5. [Databases](./databases/)
 SQL, NoSQL, database design, and optimization.
-**Technologies:** SQL, **Entity Framework Core**, **Dapper**, **MongoDB C# Driver**
-- [Mid-Level Questions](./databases/mid-level.md) - Indexing, Transactions, SQL vs NoSQL
+**Technologies:** SQL, **T-SQL**, **Entity Framework Core**, **Dapper**, **MongoDB C# Driver**
+- [Mid-Level Questions](./databases/mid-level.md) - Indexing, Transactions, SQL vs NoSQL, **T-SQL** (Stored Procedures, Functions, CTEs, Window Functions, Transactions)
 - [Senior-Level Questions](./databases/senior-level.md) - Database Sharding, Cross-Shard Transactions
 - [Principal-Level Questions](./databases/principal-level.md) - Distributed Consensus (Raft), CAP Theorem
 
@@ -64,6 +75,14 @@ Leadership, communication, and soft skills.
 - [Mid-Level Questions](./behavioral/mid-level.md)
 - [Senior-Level Questions](./behavioral/senior-level.md)
 - [Principal-Level Questions](./behavioral/principal-level.md)
+
+### 8. [Interview Categories & Questions Guide](./interview-categories-and-questions.md)
+**NEW:** Comprehensive interview preparation guide for senior positions.
+- **For Architects**: 12 categories with 120 questions covering architecture patterns, DDD, scalability, security, cloud, DevOps, microservices, databases, observability, team management, trade-offs, and migrations
+- **For Senior Developers**: 14 categories with 140 questions covering OOP, design patterns, clean code, algorithms, performance, testing, refactoring, code review, frameworks, API design, databases, Git, debugging, and mentoring
+- **Behavioral Questions**: 15 questions about experience, collaboration, and learning
+- **Practical Challenges**: Coding and design exercises for both positions
+- **260+ questions total** covering all aspects of senior-level technical interviews
 
 ## 🌐 Interactive Web Application
 
@@ -152,9 +171,27 @@ This repository is provided as-is for educational purposes.
 
 ---
 
-**Last Updated**: 2025-11-06
+**Last Updated**: 2025-11-07
 
 ### Recent Updates
+
+**2025-11-07**: Major content expansion - **2,460+ lines** of new material:
+- 🚀 **Angular Complete Coverage** (Mid/Senior/Principal levels):
+  - Mid-Level: Components, Services, DI, Directives, Routing, Forms, Pipes, Lifecycle Hooks (800 lines)
+  - Senior-Level: RxJS Operators, NgRx State Management, Change Detection, Lazy Loading, Guards, Resolvers, HTTP Interceptors (890 lines)
+  - Principal-Level: Enterprise Architecture with Nx, Micro-Frontends, Module Federation, Performance at Scale, Testing Strategy, CI/CD (770 lines)
+- 🎯 **6 New Programming Topics** (2,100+ lines):
+  - SOLID Principles (all 5 with bad/good examples)
+  - Object-Oriented Programming Fundamentals (4 pillars)
+  - React Fundamentals (Components, Hooks, State Management)
+  - jQuery Fundamentals (DOM manipulation, events, AJAX)
+  - T-SQL (Stored Procedures, Functions, CTEs, Window Functions, Transactions)
+  - Code Performance Optimization (Profiling, Caching, Async, Memory optimization)
+- 📋 **Interview Categories Guide** (260+ questions):
+  - 12 categories for Architects (120 questions)
+  - 14 categories for Senior Developers (140 questions)
+  - Behavioral questions and practical coding challenges
+- 🔧 **Technologies**: Angular 17+, RxJS, NgRx, TypeScript, React, T-SQL, C# with examples
 
 **2025-11-06**: Added comprehensive C# / .NET examples:
 - 🎯 **4,500+ lines** of production-quality C# code
