@@ -104,6 +104,10 @@ const translations = {
         loading: "Loading...",
         explanation: "Explanation:",
 
+        // Confirm dialogs
+        confirmQuitQuiz: "Are you sure you want to quit the quiz? Your progress will be lost.",
+        confirmResetStats: "Are you sure you want to reset all statistics? This action cannot be undone.",
+
         // Error messages
         errorLoadingFile: "Error Loading File",
         errorCannotLoad: "Cannot load file:",
@@ -213,6 +217,10 @@ const translations = {
         loading: "Ładowanie...",
         explanation: "Wyjaśnienie:",
 
+        // Confirm dialogs
+        confirmQuitQuiz: "Czy na pewno chcesz zakończyć quiz? Postęp zostanie utracony.",
+        confirmResetStats: "Czy na pewno chcesz zresetować wszystkie statystyki? Tej operacji nie można cofnąć.",
+
         // Error messages
         errorLoadingFile: "Błąd ładowania pliku",
         errorCannotLoad: "Nie można załadować pliku:",
@@ -235,6 +243,28 @@ function changeLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);
     updateUI();
+
+    // Reload current material if one is displayed
+    reloadCurrentMaterial();
+}
+
+// Reload currently displayed material in new language
+function reloadCurrentMaterial() {
+    // Check if we're on materials section and a file is loaded
+    const materialsSection = document.getElementById('materials-section');
+    const contentDiv = document.getElementById('content');
+
+    if (materialsSection && materialsSection.classList.contains('active') && contentDiv.style.display !== 'none') {
+        // Find the active material button
+        const activeBtn = document.querySelector('.level-btn.active');
+        if (activeBtn && activeBtn.dataset.file) {
+            const filepath = activeBtn.dataset.file;
+            console.log('[i18n] Reloading material in new language:', filepath);
+            if (typeof loadMarkdownFile === 'function') {
+                loadMarkdownFile(filepath);
+            }
+        }
+    }
 }
 
 // Update all UI text
