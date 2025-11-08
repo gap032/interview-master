@@ -291,7 +291,7 @@ function selectAnswer(answerIndex) {
         explanationDiv.className = 'explanation';
         explanationDiv.innerHTML = `
             <div style="margin-top: 1.5rem; padding: 1rem; background-color: var(--surface-light); border-radius: 8px; border-left: 4px solid ${isCorrect ? 'var(--success-color)' : 'var(--warning-color)'};">
-                <strong><i class="fas fa-lightbulb"></i> Wyjaśnienie:</strong>
+                <strong><i class="fas fa-lightbulb"></i> ${t('explanation')}</strong>
                 <p style="margin-top: 0.5rem;">${question.explanation}</p>
             </div>
         `;
@@ -328,19 +328,19 @@ function showResults() {
     if (percentage >= 90) {
         resultsIcon.innerHTML = '<i class="fas fa-trophy"></i>';
         resultsIcon.className = 'results-icon excellent';
-        resultsTitle.textContent = 'Doskonale! 🎉';
+        resultsTitle.textContent = t('resultsExcellent');
     } else if (percentage >= 70) {
         resultsIcon.innerHTML = '<i class="fas fa-star"></i>';
         resultsIcon.className = 'results-icon good';
-        resultsTitle.textContent = 'Bardzo dobrze! ⭐';
+        resultsTitle.textContent = t('resultsGood');
     } else if (percentage >= 50) {
         resultsIcon.innerHTML = '<i class="fas fa-thumbs-up"></i>';
         resultsIcon.className = 'results-icon average';
-        resultsTitle.textContent = 'Nieźle! 👍';
+        resultsTitle.textContent = t('resultsAverage');
     } else {
         resultsIcon.innerHTML = '<i class="fas fa-book-reader"></i>';
         resultsIcon.className = 'results-icon poor';
-        resultsTitle.textContent = 'Potrzebujesz więcej praktyki 📚';
+        resultsTitle.textContent = t('resultsPoor');
     }
 
     // Display score
@@ -350,7 +350,7 @@ function showResults() {
 
     // Display breakdown
     const breakdownDiv = document.getElementById('results-breakdown');
-    breakdownDiv.innerHTML = '<h3><i class="fas fa-list-check"></i> Szczegóły</h3>';
+    breakdownDiv.innerHTML = `<h3><i class="fas fa-list-check"></i> ${t('resultsDetails')}</h3>`;
 
     currentQuiz.answers.forEach((answer, index) => {
         const question = currentQuiz.questions[answer.questionIndex];
@@ -359,7 +359,7 @@ function showResults() {
         resultItem.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: start;">
                 <div style="flex: 1;">
-                    <strong>Pytanie ${index + 1}:</strong> ${question.question}
+                    <strong>${t('quizQuestion')} ${index + 1}:</strong> ${question.question}
                 </div>
                 <div style="margin-left: 1rem;">
                     <i class="fas ${answer.isCorrect ? 'fa-check-circle' : 'fa-times-circle'}"
@@ -368,8 +368,8 @@ function showResults() {
             </div>
             ${!answer.isCorrect ? `
                 <div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
-                    Twoja odpowiedź: ${question.answers[answer.selectedAnswer]}<br>
-                    Poprawna: ${question.answers[answer.correctAnswer]}
+                    ${t('resultsYourAnswer')} ${question.answers[answer.selectedAnswer]}<br>
+                    ${t('resultsCorrect')} ${question.answers[answer.correctAnswer]}
                 </div>
             ` : ''}
         `;
@@ -382,7 +382,7 @@ function showResults() {
 }
 
 function quitQuiz() {
-    if (confirm('Czy na pewno chcesz zakończyć quiz? Postęp zostanie utracony.')) {
+    if (confirm(t('confirmQuitQuiz'))) {
         resetQuiz();
     }
 }
@@ -403,7 +403,7 @@ function resetQuiz() {
 // Statistics
 function initializeStatsSection() {
     document.getElementById('reset-stats').addEventListener('click', () => {
-        if (confirm('Czy na pewno chcesz zresetować wszystkie statystyki? Tej operacji nie można cofnąć.')) {
+        if (confirm(t('confirmResetStats'))) {
             stats = {
                 totalQuizzes: 0,
                 totalQuestions: 0,

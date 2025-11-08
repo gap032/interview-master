@@ -104,6 +104,10 @@ const translations = {
         loading: "Loading...",
         explanation: "Explanation:",
 
+        // Confirm dialogs
+        confirmQuitQuiz: "Are you sure you want to quit the quiz? Your progress will be lost.",
+        confirmResetStats: "Are you sure you want to reset all statistics? This action cannot be undone.",
+
         // Error messages
         errorLoadingFile: "Error Loading File",
         errorCannotLoad: "Cannot load file:",
@@ -212,6 +216,10 @@ const translations = {
         // Misc
         loading: "Ładowanie...",
         explanation: "Wyjaśnienie:",
+
+        // Confirm dialogs
+        confirmQuitQuiz: "Czy na pewno chcesz zakończyć quiz? Postęp zostanie utracony.",
+        confirmResetStats: "Czy na pewno chcesz zresetować wszystkie statystyki? Tej operacji nie można cofnąć.",
 
         // Error messages
         errorLoadingFile: "Błąd ładowania pliku",
